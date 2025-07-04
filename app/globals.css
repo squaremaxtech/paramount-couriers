@@ -8,27 +8,32 @@
 }
 
 :root {
-  --c1: #ef4444;
-  --c2: #ef4444;
-  --c3: #ef4444;
-  /* error color */
-  --c4: #ef4444;
-  /* success color */
-  --c5: #ef4444;
+  --c1: #e11d48;
+  --c2: #c1121f;
+  --c3: #fdf0d5;
+  --c4: #003049;
+  --c5: #669bbc;
 
-  --sLight1: #ef4444;
-  --sDark1: #1e1e1e;
+  --success: #335c67;
+  --error: var(--c2);
+  --warning: #e09f3e;
+  --info: var(--c4);
+
+  /* --sLight1: #fef2f2; */
+  --sDark1: #0f0f0f;
 
   --bg1: #ffffff;
-  --bg2: #ef4444;
+  --bg2: #f0f2f5;
+  --bg3: #333333;
 
-
+  --fontSizeTitle: 5rem;
   --fontSizeEL: 2.5rem;
   --fontSizeL: 2rem;
   --fontSizeR: 1rem;
   --fontSizeS: .7rem;
 
   --spacingL: 2rem;
+  --spacingM: 1.3rem;
   --spacingR: 1rem;
   --spacingS: .5rem;
 
@@ -40,23 +45,25 @@
 
 html,
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--roboto);
   background-color: var(--bg1);
   color: var(--sDark1);
-  line-height: 1.6;
+  /* line-height: 1.6; */
 }
 
 h1 {
+  font-family: var(--manrope);
   font-size: var(--fontSizeEL);
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  color: var(--sDark1);
+  font-weight: 300;
+  margin-bottom: var(--spacingM);
+  color: var(--c1);
 }
 
 h2 {
-  font-size: var(--fontSizeEL);
-  font-weight: 600;
-  margin-bottom: 0.5rem;
+  font-family: var(--raleway);
+  font-size: var(--fontSizeL);
+  font-weight: 300;
+  margin-bottom: var(--spacingR);
   color: var(--sDark1);
 }
 

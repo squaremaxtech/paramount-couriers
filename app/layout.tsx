@@ -2,11 +2,22 @@ import type { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 import { auth } from "@/auth/auth";
+import { Raleway, Manrope, Roboto } from "next/font/google"
 
-// const geistMono = Geist_Mono({
-//   variable: "--font-geist-mono",
-//   subsets: ["latin"],
-// });
+const roboto = Roboto({
+  variable: "--roboto",
+  subsets: ["latin"],
+});
+
+const raleway = Raleway({
+  variable: "--raleway",
+  subsets: ["latin"],
+});
+
+const manrope = Manrope({
+  variable: "--manrope",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "Reggae Rush",
@@ -22,7 +33,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className={`antialiased`}>
+      <body className={`${raleway.variable} ${manrope.variable} ${roboto.variable} antialiased`}>
         <SessionProvider session={session}>
           {children}
         </SessionProvider>
