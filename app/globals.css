@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  border: 1px solid red !important;
+}
+
+:root {
+  --c1: #ef4444;
+  --c2: #ef4444;
+  --c3: #ef4444;
+  /* error color */
+  --c4: #ef4444;
+  /* success color */
+  --c5: #ef4444;
+
+  --sLight1: #ef4444;
+  --sDark1: #1e1e1e;
+
+  --bg1: #ffffff;
+  --bg2: #ef4444;
+
+
+  --fontSizeEL: 2.5rem;
+  --fontSizeL: 2rem;
+  --fontSizeR: 1rem;
+  --fontSizeS: .7rem;
+
+  --spacingL: 2rem;
+  --spacingR: 1rem;
+  --spacingS: .5rem;
+
+  --borderRadiusR: 1rem;
+  --borderRadiusS: 0.5rem;
+
+  --transitionTimeR: 400ms;
+}
+
+html,
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg1);
+  color: var(--sDark1);
+  line-height: 1.6;
+}
+
+h1 {
+  font-size: var(--fontSizeEL);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--sDark1);
+}
+
+h2 {
+  font-size: var(--fontSizeEL);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--sDark1);
+}
+
+h3 {
+  font-size: var(--fontSizeR);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--sDark1);
+}
+
+p {
+  font-size: var(--fontSizeR);
+  color: var(--sDark1);
+  margin-bottom: 1rem;
+  max-width: 60ch;
+}
+
+.button1,
+.button2,
+.button3 {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transitionTimeR) ease;
+}
+
+.button1 {
+  background-color: var(--c1);
+  color: var(--sDark1);
+}
+
+.button1:hover {
+  background-color: var(--c2);
+}
+
+.button2 {
+  background-color: var(--c3);
+  color: var(--sDark1);
+}
+
+.button2:hover {
+  background-color: var(--c3);
+}
+
+.button3 {
+  background-color: transparent;
+  border: 2px solid var(--c4);
+  color: var(--sDark1);
+}
+
+.button3:hover {
+  background-color: var(--c4);
+  color: var(--sDark1);
+}
+
+section,
+.container {
+  display: grid;
+  align-content: flex-start;
+  gap: var(--spacingR);
+}
