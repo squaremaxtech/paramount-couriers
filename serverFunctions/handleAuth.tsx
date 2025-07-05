@@ -34,7 +34,7 @@ export async function employeeOrAdminCheck() {
     return session
 }
 
-type crudType = "c" | "r" | "ro" | "u" | "uo" | "d" | "do" //update own
+type crudType = "c" | "r" | "u" | "d" | "ro" | "uo" | "do" //update own
 type rulesObjType = {
     "admin": crudType[],
     "employee_regular": crudType[],
@@ -67,16 +67,16 @@ const tableUpdateRules: tableUpdateRulesType = {
         columnNames: {
             "name": {
                 rules: {
-                    admin: ["c", "r", "ro", "u", "uo", "d", "do"],
-                    employee_regular: ["c", "r", "ro", "uo", "do"],
-                    employee_elevated: ["c", "r", "ro", "uo", "do"],
-                    employee_head: ["c", "r", "ro", "uo", "do"],
-                    customer: ["c", "r", "ro", "uo", "do"],
+                    admin: ["r", "u", "ro", "uo"],
+                    employee_regular: ["r", "ro", "uo"],
+                    employee_elevated: ["r", "ro", "uo"],
+                    employee_head: ["r", "ro", "uo"],
+                    customer: ["r", "ro", "uo"],
                 }
             }
         },
         rules: {
-            admin: ["c", "r", "ro", "u", "uo", "d", "do"],
+            admin: ["c", "r", "u", "d", "ro", "uo", "do"],
             employee_regular: ["r", "ro"],
             employee_elevated: ["r", "ro"],
             employee_head: ["r", "ro"],
@@ -87,19 +87,19 @@ const tableUpdateRules: tableUpdateRulesType = {
         columnNames: {
             "comments": {
                 rules: {
-                    admin: ["c", "r", "ro", "u", "uo", "d", "do"],
-                    employee_regular: ["c", "r", "ro", "uo", "do"],
-                    employee_elevated: ["c", "r", "ro", "uo", "do"],
-                    employee_head: ["c", "r", "ro", "uo", "do"],
-                    customer: ["c", "r", "ro", "uo", "do"],
+                    admin: ["r", "u", "ro", "uo"],
+                    employee_regular: ["r", "ro", "uo"],
+                    employee_elevated: ["r", "ro", "uo"],
+                    employee_head: ["r", "ro", "uo"],
+                    customer: ["r", "ro", "uo"],
                 }
             }
         },
         rules: {
-            admin: ["c", "r", "ro", "u", "uo", "d", "do"],
-            employee_regular: ["r", "ro"],
-            employee_elevated: ["r", "ro"],
-            employee_head: ["r", "ro"],
+            admin: ["c", "r", "u", "d"],
+            employee_regular: ["c", "r"],
+            employee_elevated: ["c", "r"],
+            employee_head: ["c", "r"],
             customer: ["ro"],
         }
     },

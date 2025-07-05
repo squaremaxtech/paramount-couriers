@@ -31,14 +31,54 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth()
 
   return (
     <html lang="en">
       <body className={`${raleway.variable} ${manrope.variable} ${roboto.variable} antialiased`}>
         <SessionProvider>
           <Toaster position="top-center" reverseOrder={false} />
+          <Navbar menuInfoArr={[
+            {
+              title: "home",
+              link: "/",
+              subMenu: [
+                {
+                  title: "homeSub",
+                  link: "/",
+                },
+                {
+                  title: "homeSub2",
+                  link: "/",
+                },
+                {
+                  title: "homeSub3",
+                  link: "/",
+                },
+              ]
+            },
+            {
+              title: "how it works",
+              link: "/howItWorks",
+            },
+            {
+              title: "pricing & rates",
+              link: "/rates",
+            },
+            {
+              title: "support",
+              link: "/support",
+            },
+            {
+              title: "about us",
+              link: "/aboutUs",
+            },
+            {
+              title: "contact",
+              link: "/contact",
+            },
+          ]} session={session} />
 
-          <Navbar />
           {children}
         </SessionProvider>
       </body>

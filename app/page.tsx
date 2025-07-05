@@ -1,14 +1,14 @@
 "use client"
 
-import { ensureCanAccessTable } from "@/serverFunctions/handleAuth";
-import { consoleAndToastError } from "@/useful/consoleErrorWithToast";
-import toast from "react-hot-toast";
+// import { ensureCanAccessTable } from "@/serverFunctions/handleAuth";
+// import { consoleAndToastError } from "@/useful/consoleErrorWithToast";
+// import toast from "react-hot-toast";
 
 export default function Home() {
 
   return (
     <div>
-      <button
+      {/* <button
         onClick={() => {
           try {
             toast.success("clicked")
@@ -19,7 +19,7 @@ export default function Home() {
             consoleAndToastError(error)
           }
         }}
-      >click</button>
+      >click</button> */}
     </div>
   );
 }
