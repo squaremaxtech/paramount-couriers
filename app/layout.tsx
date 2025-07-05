@@ -3,6 +3,8 @@ import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 import { auth } from "@/auth/auth";
 import { Raleway, Manrope, Roboto } from "next/font/google"
+import Navbar from "@/components/navbar/Navbar";
+import { Toaster } from "react-hot-toast";
 
 const roboto = Roboto({
   variable: "--roboto",
@@ -29,12 +31,14 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth()
 
   return (
     <html lang="en">
       <body className={`${raleway.variable} ${manrope.variable} ${roboto.variable} antialiased`}>
-        <SessionProvider session={session}>
+        <SessionProvider>
+          <Toaster position="top-center" reverseOrder={false} />
+
+          <Navbar />
           {children}
         </SessionProvider>
       </body>

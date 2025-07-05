@@ -1,8 +1,14 @@
 //To Do
 //Buttons - main, secondary
-//Apply database schema
+//Apply database schema...
 //custom auth on resources
-
+//make employees, customer pages, admin
+//
+//see who can update users table, pac specific column as an eg
+//
+//
+//
+//
 
 //Ideas
 //different tables can only be C,R,U,D by different kind of users
