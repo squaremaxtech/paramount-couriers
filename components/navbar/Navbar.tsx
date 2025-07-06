@@ -1,18 +1,5 @@
-import { auth } from '@/auth/auth'
-import React from 'react'
+import React, { HTMLAttributes } from 'react'
 import LogButton from '../logButtons/LogButton'
-
-// export default async function Navbar() {
-//     const session = await auth()
-
-//     return (
-//         <nav style={{ display: "flex", overflow: "auto", gap: "var(--spacingR)", whiteSpace: "nowrap" }}>
-//             <Logo />
-
-
-//         </nav>
-//     )
-// }
 import styles from "./style.module.css"
 import Link from 'next/link'
 import Logo from "@/components/logo/Logo"
@@ -39,11 +26,11 @@ export default async function MainNav({ menuInfoArr, session }: { menuInfoArr: m
 
     return (
         <nav id='mainNav' className={styles.mainNav}>
-            <MobileNav menuInfoArr={menuInfoArr} />
+            <MobileNav menuItems={menuInfoArr} />
 
             <Logo />
 
-            <DesktopNav menuInfoArr={menuInfoArr} />
+            <DesktopNav menuItems={menuInfoArr} />
 
             <div style={{ justifySelf: "flex-end", display: "grid", alignContent: "flex-start" }}>
                 {session === null ? (
@@ -60,45 +47,50 @@ export default async function MainNav({ menuInfoArr, session }: { menuInfoArr: m
     )
 }
 
+function DesktopNav({ menuItems }: { menuItems: menuItem[] }) {
 
-function DesktopNav({ menuInfoArr }: { menuInfoArr: menuItem[] }) {
+    return (
+        <Menu menu={menuItems} className={styles.desktopMenu} />
+    )
+}
+
+function MobileNav({ menuItems }: { menuItems: menuItem[] }) {
+
+    return (
+        <div className={styles.mobileMenu}>
+            <label htmlFor='mobileMenuCheckbox' style={{ margin: "0 auto", cursor: "pointer" }}>
+                <svg style={{ width: "var(--sizeL)" }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z" /></svg>
+            </label>
+
+            {/* use checkbox styling to hide the menu */}
+            <input id='mobileMenuCheckbox' className="visibilityCheckbox" type="checkbox" style={{ display: "none" }} />
+            <Menu menu={menuItems} />
+        </div>
+    )
+}
+
+function Menu({ menu, ...elProps }: { menu: menuItem[] } & HTMLAttributes<HTMLUListElement>) {
     const pathname = ""
 
     return (
-        <ul className={`${styles.mainMenu} ${styles.desktopMenu} noScrollBar`}>
-            {menuInfoArr.map((eachMenuItem, eachMenuItemIndex) => (
+        <ul {...elProps} className={`${styles.mainMenu} noScrollBar ${elProps.className ?? ""}`}>
+            {menu.map((eachMenuItem, eachMenuItemIndex) => (
                 <li key={eachMenuItemIndex} className={styles.mainMenuItem}>
-                    <div style={{ display: "flex", alignItems: "center", gap: ".3rem", justifyContent: "space-between" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "var(--spacingES)", justifyContent: "space-between", padding: "vaR(--spacingR)" }}>
                         <Link style={{ color: pathname === eachMenuItem.link ? "var(--color1)" : "" }} href={eachMenuItem.link}>{eachMenuItem.title}</Link>
 
                         {eachMenuItem.subMenu !== undefined && (
-                            <svg style={{ width: ".7rem", fill: pathname === eachMenuItem.link ? "var(--color1)" : "" }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z" /></svg>
+                            <label htmlFor='menuItemCheckbox'>
+                                <svg style={{ width: "var(--sizeS)", fill: pathname === eachMenuItem.link ? "var(--color1)" : "" }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z" /></svg>
+                            </label>
                         )}
                     </div>
 
-                    {eachMenuItem.subMenu && (
-                        <ul className={styles.subMenu}>
-                            {eachMenuItem.subMenu.map((eachSubMenuItem, eachSubMenuItemIndex) => (
-                                <li key={eachSubMenuItemIndex} className={styles.subMenuItem}>
-                                    <div style={{ display: "flex", alignItems: "center", gap: ".3rem", justifyContent: "space-between" }}>
-                                        <Link style={{ color: pathname === eachSubMenuItem.link ? "var(--color1)" : "" }} href={eachSubMenuItem.link}>{eachSubMenuItem.title}</Link>
-
-                                        {eachSubMenuItem.subSubMenu !== undefined && (
-                                            <svg style={{ width: ".7rem", color: pathname === eachSubMenuItem.link ? "var(--color1)" : "" }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z" /></svg>
-                                        )}
-                                    </div>
-
-
-                                    {eachSubMenuItem.subSubMenu && (
-                                        <ul className={styles.subSubMenu}>
-                                            {eachSubMenuItem.subSubMenu.map((seenSubSubMenuItem, seenSubSubMenuItemIndex) => (
-                                                <li key={seenSubSubMenuItemIndex} style={{ color: pathname === seenSubSubMenuItem.link ? "var(--color1)" : "" }} className={styles.subSubMenuItem}><Link href={seenSubSubMenuItem.link}>{seenSubSubMenuItem.title}</Link></li>
-                                            ))}
-                                        </ul>
-                                    )}
-                                </li>
-                            ))}
-                        </ul>
+                    {eachMenuItem.subMenu !== undefined && eachMenuItem.subMenu.length > 0 && (
+                        <>
+                            <input id='menuItemCheckbox' className="visibilityCheckbox" type="checkbox" style={{ display: "none" }} />
+                            <SubMenu subMenu={eachMenuItem.subMenu} />
+                        </>
                     )}
                 </li>
             ))}
@@ -106,77 +98,43 @@ function DesktopNav({ menuInfoArr }: { menuInfoArr: menuItem[] }) {
     )
 }
 
-
-function MobileNav({ menuInfoArr }: { menuInfoArr: menuItem[] }) {
-    const showingMenu = false
-
-    return (
-        <div className={styles.mobileMenu}>
-            <div style={{ margin: "0 auto", cursor: "pointer" }}>
-                <svg style={{ width: "2rem" }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z" /></svg>
-            </div>
-
-            {showingMenu && (
-                <ul className={`${styles.mainMenu} noScrollBar`}>
-                    {menuInfoArr.map((eachMenuItem, eachMenuItemIndex) => (
-                        <MenuItem key={eachMenuItemIndex} seenMenuItem={eachMenuItem} seenSubMenuArr={eachMenuItem.subMenu} />
-                    ))}
-                </ul>
-            )}
-        </div>
-    )
-}
-
-function MenuItem({ seenMenuItem, seenSubMenuArr }: { seenMenuItem: menuItem, seenSubMenuArr: subMenuItem[] | undefined }) {
-    const showingSubMenu = false
+function SubMenu({ subMenu }: { subMenu: subMenuItem[] }) {
     const pathname = ""
 
     return (
-        <li className={styles.mainMenuItem}>
-            <div style={{ display: "flex", alignItems: "center", gap: ".3rem", justifyContent: "space-between" }}>
-                <Link style={{ color: pathname === seenMenuItem.link ? "var(--color1)" : "" }} href={seenMenuItem.link}>{seenMenuItem.title}</Link>
+        <ul className={styles.subMenu}>
+            {subMenu.map((eachSubMenuItem, eachSubMenuItemIndex) => (
+                <li key={eachSubMenuItemIndex} className={styles.subMenuItem}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "var(--spacingES)", justifyContent: "space-between" }}>
+                        <Link style={{ color: pathname === eachSubMenuItem.link ? "var(--color1)" : "" }} href={eachSubMenuItem.link}>{eachSubMenuItem.title}</Link>
 
-                {seenSubMenuArr !== undefined && (
-                    <svg style={{ width: ".7rem", fill: pathname === seenMenuItem.link ? "var(--color1)" : "", rotate: showingSubMenu ? "180deg" : "" }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z" /></svg>
-                )}
-            </div>
+                        {eachSubMenuItem.subSubMenu !== undefined && (
+                            <label htmlFor='subMenuItemCheckbox'>
+                                <svg style={{ width: "var(--sizeS)", color: pathname === eachSubMenuItem.link ? "var(--color1)" : "" }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z" /></svg>
+                            </label>
+                        )}
+                    </div>
 
-            {showingSubMenu && seenSubMenuArr !== undefined && (
-                <ul className={styles.subMenu}>
-                    {seenSubMenuArr.map((eachSubMenuItem, eachSubMenuItemIndex) => <SubMenuItem key={eachSubMenuItemIndex} seenSubMenuItem={eachSubMenuItem} seenSubSubMenuArr={eachSubMenuItem.subSubMenu} />)}
-                </ul>
-            )}
-        </li>
+                    {eachSubMenuItem.subSubMenu !== undefined && eachSubMenuItem.subSubMenu.length > 0 && (
+                        <>
+                            <input id='subMenuItemCheckbox' className="visibilityCheckbox" type="checkbox" style={{ display: "none" }} />
+                            <SubSubMenu subSubMenu={eachSubMenuItem.subSubMenu} />
+                        </>
+                    )}
+                </li>
+            ))}
+        </ul>
     )
 }
 
-function SubMenuItem({ seenSubMenuItem, seenSubSubMenuArr }: { seenSubMenuItem: subMenuItem, seenSubSubMenuArr: subSubMenuItem[] | undefined }) {
-    const showingSubSubMenu = false
+function SubSubMenu({ subSubMenu }: { subSubMenu: subSubMenuItem[] }) {
     const pathname = ""
 
     return (
-        <li className={styles.subMenuItem}>
-            <div style={{ display: "flex", alignItems: "center", gap: ".3rem", justifyContent: "space-between" }}>
-                <Link style={{ color: pathname === seenSubMenuItem.link ? "var(--color1)" : "" }} href={seenSubMenuItem.link}>{seenSubMenuItem.title}</Link>
-
-                {seenSubSubMenuArr !== undefined && (
-                    <svg style={{ width: ".7rem", color: pathname === seenSubMenuItem.link ? "var(--color1)" : "", rotate: showingSubSubMenu ? "180deg" : "" }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z" /></svg>
-                )}
-            </div>
-
-            {showingSubSubMenu && seenSubSubMenuArr !== undefined && (
-                <ul className={styles.subSubMenu}>
-                    {seenSubSubMenuArr.map((seenSubSubMenuItem, seenSubSubMenuItemIndex) => <SubSubMenuItem key={seenSubSubMenuItemIndex} seenSubSubMenuItem={seenSubSubMenuItem} />)}
-                </ul>
-            )}
-        </li>
-    )
-}
-
-function SubSubMenuItem({ seenSubSubMenuItem }: { seenSubSubMenuItem: subSubMenuItem }) {
-    const pathname = ""
-
-    return (
-        <li style={{ color: pathname === seenSubSubMenuItem.link ? "var(--color1)" : "" }} className={styles.subSubMenuItem}><Link href={seenSubSubMenuItem.link}>{seenSubSubMenuItem.title}</Link></li>
+        <ul className={styles.subSubMenu}>
+            {subSubMenu.map((seenSubSubMenuItem, seenSubSubMenuItemIndex) => (
+                <li key={seenSubSubMenuItemIndex} style={{ color: pathname === seenSubSubMenuItem.link ? "var(--color1)" : "" }} className={styles.subSubMenuItem}><Link href={seenSubSubMenuItem.link}>{seenSubSubMenuItem.title}</Link></li>
+            ))}
+        </ul>
     )
 }

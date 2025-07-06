@@ -8,7 +8,8 @@
 }
 
 :root {
-  --c1: #e11d48;
+  /* --c1: #e11d48; */
+  --c1: #ff2525;
   --c2: #c1121f;
   --c3: #fdf0d5;
   --c4: #003049;
@@ -19,16 +20,22 @@
   --warning: #e09f3e;
   --info: var(--c4);
 
-  /* --sLight1: #fef2f2; */
-  --sDark1: #0f0f0f;
+  --textC1: #0f0f0f;
+  --textC2: #fff;
+  --textC3: #9e9e9e;
 
   --bg1: #ffffff;
   --bg2: #f0f2f5;
   --bg3: #333333;
 
+  --sizeL: 2rem;
+  --sizeR: 1rem;
+  --sizeS: .7rem;
+
   --fontSizeTitle: 5rem;
   --fontSizeEL: 2.5rem;
   --fontSizeL: 2rem;
+  --fontSizeM: 1.3rem;
   --fontSizeR: 1rem;
   --fontSizeS: .7rem;
 
@@ -36,47 +43,53 @@
   --spacingM: 1.3rem;
   --spacingR: 1rem;
   --spacingS: .5rem;
+  --spacingES: .3rem;
 
   --borderRadiusR: 1rem;
   --borderRadiusS: 0.5rem;
+  --borderRadiusES: 0.2rem;
 
   --transitionTimeR: 400ms;
+  --transitionTimeS: 200ms;
 }
 
 html,
 body {
   font-family: var(--roboto);
   background-color: var(--bg1);
-  color: var(--sDark1);
+  color: var(--textC1);
   /* line-height: 1.6; */
 }
 
 h1 {
-  font-family: var(--manrope);
-  font-size: var(--fontSizeEL);
-  font-weight: 300;
+  font-family: var(--rubik);
+  font-size: var(--fontSizeM);
+  font-weight: 500;
   margin-bottom: var(--spacingM);
-  color: var(--c1);
+  color: var(--textC3);
 }
 
 h2 {
   font-family: var(--raleway);
   font-size: var(--fontSizeL);
-  font-weight: 300;
+  font-weight: 700;
   margin-bottom: var(--spacingR);
-  color: var(--sDark1);
+  color: var(--c1);
 }
 
 h3 {
+  font-family: var(--rubik);
   font-size: var(--fontSizeR);
   font-weight: 500;
   margin-bottom: 0.5rem;
-  color: var(--sDark1);
+  color: var(--textC1);
+  text-transform: uppercase;
 }
 
 p {
+  font-family: var(--rubik);
   font-size: var(--fontSizeR);
-  color: var(--sDark1);
+  color: var(--textC1);
   margin-bottom: 1rem;
   max-width: 60ch;
 }
@@ -84,17 +97,19 @@ p {
 .button1,
 .button2,
 .button3 {
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  border-radius: var(--radius);
-  border: none;
   cursor: pointer;
-  transition: all var(--transitionTimeR) ease;
+  transition: all var(--transitionTimeS) ease;
 }
 
 .button1 {
+  display: block;
   background-color: var(--c1);
-  color: var(--sDark1);
+  color: var(--textC2);
+  transform: skew(160deg);
+  padding: var(--spacingS) var(--spacingR);
+  border-radius: var(--borderRadiusES);
+  text-transform: uppercase;
+  font-weight: 700;
 }
 
 .button1:hover {
@@ -103,7 +118,7 @@ p {
 
 .button2 {
   background-color: var(--c3);
-  color: var(--sDark1);
+  color: var(--textC1);
 }
 
 .button2:hover {
@@ -113,17 +128,36 @@ p {
 .button3 {
   background-color: transparent;
   border: 2px solid var(--c4);
-  color: var(--sDark1);
+  color: var(--textC1);
 }
 
 .button3:hover {
   background-color: var(--c4);
-  color: var(--sDark1);
+  color: var(--textC1);
 }
+
+svg {
+  aspect-ratio: 1/1;
+  width: var(--sizeR);
+}
+
 
 section,
 .container {
   display: grid;
   align-content: flex-start;
   gap: var(--spacingR);
+}
+
+/* custom classes */
+.visibilityCheckbox:not(:checked)+* {
+  display: none;
+}
+
+.chevron {
+  transition: rotate 400ms;
+}
+
+.noDisplay {
+  display: none !important;
 }

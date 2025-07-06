@@ -11,6 +11,15 @@
 //
 
 //Ideas
+//things that can change color
+//text
+//backgrounds
+//buttons
+//
+//colors
+//text color
+//bg
+
 //different tables can only be C,R,U,D by different kind of users
 //e.g Users, packages table
 
@@ -28,7 +37,6 @@
 //agent sees pre alert makes package
 
 //logs items in the package - cup, racket, book
-
 
 
 
