@@ -1,4 +1,4 @@
-import { dbImageType, dbInvoiceType } from "@/types";
+import { dbImageType, dbInvoiceType, userType } from "@/types";
 import { relations } from "drizzle-orm";
 import { boolean, timestamp, pgTable, text, primaryKey, integer, pgEnum, serial, json, decimal, index } from "drizzle-orm/pg-core"
 import type { AdapterAccountType } from "next-auth/adapters"
@@ -7,14 +7,19 @@ export const roleEnum = pgEnum("role", ["admin", "employee", "customer"]);
 export const accessLevelEnum = pgEnum("accessLevel", ["regular", "elevated", "head"]);
 
 export const users = pgTable("user", {
+    //defaults
     id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
     role: roleEnum().notNull().default("customer"),
     accessLevel: accessLevelEnum().notNull().default("regular"),
 
+    //regular
+
+    //null
     name: text("name"),
     email: text("email").unique(),
     emailVerified: timestamp("emailVerified", { mode: "date" }),
     image: text("image"),
+    authorizedUsers: json("authorizedUsers").$type<userType["authorizedUsers"]>(),
 })
 export const userRelations = relations(users, ({ one, many }) => ({
     packages: many(packages),
@@ -24,27 +29,26 @@ export const userRelations = relations(users, ({ one, many }) => ({
 
 
 
-
-
-
 export const statusEnum = pgEnum("status", ["fulfilled", "in progress", "cancelled", "on hold"]);
+export const locationEnum = pgEnum("location", ["on way to warehouse", "warehouse delivered", "in transit to jamaica", "jamaica arrived", "ready for pickup"]);
 
 export const packages = pgTable("packages", { //unique for amazon, shein, multiple amazon orders... all separate packages
-    //regular
-    id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
-    userId: text("userId").notNull().references(() => users.id),
-    sequenceId: serial("sequenceId").notNull(),
-    status: statusEnum().notNull(),
-    store: text("store").notNull(),
-    trackingNumber: text("trackingNumber").notNull(),
-    consignee: text("consignee").notNull(),
-    comments: text("comments").notNull(),
-    invoices: json("invoices").$type<dbInvoiceType[]>().notNull(),
-
-    //defaults
+    id: serial("id").primaryKey(),
     dateCreated: timestamp("dateCreated", { mode: "date" }).notNull().defaultNow(),
 
-    //null
+    userId: text("userId").notNull().references(() => users.id),
+    location: locationEnum().notNull(),
+    status: statusEnum().notNull(),
+    trackingNumber: text("trackingNumber").notNull(),
+    images: json("images").$type<dbImageType[]>().notNull(),
+    weight: decimal("weight").notNull(),
+    payment: decimal("payment").notNull(),
+    store: text("store").notNull(),
+    consignee: text("consignee").notNull(),
+    description: text("description").notNull(),
+    price: decimal("price").notNull(),
+    invoices: json("invoices").$type<dbInvoiceType[]>().notNull(),
+    comments: text("comments").notNull(),
 },
     (table) => {
         return {
@@ -57,36 +61,6 @@ export const packageRelations = relations(packages, ({ one, many }) => ({
         fields: [packages.userId],
         references: [users.id]
     }),
-    items: many(items),
-}));
-
-
-
-
-export const locationEnum = pgEnum("location", ["on way to warehouse", "warehouse delivered", "in transit to jamaica", "jamaica arrived", "ready for pickup"]);
-
-export const items = pgTable("items", {
-    id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
-    packageId: text("packageId").notNull().references(() => packages.id),
-    location: locationEnum().notNull(),
-    images: json("images").$type<dbImageType[]>().notNull(),
-    weight: decimal("weight").notNull(),
-    price: decimal("price").notNull(),
-    paid: boolean("paid").notNull(),
-
-    dateCreated: timestamp("dateCreated", { mode: "date" }).notNull().defaultNow(),
-},
-    (table) => {
-        return {
-            itemsPackageIdIndex: index("itemsPackageIdIndex").on(table.packageId),
-            itemsDateCreatedIndex: index("itemsDateCreatedIndex").on(table.dateCreated),
-        };
-    })
-export const itemRelations = relations(items, ({ one }) => ({
-    fromPackage: one(packages, {
-        fields: [items.packageId],
-        references: [packages.id]
-    })
 }));
 
 
@@ -94,15 +68,15 @@ export const itemRelations = relations(items, ({ one }) => ({
 
 export const preAlerts = pgTable("preAlerts", {
     id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+    dateCreated: timestamp("dateCreated", { mode: "date" }).notNull().defaultNow(),
+
     userId: text("userId").notNull().references(() => users.id),
     trackingNumber: text("trackingNumber").notNull(),
     store: text("store").notNull(),
-    value: decimal("value").notNull(),
-    description: text("description").notNull(),
     consignee: text("consignee").notNull(),
+    description: text("description").notNull(),
+    price: decimal("price").notNull(),
     invoices: json("invoices").$type<dbInvoiceType[]>().notNull(),
-
-    dateCreated: timestamp("dateCreated", { mode: "date" }).notNull().defaultNow(),
 },
     (table) => {
         return {
