@@ -4,6 +4,8 @@ import styles from "./style.module.css"
 import Link from 'next/link'
 import Logo from "@/components/logo/Logo"
 import { Session } from 'next-auth'
+import Image from 'next/image'
+import defaultImage from "@/public/logo.png"
 
 type menuItem = {
     title: string,
@@ -34,13 +36,40 @@ export default async function MainNav({ menuInfoArr, session }: { menuInfoArr: m
 
             <div style={{ justifySelf: "flex-end", display: "grid", alignContent: "flex-start" }}>
                 {session === null ? (
-                    <>
-                        <LogButton option='login' />
-                    </>
+                    <LogButton option='login' />
                 ) : (
-                    <>
-                        <LogButton option='logout' />
-                    </>
+                    <div className={styles.contDiv}>
+                        <label htmlFor='userOptionsCheckbox' style={{ margin: "0 auto", cursor: "pointer" }}>
+                            <Image alt="userImage" src={session.user.image !== null ? session.user.image : defaultImage} width={30} height={30} style={{ objectFit: "cover" }}
+                            />
+                        </label>
+
+                        <input id='userOptionsCheckbox' className="visibilityCheckbox" type="checkbox" style={{ display: "none" }} />
+
+                        <ul className={styles.moreItemsMenu}>
+                            <li style={{ padding: ".5rem" }}>{session.user.name}</li>
+
+                            <li className={styles.moreIntemsItem}
+                            >
+                                <Link href={session.user.role === "customer" ? "/customer" : "/employee"}>dashboard</Link>
+                            </li>
+
+                            {session.user.role === "admin" && (
+                                <li className={styles.moreIntemsItem}
+                                >
+                                    <Link href={"/admin"}>admin dashboard</Link>
+                                </li>
+                            )}
+
+                            <li className={styles.moreIntemsItem}>account</li>
+
+                            <li className={styles.moreIntemsItem}>settings</li>
+
+                            <li className={styles.moreIntemsItem}>
+                                <LogButton option='logout' />
+                            </li>
+                        </ul>
+                    </div>
                 )}
             </div>
         </nav>

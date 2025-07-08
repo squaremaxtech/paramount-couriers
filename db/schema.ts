@@ -6,7 +6,7 @@ import type { AdapterAccountType } from "next-auth/adapters"
 export const roleEnum = pgEnum("role", ["admin", "employee", "customer"]);
 export const accessLevelEnum = pgEnum("accessLevel", ["regular", "elevated", "head"]);
 
-export const users = pgTable("user", {
+export const users = pgTable("users", {
     //defaults
     id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
     role: roleEnum().notNull().default("customer"),
@@ -32,7 +32,7 @@ export const userRelations = relations(users, ({ one, many }) => ({
 export const statusEnum = pgEnum("status", ["fulfilled", "in progress", "cancelled", "on hold"]);
 export const locationEnum = pgEnum("location", ["on way to warehouse", "warehouse delivered", "in transit to jamaica", "jamaica arrived", "ready for pickup"]);
 
-export const packages = pgTable("packages", { //unique for amazon, shein, multiple amazon orders... all separate packages
+export const packages = pgTable("packages", {
     id: serial("id").primaryKey(),
     dateCreated: timestamp("dateCreated", { mode: "date" }).notNull().defaultNow(),
 
