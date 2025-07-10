@@ -4,7 +4,7 @@ import { boolean, timestamp, pgTable, text, primaryKey, integer, pgEnum, serial,
 import type { AdapterAccountType } from "next-auth/adapters"
 
 export const roleEnum = pgEnum("role", ["admin", "employee", "customer"]);
-export const accessLevelEnum = pgEnum("accessLevel", ["regular", "elevated", "head"]);
+export const accessLevelEnum = pgEnum("accessLevel", ["regular", "warehouse", "elevated", "supervisor"]);
 
 export const users = pgTable("users", {
     //defaults

@@ -43,7 +43,7 @@ export type dbInvoiceType = z.infer<typeof dbInvoiceSchema>
 export const roleSchema = z.enum(["admin", "employee", "customer"])
 export type roleType = z.infer<typeof roleSchema>
 
-export const accessLevelSchema = z.enum(["regular", "elevated", "head"])
+export const accessLevelSchema = z.enum(["regular", "warehouse", "elevated", "supervisor"])
 export type accessLevelType = z.infer<typeof accessLevelSchema>
 
 export const userSchema = z.object({

@@ -3,67 +3,96 @@ import { auth } from "@/auth/auth";
 import { getSpecificUser } from "./handleUser";
 import { userType } from "@/types";
 
-type crudType = "c" | "r" | "u" | "d" | "ro" | "uo" | "do";
+type crudType = "c" | "r" | "u" | "d" | "co" | "ro" | "uo" | "do";
 
-type accessListType = {
+type userCrudType = {
     admin: crudType[];
     employee_regular: crudType[];
+    employee_warehouse: crudType[];
     employee_elevated: crudType[];
-    employee_head: crudType[];
+    employee_supervisor: crudType[];
     customer: crudType[];
 };
-type accessListKeysType = keyof accessListType;
+type userCrudKeysType = keyof userCrudType;
 
 type tableNames = "users" | "packages" | "preAlerts";
 type tableColumns = {
-    users: "name" | "authorizedUsers";
+    users: "id" | "role" | "accessLevel" | "name" | "authorizedUsers";
     packages: "comments";
     preAlerts: "";
 };
 
-type TableAccessType<T extends tableNames = tableNames> = {
-    tableCrud: accessListType;
-    defaultColumnCrud: accessListType;
-    columns?: {
-        [C in tableColumns[T]]?: accessListType;
+type tableAccessType<T extends tableNames = tableNames> = {
+    tableCrud: userCrudType;
+    columnCrudDefault: userCrudType;
+    columnCrud?: {
+        [C in tableColumns[T]]?: userCrudType;
     };
 };
 
 const fullAccess: crudType[] = ["c", "r", "u", "d"];
-const readOnly: crudType[] = ["r", "ro"];
-const readUpdateOwn: crudType[] = ["r", "ro", "uo"];
+const readOnly: crudType[] = ["r"];
+const readUpdate: crudType[] = ["r", "u"];
 const creatUpdateOwn: crudType[] = ["c", "ro", "uo", "do"];
 
-const tableAccessList: { [T in tableNames]: TableAccessType<T> } = {
+const tableAccessList: { [T in tableNames]: tableAccessType<T> } = {
     users: {
         tableCrud: {
             admin: fullAccess,
-            employee_regular: ["r", "ro"],
+            employee_regular: readOnly,
+            employee_warehouse: readOnly,
             employee_elevated: readOnly,
-            employee_head: readOnly,
+            employee_supervisor: ["c", "r", "d"],
             customer: ["ro"],
         },
-        defaultColumnCrud: {
+        columnCrudDefault: {
             admin: fullAccess,
             employee_regular: readOnly,
+            employee_warehouse: readOnly,
             employee_elevated: readOnly,
-            employee_head: readOnly,
-            customer: readOnly,
+            employee_supervisor: readOnly,
+            customer: ["ro"],
         },
-        columns: {
+        columnCrud: {
+            id: {
+                admin: readOnly,
+                employee_regular: readOnly,
+                employee_warehouse: readOnly,
+                employee_elevated: readOnly,
+                employee_supervisor: readOnly,
+                customer: readOnly,
+            },
+            role: {
+                admin: readUpdate,
+                employee_regular: readOnly,
+                employee_warehouse: readOnly,
+                employee_elevated: readOnly,
+                employee_supervisor: readOnly,
+                customer: readOnly,
+            },
+            accessLevel: {
+                admin: readUpdate,
+                employee_regular: readOnly,
+                employee_warehouse: readOnly,
+                employee_elevated: readOnly,
+                employee_supervisor: readUpdate,
+                customer: readOnly,
+            },
             name: {
                 admin: fullAccess,
-                employee_regular: readUpdateOwn,
-                employee_elevated: readUpdateOwn,
-                employee_head: readUpdateOwn,
-                customer: readUpdateOwn,
+                employee_regular: readOnly,
+                employee_warehouse: readOnly,
+                employee_elevated: readUpdate,
+                employee_supervisor: readUpdate,
+                customer: ["r", "uo"],
             },
             authorizedUsers: {
                 admin: fullAccess,
-                employee_regular: ["r"],
+                employee_regular: readOnly,
+                employee_warehouse: readOnly,
                 employee_elevated: fullAccess,
-                employee_head: fullAccess,
-                customer: creatUpdateOwn,
+                employee_supervisor: fullAccess,
+                customer: ["co", "ro", "uo", "do"],
             },
         },
     },
@@ -71,23 +100,26 @@ const tableAccessList: { [T in tableNames]: TableAccessType<T> } = {
         tableCrud: {
             admin: fullAccess,
             employee_regular: ["r"],
+            employee_warehouse: fullAccess,
             employee_elevated: fullAccess,
-            employee_head: fullAccess,
+            employee_supervisor: fullAccess,
             customer: ["ro"],
         },
-        defaultColumnCrud: {
+        columnCrudDefault: {
             admin: fullAccess,
             employee_regular: ["r"],
+            employee_warehouse: ["r", "u"],
             employee_elevated: ["r", "u"],
-            employee_head: ["r", "u"],
+            employee_supervisor: ["r", "u"],
             customer: ["ro"],
         },
-        columns: {
+        columnCrud: {
             comments: {
                 admin: fullAccess,
                 employee_regular: creatUpdateOwn,
+                employee_warehouse: creatUpdateOwn,
                 employee_elevated: creatUpdateOwn,
-                employee_head: ["c", "r", "d", "uo", "do"],
+                employee_supervisor: ["c", "r", "d", "uo", "do"],
                 customer: [],
             },
         },
@@ -96,27 +128,23 @@ const tableAccessList: { [T in tableNames]: TableAccessType<T> } = {
         tableCrud: {
             admin: fullAccess,
             employee_regular: ["r"],
+            employee_warehouse: ["c", "r", "u"],
             employee_elevated: ["c", "r", "u"],
-            employee_head: ["c", "r", "u"],
+            employee_supervisor: ["c", "r", "u"],
             customer: creatUpdateOwn,
         },
-        defaultColumnCrud: {
+        columnCrudDefault: {
             admin: fullAccess,
             employee_regular: ["r"],
+            employee_warehouse: ["r", "u"],
             employee_elevated: ["r", "u"],
-            employee_head: ["r", "u"],
+            employee_supervisor: ["r", "u"],
             customer: creatUpdateOwn,
         },
-        columns: {
+        columnCrud: {
         },
     },
 };
-
-function getUserType(user: userType): accessListKeysType {
-    return user.role === "employee"
-        ? `employee_${user.accessLevel}` as accessListKeysType
-        : user.role;
-}
 
 export async function sessionCheck() {
     const session = await auth();
@@ -140,6 +168,12 @@ export async function employeeOrAdminCheck() {
     return session;
 }
 
+function getUserType(user: userType): userCrudKeysType {
+    return user.role === "employee"
+        ? `employee_${user.accessLevel}` as userCrudKeysType
+        : user.role;
+}
+
 export async function customerCheck() {
     const session = await sessionCheck();
 
@@ -154,22 +188,20 @@ export async function ensureCanAccessTable<T extends tableNames>(
     columnName?: tableColumns[T]
 ) {
     const session = await sessionCheck();
-    const seenUser = await getSpecificUser(session.user.id);
-    if (seenUser === undefined) throw new Error("User not found");
 
     const table = tableAccessList[tableInfo.name];
     if (table === undefined) throw new Error(`No access rules for table '${tableInfo.name}'`);
 
-    const userType = getUserType(seenUser);
+    const userType = getUserType(session.user);
 
     let accessList: crudType[] | null = null;
 
     //wants specific column access list
     if (columnName !== undefined) {
-        if (table.columns === undefined) throw new Error("not seeing columns on table")
+        if (table.columnCrud === undefined) throw new Error("not seeing columns on table")
 
-        const columnRules = table.columns[columnName];
-        accessList = columnRules === undefined ? table.defaultColumnCrud[userType] : columnRules[userType]
+        const columnRules = table.columnCrud[columnName];
+        accessList = columnRules === undefined ? table.columnCrudDefault[userType] : columnRules[userType]
 
     } else {
         //normal access list
