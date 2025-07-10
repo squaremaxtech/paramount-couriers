@@ -4,8 +4,9 @@ import { getSpecificUser } from "./handleUser";
 import { userType } from "@/types";
 import * as schema from "@/db/schema"
 
-type crudType = "c" | "r" | "u" | "d" | "co" | "ro" | "uo" | "do";
+type schemaType = typeof schema
 
+type crudType = "c" | "r" | "u" | "d" | "co" | "ro" | "uo" | "do";
 type userCrudType = {
     admin: crudType[];
     employee_regular: crudType[];
@@ -16,85 +17,99 @@ type userCrudType = {
 };
 type userCrudKeysType = keyof userCrudType;
 
-type tableNames = keyof typeof schema
-
-// type tableNames = "users" | "packages" | "preAlerts";
+type tableNames = keyof schemaType
 type tableColumns = {
-    users: "id" | "role" | "accessLevel" | "name" | "authorizedUsers";
-    packages: "comments";
-    preAlerts: "";
+    // used
+    users: keyof schemaType["users"]["$inferSelect"];
+    packages: keyof schemaType["packages"]["$inferSelect"];
+    preAlerts: keyof schemaType["preAlerts"]["$inferSelect"];
+
+    // not used
+    accounts: ""
+    sessions: ""
+    authenticators: ""
+    verificationTokens: ""
+    roleEnum: ""
+    accessLevelEnum: ""
+    statusEnum: ""
+    locationEnum: ""
+    userRelations: ""
+    packageRelations: ""
+    preAlertRelations: ""
 };
 
 const fullAccess: crudType[] = ["c", "r", "u", "d"];
-const readOnly: crudType[] = ["r"];
+const read: crudType[] = ["r"];
+const readOwn: crudType[] = ["ro"];
 const readUpdate: crudType[] = ["r", "u"];
-const creatUpdateOwn: crudType[] = ["c", "ro", "uo", "do"];
+const createReadUpdateOwn: crudType[] = ["c", "r", "uo", "do"];
+const fixedUserCrud: userCrudType = {
+    admin: read,
+    employee_regular: read,
+    employee_warehouse: read,
+    employee_elevated: read,
+    employee_supervisor: read,
+    customer: read,
+}
 
 type tableAccessType = {
-    [T in tableNames]?: {
+    [T in tableNames]: {
         tableCrud: userCrudType;
         columnDefaultCrud: userCrudType;
         columns?: {
             [C in tableColumns[T]]?: userCrudType;
         };
-    }
+    } | undefined
 };
 
 const tableAccess: tableAccessType = {
     users: {
         tableCrud: {
             admin: fullAccess,
-            employee_regular: readOnly,
-            employee_warehouse: readOnly,
-            employee_elevated: readOnly,
-            employee_supervisor: ["c", "r", "d"],
-            customer: ["ro"],
+            employee_regular: read,
+            employee_warehouse: read,
+            employee_elevated: read,
+            employee_supervisor: ["c", "r"],
+            customer: readOwn,
         },
         columnDefaultCrud: {
             admin: fullAccess,
-            employee_regular: readOnly,
-            employee_warehouse: readOnly,
-            employee_elevated: readOnly,
-            employee_supervisor: readOnly,
-            customer: ["ro"],
+            employee_regular: read,
+            employee_warehouse: read,
+            employee_elevated: read,
+            employee_supervisor: read,
+            customer: readOwn,
         },
         columns: {
-            id: {
-                admin: readOnly,
-                employee_regular: readOnly,
-                employee_warehouse: readOnly,
-                employee_elevated: readOnly,
-                employee_supervisor: readOnly,
-                customer: readOnly,
-            },
+            id: fixedUserCrud,
             role: {
                 admin: readUpdate,
-                employee_regular: readOnly,
-                employee_warehouse: readOnly,
-                employee_elevated: readOnly,
-                employee_supervisor: readOnly,
-                customer: readOnly,
+                employee_regular: read,
+                employee_warehouse: read,
+                employee_elevated: read,
+                employee_supervisor: read,
+                customer: readOwn,
             },
             accessLevel: {
                 admin: readUpdate,
-                employee_regular: readOnly,
-                employee_warehouse: readOnly,
-                employee_elevated: readOnly,
+                employee_regular: read,
+                employee_warehouse: read,
+                employee_elevated: read,
                 employee_supervisor: readUpdate,
-                customer: readOnly,
+                customer: readOwn,
             },
             name: {
                 admin: fullAccess,
-                employee_regular: readOnly,
-                employee_warehouse: readOnly,
+                employee_regular: read,
+                employee_warehouse: read,
                 employee_elevated: readUpdate,
                 employee_supervisor: readUpdate,
                 customer: ["r", "uo"],
             },
             authorizedUsers: {
                 admin: fullAccess,
-                employee_regular: readOnly,
-                employee_warehouse: readOnly,
+                employee_regular: read,
+                employee_warehouse: read,
                 employee_elevated: fullAccess,
                 employee_supervisor: fullAccess,
                 customer: ["co", "ro", "uo", "do"],
@@ -112,19 +127,19 @@ const tableAccess: tableAccessType = {
         },
         columnDefaultCrud: {
             admin: fullAccess,
-            employee_regular: ["r"],
-            employee_warehouse: ["r", "u"],
-            employee_elevated: ["r", "u"],
-            employee_supervisor: ["r", "u"],
-            customer: ["ro"],
+            employee_regular: read,
+            employee_warehouse: readUpdate,
+            employee_elevated: readUpdate,
+            employee_supervisor: readUpdate,
+            customer: readOwn,
         },
         columns: {
             comments: {
                 admin: fullAccess,
-                employee_regular: creatUpdateOwn,
-                employee_warehouse: creatUpdateOwn,
-                employee_elevated: creatUpdateOwn,
-                employee_supervisor: ["c", "r", "d", "uo", "do"],
+                employee_regular: createReadUpdateOwn,
+                employee_warehouse: createReadUpdateOwn,
+                employee_elevated: createReadUpdateOwn,
+                employee_supervisor: fullAccess,
                 customer: [],
             },
         },
@@ -132,11 +147,11 @@ const tableAccess: tableAccessType = {
     preAlerts: {
         tableCrud: {
             admin: fullAccess,
-            employee_regular: ["r"],
-            employee_warehouse: ["c", "r", "u"],
-            employee_elevated: ["c", "r", "u"],
-            employee_supervisor: ["c", "r", "u"],
-            customer: creatUpdateOwn,
+            employee_regular: fullAccess,
+            employee_warehouse: read,
+            employee_elevated: fullAccess,
+            employee_supervisor: fullAccess,
+            customer: ["c", "ro", "uo", "do"],
         },
         columnDefaultCrud: {
             admin: fullAccess,
@@ -144,26 +159,30 @@ const tableAccess: tableAccessType = {
             employee_warehouse: ["r", "u"],
             employee_elevated: ["r", "u"],
             employee_supervisor: ["r", "u"],
-            customer: creatUpdateOwn,
+            customer: ["c", "ro", "uo", "do"],
         },
         columns: {
         },
     },
+
+
+
+
+    // not used
+    accounts: undefined,
+    sessions: undefined,
+    authenticators: undefined,
+    verificationTokens: undefined,
+
+    roleEnum: undefined,
+    accessLevelEnum: undefined,
+    statusEnum: undefined,
+    locationEnum: undefined,
+
+    userRelations: undefined,
+    packageRelations: undefined,
+    preAlertRelations: undefined,
 };
-
-export async function test() {
-    const tablesInSchema = Object.entries(schema).map(eachEntry => {
-        const eachKey = eachEntry[0]
-        const eachValue = eachEntry[1]
-
-        if (eachKey.includes("enum") || eachKey.includes("relations")) return null
-
-        console.log(`$eachKey`, eachKey);
-        console.log(`$eachValue`, eachValue);
-
-        return eachKey
-    })
-}
 
 export async function sessionCheck() {
     const session = await auth();
