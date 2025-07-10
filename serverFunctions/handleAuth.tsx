@@ -2,6 +2,7 @@
 import { auth } from "@/auth/auth";
 import { getSpecificUser } from "./handleUser";
 import { userType } from "@/types";
+import * as schema from "@/db/schema"
 
 type crudType = "c" | "r" | "u" | "d" | "co" | "ro" | "uo" | "do";
 
@@ -15,19 +16,13 @@ type userCrudType = {
 };
 type userCrudKeysType = keyof userCrudType;
 
-type tableNames = "users" | "packages" | "preAlerts";
+type tableNames = keyof typeof schema
+
+// type tableNames = "users" | "packages" | "preAlerts";
 type tableColumns = {
     users: "id" | "role" | "accessLevel" | "name" | "authorizedUsers";
     packages: "comments";
     preAlerts: "";
-};
-
-type tableAccessType<T extends tableNames = tableNames> = {
-    tableCrud: userCrudType;
-    columnCrudDefault: userCrudType;
-    columnCrud?: {
-        [C in tableColumns[T]]?: userCrudType;
-    };
 };
 
 const fullAccess: crudType[] = ["c", "r", "u", "d"];
@@ -35,7 +30,17 @@ const readOnly: crudType[] = ["r"];
 const readUpdate: crudType[] = ["r", "u"];
 const creatUpdateOwn: crudType[] = ["c", "ro", "uo", "do"];
 
-const tableAccessList: { [T in tableNames]: tableAccessType<T> } = {
+type tableAccessType = {
+    [T in tableNames]?: {
+        tableCrud: userCrudType;
+        columnDefaultCrud: userCrudType;
+        columns?: {
+            [C in tableColumns[T]]?: userCrudType;
+        };
+    }
+};
+
+const tableAccess: tableAccessType = {
     users: {
         tableCrud: {
             admin: fullAccess,
@@ -45,7 +50,7 @@ const tableAccessList: { [T in tableNames]: tableAccessType<T> } = {
             employee_supervisor: ["c", "r", "d"],
             customer: ["ro"],
         },
-        columnCrudDefault: {
+        columnDefaultCrud: {
             admin: fullAccess,
             employee_regular: readOnly,
             employee_warehouse: readOnly,
@@ -53,7 +58,7 @@ const tableAccessList: { [T in tableNames]: tableAccessType<T> } = {
             employee_supervisor: readOnly,
             customer: ["ro"],
         },
-        columnCrud: {
+        columns: {
             id: {
                 admin: readOnly,
                 employee_regular: readOnly,
@@ -105,7 +110,7 @@ const tableAccessList: { [T in tableNames]: tableAccessType<T> } = {
             employee_supervisor: fullAccess,
             customer: ["ro"],
         },
-        columnCrudDefault: {
+        columnDefaultCrud: {
             admin: fullAccess,
             employee_regular: ["r"],
             employee_warehouse: ["r", "u"],
@@ -113,7 +118,7 @@ const tableAccessList: { [T in tableNames]: tableAccessType<T> } = {
             employee_supervisor: ["r", "u"],
             customer: ["ro"],
         },
-        columnCrud: {
+        columns: {
             comments: {
                 admin: fullAccess,
                 employee_regular: creatUpdateOwn,
@@ -133,7 +138,7 @@ const tableAccessList: { [T in tableNames]: tableAccessType<T> } = {
             employee_supervisor: ["c", "r", "u"],
             customer: creatUpdateOwn,
         },
-        columnCrudDefault: {
+        columnDefaultCrud: {
             admin: fullAccess,
             employee_regular: ["r"],
             employee_warehouse: ["r", "u"],
@@ -141,10 +146,24 @@ const tableAccessList: { [T in tableNames]: tableAccessType<T> } = {
             employee_supervisor: ["r", "u"],
             customer: creatUpdateOwn,
         },
-        columnCrud: {
+        columns: {
         },
     },
 };
+
+export async function test() {
+    const tablesInSchema = Object.entries(schema).map(eachEntry => {
+        const eachKey = eachEntry[0]
+        const eachValue = eachEntry[1]
+
+        if (eachKey.includes("enum") || eachKey.includes("relations")) return null
+
+        console.log(`$eachKey`, eachKey);
+        console.log(`$eachValue`, eachValue);
+
+        return eachKey
+    })
+}
 
 export async function sessionCheck() {
     const session = await auth();
@@ -189,7 +208,7 @@ export async function ensureCanAccessTable<T extends tableNames>(
 ) {
     const session = await sessionCheck();
 
-    const table = tableAccessList[tableInfo.name];
+    const table = tableAccess[tableInfo.name];
     if (table === undefined) throw new Error(`No access rules for table '${tableInfo.name}'`);
 
     const userType = getUserType(session.user);
@@ -198,10 +217,10 @@ export async function ensureCanAccessTable<T extends tableNames>(
 
     //wants specific column access list
     if (columnName !== undefined) {
-        if (table.columnCrud === undefined) throw new Error("not seeing columns on table")
+        if (table.columns === undefined) throw new Error("not seeing columns on table")
 
-        const columnRules = table.columnCrud[columnName];
-        accessList = columnRules === undefined ? table.columnCrudDefault[userType] : columnRules[userType]
+        const columnRules = table.columns[columnName];
+        accessList = columnRules === undefined ? table.columnDefaultCrud[userType] : columnRules[userType]
 
     } else {
         //normal access list
