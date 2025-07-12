@@ -46,8 +46,11 @@
 .headerCont {
     display: grid;
     align-content: flex-start;
+    grid-template-columns: 1fr auto;
+    align-items: center;
     background-color: var(--c2);
     padding: var(--spacingR) var(--spacingL);
+    position: relative;
 }
 
 .headerCont>h1 {
@@ -68,6 +71,7 @@
         width: 100%;
         border-top-left-radius: var(--borderRadiusL);
         border-top-right-radius: var(--borderRadiusL);
+        padding-right: var(--spacingL);
     }
 
     .menuItem {

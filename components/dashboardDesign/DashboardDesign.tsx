@@ -2,17 +2,27 @@ import React from 'react'
 import styles from "./style.module.css"
 import Link from 'next/link';
 import { headers } from 'next/headers';
+import DashboardProfile from '../dashboardProfile/DashboardProfile';
 
 type dashboardMenu = {
     icon: React.JSX.Element,
     link: string | null,
-    title: string
+    title: string,
+    dashboardHome?: true,
 }
 
 export default async function DashboardDesign({ navMenu, children, additionalContent }: { navMenu: dashboardMenu[], additionalContent?: React.JSX.Element, children: React.ReactNode; }) {
     const headersList = await headers();
     const fullUrl = headersList.get('x-url') || headersList.get('referer') || '';
-    const pathname = new URL(fullUrl).pathname;
+    let pathname = ""
+
+    try {
+        pathname = new URL(fullUrl).pathname;
+
+    } catch (error) {
+        console.log(`$error happened dasboard url`, error);
+    }
+
     const foundNavItem = navMenu.find(eachItem => eachItem.link === pathname)
 
     return (
@@ -24,7 +34,7 @@ export default async function DashboardDesign({ navMenu, children, additionalCon
                             {menuItem.icon}
 
                             {menuItem.title !== "" && (
-                                <p>{menuItem.title}</p>
+                                <div>{menuItem.title}</div>
                             )}
                         </>
                     )
@@ -51,6 +61,10 @@ export default async function DashboardDesign({ navMenu, children, additionalCon
                 {foundNavItem !== undefined && (
                     <div className={`${styles.headerCont} textResetMargin`}>
                         <h1>{foundNavItem.title}</h1>
+
+                        {foundNavItem.dashboardHome && (
+                            <DashboardProfile />
+                        )}
                     </div>
                 )}
 

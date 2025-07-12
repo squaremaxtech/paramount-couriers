@@ -2,7 +2,7 @@
 //make employee customer and admin pages
 //admin check in nav using auth
 //employee check using auth
-//
+//home, packages, payment, account - rate sheet
 //
 
 

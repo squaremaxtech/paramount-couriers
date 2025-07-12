@@ -4,6 +4,7 @@ import "./globals.css";
 import { Raleway, Manrope, Roboto, Rubik } from "next/font/google"
 import { Toaster } from "react-hot-toast";
 import localFont from "next/font/local";
+import { auth } from "@/auth/auth";
 
 const roboto = Roboto({
   variable: "--roboto",
@@ -48,11 +49,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth()
 
   return (
     <html lang="en">
       <body className={`${raleway.variable} ${manrope.variable} ${roboto.variable} ${rubik.variable} ${materialSymbolsOutlined.variable} ${materialSymbolsRounded.variable} ${materialSymbolsSharp.variable} antialiased`}>
-        <SessionProvider>
+        <SessionProvider session={session}>
           <Toaster position="top-center" reverseOrder={false} />
           {children}
         </SessionProvider>

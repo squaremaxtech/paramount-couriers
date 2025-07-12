@@ -1,7 +1,7 @@
 import DashboardDesign from "@/components/dashboardDesign/DashboardDesign";
 import Logo from "@/components/logo/Logo";
 
-export default async function EmployeeLayout({
+export default async function CustomerLayout({
   children
 }: Readonly<{ children: React.ReactNode }>) {
 
@@ -21,7 +21,7 @@ export default async function EmployeeLayout({
               home
             </span>
           ),
-          link: `/employee`,
+          link: `/customer`,
           title: "home",
           dashboardHome: true,
         },
@@ -31,7 +31,7 @@ export default async function EmployeeLayout({
               package_2
             </span>
           ),
-          link: `/employee/packages`,
+          link: `/customer/packages`,
           title: "packages"
         },
         {

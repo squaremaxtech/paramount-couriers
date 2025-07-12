@@ -4,7 +4,7 @@
 *::before,
 *::after {
   box-sizing: border-box;
-  border: 1px solid red !important;
+  /* border: 1px solid red !important; */
 }
 
 :root {
@@ -41,6 +41,7 @@
   --spacingS: .5rem;
   --spacingES: .3rem;
 
+  --borderRadiusEL: 50%;
   --borderRadiusL: 2rem;
   --borderRadiusR: 1rem;
   --borderRadiusS: 0.5rem;
