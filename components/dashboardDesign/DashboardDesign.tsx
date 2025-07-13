@@ -3,6 +3,7 @@ import styles from "./style.module.css"
 import Link from 'next/link';
 import { headers } from 'next/headers';
 import DashboardProfile from '../dashboardProfile/DashboardProfile';
+import { getPathname } from '@/utility';
 
 type dashboardMenu = {
     icon: React.JSX.Element,
@@ -14,15 +15,7 @@ type dashboardMenu = {
 export default async function DashboardDesign({ navMenu, children, additionalContent }: { navMenu: dashboardMenu[], additionalContent?: React.JSX.Element, children: React.ReactNode; }) {
     const headersList = await headers();
     const fullUrl = headersList.get('x-url') || headersList.get('referer') || '';
-    let pathname = ""
-
-    try {
-        pathname = new URL(fullUrl).pathname;
-
-    } catch (error) {
-        console.log(`$error happened dasboard url`, error);
-    }
-
+    const pathname = getPathname(fullUrl)
     const foundNavItem = navMenu.find(eachItem => eachItem.link === pathname)
 
     return (

@@ -61,6 +61,7 @@ body {
   height: 100%;
   overflow: auto;
   display: grid;
+  align-content: stretch;
   background-color: var(--bg1);
   color: var(--textC1);
   font-family: var(--roboto);

@@ -37,11 +37,11 @@ export default async function CustomerLayout({
         {
           icon: (
             <span className="material-symbols-outlined largeIcon">
-              help_center
+              quick_reorder
             </span>
           ),
-          link: ``,
-          title: "faq"
+          link: `/customer/preAlert`,
+          title: "pre alerts"
         },
         {
           icon: (
@@ -61,15 +61,6 @@ export default async function CustomerLayout({
           link: ``,
           title: "addresses"
         },
-        //  {
-        //   icon: (
-        //     <span className="material-symbols-outlined largeIcon">
-
-        //     </span>
-        //   ),
-        //   link: "",
-        //   title: ""
-        // },
       ]}
     >
       {children}

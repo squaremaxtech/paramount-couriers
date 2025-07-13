@@ -26,8 +26,6 @@ export default function DashboardProfile() {
                 <ul className={styles.moreItemsMenu}
                     onClick={() => { showingNavSet(false) }}
                 >
-                    <li style={{ padding: ".5rem" }}>{session.user.name}</li>
-
                     <li className={styles.moreIntemsItem}>account</li>
 
                     <li className={styles.moreIntemsItem}>settings</li>

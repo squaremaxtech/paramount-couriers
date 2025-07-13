@@ -5,6 +5,8 @@ export default async function Page() {
   await customerCheck()
 
   return (
-    <div>customer Page</div>
+    <div>
+      customer Page
+    </div>
   )
 }
