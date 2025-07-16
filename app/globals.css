@@ -104,6 +104,13 @@ p {
   max-width: 60ch;
 }
 
+main {
+  display: grid;
+  align-content: flex-start;
+  gap: var(--spacingR);
+  padding: var(--spacingR);
+}
+
 .button1,
 .button2,
 .button3 {
@@ -151,13 +158,32 @@ svg {
   width: var(--sizeR);
 }
 
-
 section,
 .container {
   display: grid;
   align-content: flex-start;
   gap: var(--spacingR);
 }
+
+label {
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+input,
+textarea {
+  padding: var(--spacingR);
+  background-color: var(--bg1);
+  border-radius: var(--borderRadiusS);
+  border: 1px solid var(--bg3);
+}
+
+input:focus,
+textarea:focus {
+  border: 1px solid var(--bg1);
+  outline: none;
+}
+
 
 /* custom classes */
 .material-symbols-outlined {

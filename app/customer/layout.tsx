@@ -40,7 +40,7 @@ export default async function CustomerLayout({
               quick_reorder
             </span>
           ),
-          link: `/customer/preAlerts`,
+          link: `/customer/preAlerts/add`,
           title: "pre alerts"
         },
         {

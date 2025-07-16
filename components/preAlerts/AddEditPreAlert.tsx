@@ -5,8 +5,8 @@ import { deepClone } from '@/utility/utility'
 import toast from 'react-hot-toast'
 import TextInput from '../textInput/TextInput'
 import { z } from "zod"
-import { newPreAlertSchema, newPreAlertType, preAlertSchema, preAlertType, updatePreAlertSchema } from '@/types'
-import { addPreAlerts, updatePreAlerts } from '@/serverFunctions/handlePreAlerts'
+import { dbInvoiceType, newPreAlertSchema, newPreAlertType, preAlertSchema, preAlertType, updatePreAlertSchema, uploadNamesResponseSchema } from '@/types'
+import { addPreAlerts, deletePreAlertInvoices, updatePreAlerts } from '@/serverFunctions/handlePreAlerts'
 import { consoleAndToastError } from '@/useful/consoleErrorWithToast'
 import { useSession } from 'next-auth/react'
 import FormToggleButton from '../formToggleButton/FormToggleButton'
@@ -31,7 +31,8 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
     //assign either a new form, or the safe values on an update form
     const [formObj, formObjSet] = useState<Partial<newPreAlertType>>(deepClone(sentPreAlert === undefined ? initialFormObj : updatePreAlertSchema.parse(sentPreAlert)))
 
-    const [uploadedInvoices, uploadedInvoicesSet] = useState<FormData | null>(null)
+    const [invoiceFormData, invoiceFormDataSet] = useState<FormData | null>(null)
+    const [deleteFromServerInvoiceList, deleteFromServerInvoiceListSet] = useState<dbInvoiceType["src"][]>([])
 
     type preAlertKeys = keyof preAlertType
     const [formErrors, formErrorsSet] = useState<Partial<{ [key in preAlertKeys]: string }>>({})
@@ -93,6 +94,35 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
         try {
             toast.success("submittting")
 
+            //handle files
+            //delete from server
+            if (deleteFromServerInvoiceList.length > 0 && sentPreAlert !== undefined) {
+                //reset on server
+                await deletePreAlertInvoices(sentPreAlert.id)
+            }
+
+            //add to server
+            if (invoiceFormData !== null) {
+                const response = await fetch(`/api/documents/upload`, {
+                    method: 'POST',
+                    body: invoiceFormData,
+                })
+
+                toast.success("invoices uploaded")
+
+                //array of file names
+                const seenNames = uploadNamesResponseSchema.parse(await response.json());
+
+                const newFormInvoices: preAlertType["invoices"] = seenNames.names.map(eachName => {
+                    return {
+                        createdAt: new Date(),
+                        src: eachName
+                    }
+                })
+
+                formObj.invoices = [...newFormInvoices]
+            }
+
             //new preAlert
             if (sentPreAlert === undefined) {
                 const validatedNewPreAlert = newPreAlertSchema.parse(formObj)
@@ -101,6 +131,9 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
                 await addPreAlerts(validatedNewPreAlert)
 
                 toast.success("submitted")
+
+                //reset
+                invoiceFormDataSet(null)
                 formObjSet(deepClone(initialFormObj))
 
             } else {
@@ -121,6 +154,8 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
             consoleAndToastError(error)
         }
     }
+
+    console.log(`$invoiceFormData`, invoiceFormData);
 
     return (
         <form className={styles.form} action={() => { }}>
@@ -280,17 +315,23 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
                             const uploadedFiles = e.target.files
                             const formData = new FormData();
 
+                            console.log(`$got here`);
+
                             for (let index = 0; index < uploadedFiles.length; index++) {
                                 const file = uploadedFiles[index];
 
+                                console.log(`$file`, file);
+
                                 //validation
                                 if (!allowedInvoiceFileTypes.includes(file.type)) {
+                                    console.log(`$na type`);
                                     toast.error(`File ${file.name} is not a valid file type to upload.`);
                                     continue;
                                 }
 
                                 // Check the file size
                                 if (file.size > maxDocumentUploadSize) {
+                                    console.log(`$na size`);
                                     toast.error(`File ${file.name} is too large. Maximum size is ${convertBtyes(maxDocumentUploadSize, "mb")} MB`);
                                     continue;
                                 }
@@ -302,13 +343,45 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
                             }
 
                             if (totalUploadSize > maxBodyToServerSize) {
+                                console.log(`$na body size`);
                                 toast.error(`Please upload less than ${convertBtyes(maxBodyToServerSize, "mb")} MB at a time`);
                                 return
                             }
 
-                            uploadedInvoicesSet(formData)
+                            console.log(`$formData sent`, formData);
+                            invoiceFormDataSet(formData)
                         }}
                     />
+
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                        {invoiceFormData !== null && (
+                            <p>
+                                {Array.from(invoiceFormData.entries())
+                                    .map(([, value]) => {
+                                        const file = value as File;
+                                        return file.name;
+                                    })
+                                    .join(", ")}
+                            </p>
+                        )}
+
+                        {(formObj.invoices !== undefined && formObj.invoices.length > 0) && (
+                            <button
+                                onClick={async () => {
+                                    //reset local
+                                    invoiceFormDataSet(null)
+
+                                    if (formObj.invoices !== undefined) {
+                                        deleteFromServerInvoiceListSet(formObj.invoices.map(eachInvoice => eachInvoice.src))
+                                    }
+                                }}
+                            >
+                                <span className="material-symbols-outlined">
+                                    delete
+                                </span>
+                            </button>
+                        )}
+                    </div>
                 </div>
             )}
 

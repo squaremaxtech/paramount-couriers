@@ -22,6 +22,10 @@ export const dbInvoiceSchema = z.object({
 })
 export type dbInvoiceType = z.infer<typeof dbInvoiceSchema>
 
+export const uploadNamesResponseSchema = z.object({
+    names: z.string().array(),
+})
+export type uploadNamesResponseType = z.infer<typeof uploadNamesResponseSchema>
 
 
 

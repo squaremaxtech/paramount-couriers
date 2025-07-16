@@ -3,6 +3,8 @@ import { db } from "@/db"
 import { preAlerts } from "@/db/schema"
 import { newPreAlertSchema, newPreAlertType, preAlertFilterType, preAlertSchema, preAlertType, updatePreAlertSchema } from "@/types"
 import { and, desc, eq, SQLWrapper } from "drizzle-orm"
+import path from "path";
+import { deleteInvoices } from "./handleDocuments"
 
 export async function addPreAlerts(newPreAlertObj: newPreAlertType) {
     //security check 
@@ -33,6 +35,26 @@ export async function deletePreAlerts(preAlertId: preAlertType["id"]) {
     preAlertSchema.shape.id.parse(preAlertId)
 
     await db.delete(preAlerts).where(eq(preAlerts.id, preAlertId));
+}
+
+export async function deletePreAlertInvoices(preAlertId: preAlertType["id"]) {
+    //validation
+    preAlertSchema.shape.id.parse(preAlertId)
+
+    const seenPreAlert = await getSpecificPreAlert(preAlertId)
+    if (seenPreAlert === undefined) throw new Error("not seeing pre alert id")
+
+    //validate that user can delete
+    //CRUD
+
+    //delete from folder
+    await deleteInvoices(seenPreAlert.invoices.map(eachInvoice => eachInvoice.src))
+
+    await db.update(preAlerts)
+        .set({
+            invoices: []
+        })
+        .where(eq(preAlerts.id, preAlertId));
 }
 
 export async function getSpecificPreAlert(preAlertId: preAlertType["id"]): Promise<preAlertType | undefined> {
