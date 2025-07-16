@@ -194,3 +194,8 @@ section,
 .largeIcon {
   font-size: var(--sizeL);
 }
+
+.errorText {
+  color: var(--c1);
+  font-size: var(--fontSizeS);
+}

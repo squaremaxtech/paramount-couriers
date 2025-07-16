@@ -5,8 +5,9 @@ export const dateSchma = z.preprocess((val) => {
     return val;
 }, z.date())
 
-
-
+export type preAlertFilterType = {
+    [key in keyof preAlertType]?: preAlertType[key]
+}
 
 export const dbImageSchema = z.object({
     createdAt: dateSchma,
@@ -111,10 +112,16 @@ export const preAlertSchema = z.object({
     store: z.string().min(1),
     consignee: z.string().min(1),
     description: z.string().min(1),
-    price: z.number(),
+    price: z.string(),
     invoices: dbInvoiceSchema.array(),
-
+    acknowledged: z.boolean(),
 })
 export type preAlertType = z.infer<typeof preAlertSchema> & {
     fromUser?: userType,
 }
+
+export const newPreAlertSchema = preAlertSchema.omit({ id: true, dateCreated: true })
+export type newPreAlertType = z.infer<typeof newPreAlertSchema>
+
+export const updatePreAlertSchema = preAlertSchema.omit({ id: true, dateCreated: true, userId: true })
+export type updatePreAlertType = z.infer<typeof updatePreAlertSchema>

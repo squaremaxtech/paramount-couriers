@@ -1,6 +1,6 @@
 import { dbImageType, dbInvoiceType, userType } from "@/types";
 import { relations } from "drizzle-orm";
-import { boolean, timestamp, pgTable, text, primaryKey, integer, pgEnum, serial, json, decimal, index } from "drizzle-orm/pg-core"
+import { boolean, timestamp, pgTable, text, primaryKey, integer, pgEnum, serial, json, decimal, index, numeric } from "drizzle-orm/pg-core"
 import type { AdapterAccountType } from "next-auth/adapters"
 
 export const roleEnum = pgEnum("role", ["admin", "employee", "customer"]);
@@ -77,6 +77,7 @@ export const preAlerts = pgTable("preAlerts", {
     description: text("description").notNull(),
     price: decimal("price").notNull(),
     invoices: json("invoices").$type<dbInvoiceType[]>().notNull(),
+    acknowledged: boolean("acknowledged").notNull(),
 },
     (table) => {
         return {
@@ -90,9 +91,6 @@ export const preAlertRelations = relations(preAlerts, ({ one }) => ({
         references: [users.id]
     })
 }));
-
-
-
 
 
 
