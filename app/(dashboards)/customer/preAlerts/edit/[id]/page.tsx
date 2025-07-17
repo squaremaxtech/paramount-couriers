@@ -3,8 +3,9 @@ import { getSpecificPreAlert } from '@/serverFunctions/handlePreAlerts'
 import { preAlertType } from '@/types'
 import React from 'react'
 
-export default async function Page({ params }: { params: { id: preAlertType["id"] } }) {
-    const seenPreAlert = await getSpecificPreAlert(params.id)
+export default async function Page({ params }: { params: Promise<{ id: preAlertType["id"] }> }) {
+    const { id } = await params
+    const seenPreAlert = await getSpecificPreAlert(id)
 
     //validate
 

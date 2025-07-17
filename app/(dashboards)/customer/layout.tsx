@@ -1,12 +1,14 @@
-import DashboardDesign from "@/components/dashboardDesign/DashboardDesign";
+import DashboardLayout from "@/components/dashboardLayout/DashboardLayout";
 import Logo from "@/components/logo/Logo";
+import { customerCheck } from "@/serverFunctions/handleAuth";
 
 export default async function CustomerLayout({
   children
 }: Readonly<{ children: React.ReactNode }>) {
+  await customerCheck()
 
   return (
-    <DashboardDesign
+    <DashboardLayout
       navMenu={[
         {
           icon: (
@@ -64,6 +66,6 @@ export default async function CustomerLayout({
       ]}
     >
       {children}
-    </DashboardDesign>
+    </DashboardLayout>
   );
 }

@@ -1,12 +1,14 @@
-import DashboardDesign from "@/components/dashboardDesign/DashboardDesign";
+import DashboardLayout from "@/components/dashboardLayout/DashboardLayout";
 import Logo from "@/components/logo/Logo";
+import { employeeOrAdminCheck } from "@/serverFunctions/handleAuth";
 
 export default async function EmployeeLayout({
   children
 }: Readonly<{ children: React.ReactNode }>) {
+  await employeeOrAdminCheck()
 
   return (
-    <DashboardDesign
+    <DashboardLayout
       navMenu={[
         {
           icon: (
@@ -73,6 +75,6 @@ export default async function EmployeeLayout({
       ]}
     >
       {children}
-    </DashboardDesign>
+    </DashboardLayout>
   );
 }

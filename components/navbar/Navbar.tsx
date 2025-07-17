@@ -3,9 +3,9 @@ import LogButton from '../logButtons/LogButton'
 import styles from "./style.module.css"
 import Link from 'next/link'
 import Logo from "@/components/logo/Logo"
-import { Session } from 'next-auth'
 import Image from 'next/image'
 import defaultImage from "@/public/logo.png"
+import { auth } from '@/auth/auth'
 
 type menuItem = {
     title: string,
@@ -24,7 +24,8 @@ type subSubMenuItem = {
     link: string
 }
 
-export default async function MainNav({ menuInfoArr, session }: { menuInfoArr: menuItem[], session: Session | null }) {
+export default async function MainNav({ menuInfoArr }: { menuInfoArr: menuItem[] }) {
+    const session = await auth()
 
     return (
         <nav id='mainNav' className={styles.mainNav}>

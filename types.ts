@@ -5,6 +5,14 @@ export const dateSchma = z.preprocess((val) => {
     return val;
 }, z.date())
 
+export type dbImageType = z.infer<typeof dbImageSchema>
+
+export const dbInvoiceSchema = z.object({
+    createdAt: dateSchma,
+    src: z.string().min(1),
+})
+export type dbInvoiceType = z.infer<typeof dbInvoiceSchema>
+
 export type preAlertFilterType = {
     [key in keyof preAlertType]?: preAlertType[key]
 }
@@ -14,19 +22,18 @@ export const dbImageSchema = z.object({
     src: z.string().min(1),
     alt: z.string().min(1),
 })
-export type dbImageType = z.infer<typeof dbImageSchema>
-
-export const dbInvoiceSchema = z.object({
-    createdAt: dateSchma,
-    src: z.string().min(1),
-})
-export type dbInvoiceType = z.infer<typeof dbInvoiceSchema>
 
 export const uploadNamesResponseSchema = z.object({
     names: z.string().array(),
 })
 export type uploadNamesResponseType = z.infer<typeof uploadNamesResponseSchema>
 
+export type dashboardMenu = {
+    icon: React.JSX.Element,
+    link: string | null,
+    title: string,
+    dashboardHome?: true,
+}
 
 
 
@@ -56,6 +63,9 @@ export const userSchema = z.object({
     id: z.string().min(1),
     role: roleSchema,
     accessLevel: accessLevelSchema,
+    authorizedUsers: z.object({
+        userId: z.string().min(1)
+    }).array(),
 
     //regular
 
@@ -64,9 +74,6 @@ export const userSchema = z.object({
     email: z.string().email().nullable(),
     emailVerified: dateSchma.nullable(),
     image: z.string().min(1).nullable(),
-    authorizedUsers: z.object({
-        userId: z.string().min(1)
-    }).array(),
 })
 export type userType = z.infer<typeof userSchema> & {
     packages?: packageType[],

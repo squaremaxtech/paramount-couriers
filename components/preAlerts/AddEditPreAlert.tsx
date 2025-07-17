@@ -4,7 +4,6 @@ import styles from "./style.module.css"
 import { deepClone } from '@/utility/utility'
 import toast from 'react-hot-toast'
 import TextInput from '../textInput/TextInput'
-import { z } from "zod"
 import { dbInvoiceType, newPreAlertSchema, newPreAlertType, preAlertSchema, preAlertType, updatePreAlertSchema, uploadNamesResponseSchema } from '@/types'
 import { addPreAlerts, deletePreAlertInvoices, updatePreAlerts } from '@/serverFunctions/handlePreAlerts'
 import { consoleAndToastError } from '@/useful/consoleErrorWithToast'
@@ -154,8 +153,6 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
             consoleAndToastError(error)
         }
     }
-
-    console.log(`$invoiceFormData`, invoiceFormData);
 
     return (
         <form className={styles.form} action={() => { }}>
