@@ -1,8 +1,13 @@
 //To Do
-//make employee customer and admin pages
-//admin check in nav using auth
-//employee check using auth
-//home, packages, payment, account - rate sheet
+//preAlerts...
+//packages
+////build user selection...
+////build pre alert selection / integration
+//customer view packages
+//check validations on getall functions
+//change documents api to files
+//add auth to functions - e.g db delete
+//
 //
 
 
@@ -10,6 +15,11 @@
 
 //Ideas
 
+
+//naming
+//schema - plural
+//type - singular with Type added - e.g userType
+//serverFunctions - handlePlural e.g handleUsers - singular function names - e.g addUser - getAll remains plural - e.g getUsers
 
 
 

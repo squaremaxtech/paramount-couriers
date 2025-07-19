@@ -11,3 +11,24 @@ export function moveItemInArray<T>(arr: T[], fromIndex: number, toIndex: number)
 
     return newArr;
 }
+
+export function spaceCamelCase(seenString: string) {
+    return seenString.replace(/([A-Z])/g, ' $1').replace(/^./, function (str) { return str.toUpperCase(); })
+}
+
+export function formatLocalDateTime(seenDate: Date) {
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+
+    //@ts-expect-error type
+    const customDateTime = seenDate.toLocaleString('en-US', options);
+    return customDateTime
+}
+
+export function makeValidFilename(input: string, options: { replacement?: string } = {}) {
+    const { replacement = "_" } = options;
+
+    return input
+        // Replace invalid characters
+        .replace(/[<>:"/\\|?*\x00-\x1F]/g, replacement)
+        .replace(/[. ]+$/, "")
+}

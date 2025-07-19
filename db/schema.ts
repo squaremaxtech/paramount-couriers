@@ -1,10 +1,10 @@
-import { dbImageType, dbInvoiceType, userType } from "@/types";
+import { accessLevelOptions, dbImageType, dbInvoiceType, locationOptions, roleOptions, statusOptions, userType } from "@/types";
 import { relations } from "drizzle-orm";
 import { boolean, timestamp, pgTable, text, primaryKey, integer, pgEnum, serial, json, decimal, index, numeric } from "drizzle-orm/pg-core"
 import type { AdapterAccountType } from "next-auth/adapters"
 
-export const roleEnum = pgEnum("role", ["admin", "employee", "customer"]);
-export const accessLevelEnum = pgEnum("accessLevel", ["regular", "warehouse", "elevated", "supervisor"]);
+export const roleEnum = pgEnum("role", roleOptions);
+export const accessLevelEnum = pgEnum("accessLevel", accessLevelOptions);
 
 export const users = pgTable("users", {
     //defaults
@@ -29,8 +29,8 @@ export const userRelations = relations(users, ({ one, many }) => ({
 
 
 
-export const statusEnum = pgEnum("status", ["fulfilled", "in progress", "cancelled", "on hold"]);
-export const locationEnum = pgEnum("location", ["on way to warehouse", "warehouse delivered", "in transit to jamaica", "jamaica arrived", "ready for pickup"]);
+export const statusEnum = pgEnum("status", statusOptions);
+export const locationEnum = pgEnum("location", locationOptions);
 
 export const packages = pgTable("packages", {
     id: serial("id").primaryKey(),

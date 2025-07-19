@@ -2,6 +2,6 @@ import React from 'react'
 
 export default function Page() {
     return (
-        <div>rates static?</div>
+        <div>Page</div>
     )
 }

@@ -11,13 +11,17 @@ export default function Header({ navMenu }: { navMenu: dashboardMenu[] }) {
 
     return (
         <div className={`${styles.headerCont} textResetMargin`}>
-            {foundNavItem !== undefined && (
+            {foundNavItem !== undefined ? (
                 <>
                     <h1>{foundNavItem.title}</h1>
 
                     {foundNavItem.dashboardHome && (
                         <DashboardProfile />
                     )}
+                </>
+            ) : (
+                <>
+                    <h1>Page</h1>
                 </>
             )}
         </div>

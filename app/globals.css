@@ -225,3 +225,11 @@ textarea:focus {
   color: var(--c1);
   font-size: var(--fontSizeS);
 }
+
+.snap {
+  scroll-snap-type: x mandatory;
+}
+
+.snap>* {
+  scroll-snap-align: start;
+}

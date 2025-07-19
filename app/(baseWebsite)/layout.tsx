@@ -1,4 +1,4 @@
-// import Navbar from "@/components/navbar/Navbar";
+import Navbar from "@/components/navbar/Navbar";
 
 export default function BaseWebsiteLayout({
   children,
@@ -8,7 +8,7 @@ export default function BaseWebsiteLayout({
 
   return (
     <>
-      {/* <Navbar
+      <Navbar
         menuInfoArr={[
           {
             title: "home",
@@ -59,7 +59,7 @@ export default function BaseWebsiteLayout({
             link: "/contact",
           },
         ]}
-      /> */}
+      />
 
       {children}
     </>

@@ -5,23 +5,40 @@ export const dateSchma = z.preprocess((val) => {
     return val;
 }, z.date())
 
+export const dbFileUploadSchema = z.object({
+    createdAt: dateSchma,
+    fileName: z.string().min(1),
+    src: z.string().min(1),
+    status: z.enum(["to-delete", "to-upload"]),
+    uploaded: z.boolean()
+})
+export type dbFileUploadType = z.infer<typeof dbFileUploadSchema>
+
+export const dbImageSchema = z.object({
+    file: dbFileUploadSchema,
+    alt: z.string().min(1),
+})
 export type dbImageType = z.infer<typeof dbImageSchema>
 
 export const dbInvoiceSchema = z.object({
-    createdAt: dateSchma,
-    src: z.string().min(1),
+    file: dbFileUploadSchema,
+    type: z.enum(["shipping", "internal"]),
 })
 export type dbInvoiceType = z.infer<typeof dbInvoiceSchema>
 
-export type preAlertFilterType = {
-    [key in keyof preAlertType]?: preAlertType[key]
+export type tableFilterTypes<T> = {
+    [key in keyof T]?: T[key]
 }
 
-export const dbImageSchema = z.object({
-    createdAt: dateSchma,
-    src: z.string().min(1),
-    alt: z.string().min(1),
-})
+//handle search component with limits/offsets
+export type searchObjType<T> = {
+    searchItems: T[],
+    loading?: true,
+    limit?: number, //how many
+    offset?: number, //increaser
+    incrementOffsetBy?: number, //how much to increase by
+    refreshAll?: boolean
+}
 
 export const uploadNamesResponseSchema = z.object({
     names: z.string().array(),
@@ -52,10 +69,12 @@ export type dashboardMenu = {
 
 
 //keep synced with db schema
-export const roleSchema = z.enum(["admin", "employee", "customer"])
+export const roleOptions = ["admin", "employee", "customer"] as const
+export const roleSchema = z.enum(roleOptions)
 export type roleType = z.infer<typeof roleSchema>
 
-export const accessLevelSchema = z.enum(["regular", "warehouse", "elevated", "supervisor"])
+export const accessLevelOptions = ["regular", "warehouse", "elevated", "supervisor"] as const
+export const accessLevelSchema = z.enum(accessLevelOptions)
 export type accessLevelType = z.infer<typeof accessLevelSchema>
 
 export const userSchema = z.object({
@@ -80,13 +99,21 @@ export type userType = z.infer<typeof userSchema> & {
     preAlerts?: preAlertType[],
 }
 
+export const newUserSchema = userSchema.omit({ id: true, role: true })
+export type newUserType = z.infer<typeof newUserSchema>
+
+export const updateUserSchema = userSchema.omit({ id: true, emailVerified: true })
+export type updateUserType = z.infer<typeof updateUserSchema>
 
 
 
-export const statusSchema = z.enum(["fulfilled", "in progress", "cancelled", "on hold"])
+
+export const statusOptions = ["fulfilled", "in progress", "cancelled", "on hold"] as const
+export const statusSchema = z.enum(statusOptions)
 export type statusType = z.infer<typeof statusSchema>
 
-export const locationSchema = z.enum(["on way to warehouse", "warehouse delivered", "in transit to jamaica", "jamaica arrived", "ready for pickup"])
+export const locationOptions = ["on way to warehouse", "warehouse delivered", "in transit to jamaica", "jamaica arrived", "ready for pickup"] as const
+export const locationSchema = z.enum(locationOptions)
 export type locationType = z.infer<typeof locationSchema>
 
 export const packageSchema = z.object({
@@ -98,12 +125,12 @@ export const packageSchema = z.object({
     status: statusSchema,
     trackingNumber: z.string().min(1),
     images: dbImageSchema.array(),
-    weight: z.number(),
-    payment: z.number(),
+    weight: z.string(),
+    payment: z.string(),
     store: z.string().min(1),
     consignee: z.string().min(1),
     description: z.string().min(1),
-    price: z.number(),
+    price: z.string(),
     invoices: dbInvoiceSchema.array(),
     comments: z.string(),
 })
@@ -111,6 +138,11 @@ export type packageType = z.infer<typeof packageSchema> & {
     fromUser?: userType,
 }
 
+export const newPackageSchema = packageSchema.omit({ id: true, dateCreated: true })
+export type newPackageType = z.infer<typeof newPackageSchema>
+
+export const updatePackageSchema = packageSchema.omit({ id: true, dateCreated: true, userId: true })
+export type updatePackageType = z.infer<typeof updatePackageSchema>
 
 
 

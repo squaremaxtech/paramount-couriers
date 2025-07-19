@@ -4,13 +4,13 @@ import styles from "./style.module.css"
 import { deepClone } from '@/utility/utility'
 import toast from 'react-hot-toast'
 import TextInput from '../textInput/TextInput'
-import { dbInvoiceType, newPreAlertSchema, newPreAlertType, preAlertSchema, preAlertType, updatePreAlertSchema, uploadNamesResponseSchema } from '@/types'
-import { addPreAlerts, deletePreAlertInvoices, updatePreAlerts } from '@/serverFunctions/handlePreAlerts'
+import { dbInvoiceType, newPreAlertSchema, newPreAlertType, preAlertSchema, preAlertType, updatePreAlertSchema } from '@/types'
+import { addPreAlert, deleteInvoiceOnPreAlert, updatePreAlert } from '@/serverFunctions/handlePreAlerts'
 import { consoleAndToastError } from '@/useful/consoleErrorWithToast'
 import { useSession } from 'next-auth/react'
 import FormToggleButton from '../formToggleButton/FormToggleButton'
-import { allowedInvoiceFileTypes, maxBodyToServerSize, maxDocumentUploadSize } from '@/types/uploadTypes'
-import { convertBtyes } from '@/useful/usefulFunctions'
+import { allowedInvoiceFileTypes } from '@/types/uploadTypes'
+import UploadFiles from '../uploadFiles/UploadFiles'
 
 export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { sentPreAlert?: preAlertType, submissionAction?: () => void }) {
     //on success submit upload files
@@ -31,10 +31,8 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
     const [formObj, formObjSet] = useState<Partial<newPreAlertType>>(deepClone(sentPreAlert === undefined ? initialFormObj : updatePreAlertSchema.parse(sentPreAlert)))
 
     const [invoiceFormData, invoiceFormDataSet] = useState<FormData | null>(null)
-    const [deleteFromServerInvoiceList, deleteFromServerInvoiceListSet] = useState<dbInvoiceType["src"][]>([])
 
-    type preAlertKeys = keyof preAlertType
-    const [formErrors, formErrorsSet] = useState<Partial<{ [key in preAlertKeys]: string }>>({})
+    const [formErrors, formErrorsSet] = useState<Partial<{ [key in keyof preAlertType]: string }>>({})
 
     const { data: session } = useSession()
 
@@ -89,45 +87,63 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
         }
     }
 
+    async function handleDbInvoicesUpload(dbInvoices: dbInvoiceType[]) {
+        //handle files 
+        const dbInvoicesToUpload = dbInvoices.filter(eachDbInvoice => eachDbInvoice.file.status === "to-upload")
+        if (dbInvoicesToUpload.length > 0 && invoiceFormData !== null) {
+            //set upload type
+            invoiceFormData.append("type", "invoices")
+
+            const response = await fetch(`/api/files/upload`, {
+                method: 'POST',
+                body: invoiceFormData,
+            })
+            const seenNamesObj = await response.json()
+            const seenUploadedFiles = seenNamesObj.names
+
+            toast.success("invoices uploaded")
+
+            dbInvoices = dbInvoices.map(eachDbInvoice => {
+                if (seenUploadedFiles.includes(eachDbInvoice.file.src)) {
+                    //react obj refresher
+                    eachDbInvoice.file = { ...eachDbInvoice.file }
+
+                    eachDbInvoice.file.uploaded = true
+                }
+
+                return eachDbInvoice
+            })
+        }
+
+        const dbInvoicesToDelete = dbInvoices.filter(eachDbInvoice => eachDbInvoice.file.status === "to-delete")
+        if (dbInvoicesToDelete.length > 0) {
+            if (sentPreAlert !== undefined) {
+                const deleteOnServer = dbInvoicesToDelete.filter(eachDbInvoice => eachDbInvoice.file.uploaded)
+
+                //delete on server
+                await deleteInvoiceOnPreAlert(sentPreAlert.id, deleteOnServer)
+            }
+
+            //delete locally
+            dbInvoices = dbInvoices.filter(eachDbInvoice => dbInvoicesToDelete.find(eachDbInvoiceToDelete => eachDbInvoiceToDelete.file.src === eachDbInvoice.file.src) === undefined)
+        }
+
+        return [...dbInvoices]
+    }
+
     async function handleSubmit() {
         try {
             toast.success("submittting")
-
-            //handle files
-            //delete from server
-            if (deleteFromServerInvoiceList.length > 0 && sentPreAlert !== undefined) {
-                //reset on server
-                await deletePreAlertInvoices(sentPreAlert.id)
-            }
-
-            //add to server
-            if (invoiceFormData !== null) {
-                const response = await fetch(`/api/documents/upload`, {
-                    method: 'POST',
-                    body: invoiceFormData,
-                })
-
-                toast.success("invoices uploaded")
-
-                //array of file names
-                const seenNames = uploadNamesResponseSchema.parse(await response.json());
-
-                const newFormInvoices: preAlertType["invoices"] = seenNames.names.map(eachName => {
-                    return {
-                        createdAt: new Date(),
-                        src: eachName
-                    }
-                })
-
-                formObj.invoices = [...newFormInvoices]
-            }
 
             //new preAlert
             if (sentPreAlert === undefined) {
                 const validatedNewPreAlert = newPreAlertSchema.parse(formObj)
 
+                //files
+                validatedNewPreAlert.invoices = await handleDbInvoicesUpload(validatedNewPreAlert.invoices)
+
                 //send up to server
-                await addPreAlerts(validatedNewPreAlert)
+                await addPreAlert(validatedNewPreAlert)
 
                 toast.success("submitted")
 
@@ -139,8 +155,11 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
                 //validate
                 const validatedUpdatedPreAlert = updatePreAlertSchema.parse(formObj)
 
+                //files
+                validatedUpdatedPreAlert.invoices = await handleDbInvoicesUpload(validatedUpdatedPreAlert.invoices)
+
                 //update
-                await updatePreAlerts(sentPreAlert.id, validatedUpdatedPreAlert)
+                await updatePreAlert(sentPreAlert.id, validatedUpdatedPreAlert)
 
                 toast.success("pre alert updated")
             }
@@ -297,89 +316,38 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
             )}
 
             {formObj.invoices !== undefined && (
-                <div style={{ display: "grid", alignContent: "flex-start", gap: "var(--spacingR)" }}>
-                    <button className='button1'>
-                        <label htmlFor='invoiceUpload' style={{ cursor: "pointer" }}>
-                            upload
-                        </label>
-                    </button>
+                <UploadFiles
+                    accept='.pdf,.doc,.docx,.txt'
+                    allowedFileTypes={allowedInvoiceFileTypes}
+                    formDataSet={invoiceFormDataSet}
+                    newDbRecordSetter={(dbFile) => {
+                        //make new dbInvoice
+                        const newDbInvoice: dbInvoiceType = {
+                            type: "shipping",
+                            file: dbFile
+                        }
 
-                    <input id='invoiceUpload' type="file" placeholder='Upload invoices' multiple={true} accept=".pdf,.doc,.docx,.txt" style={{ display: "none" }}
-                        onChange={(e) => {
-                            if (!e.target.files) return
+                        formObjSet(prevFormObj => {
+                            const newFormObj = { ...prevFormObj }
+                            if (newFormObj.invoices === undefined) return prevFormObj
 
-                            let totalUploadSize = 0
-                            const uploadedFiles = e.target.files
-                            const formData = new FormData();
+                            newFormObj.invoices = [...newFormObj.invoices, newDbInvoice]
 
-                            console.log(`$got here`);
+                            return newFormObj
+                        })
+                    }}
+                    dbUploadedFiles={formObj.invoices.map(eachDbInvoice => eachDbInvoice.file)}
+                    dbUploadedFilesSetter={(dbUpdatedFile, index) => {
+                        formObjSet(prevFormObj => {
+                            const newFormObj = { ...prevFormObj }
+                            if (newFormObj.invoices === undefined) return prevFormObj
 
-                            for (let index = 0; index < uploadedFiles.length; index++) {
-                                const file = uploadedFiles[index];
+                            newFormObj.invoices[index].file = { ...dbUpdatedFile }
 
-                                console.log(`$file`, file);
-
-                                //validation
-                                if (!allowedInvoiceFileTypes.includes(file.type)) {
-                                    console.log(`$na type`);
-                                    toast.error(`File ${file.name} is not a valid file type to upload.`);
-                                    continue;
-                                }
-
-                                // Check the file size
-                                if (file.size > maxDocumentUploadSize) {
-                                    console.log(`$na size`);
-                                    toast.error(`File ${file.name} is too large. Maximum size is ${convertBtyes(maxDocumentUploadSize, "mb")} MB`);
-                                    continue;
-                                }
-
-                                //add file size to totalUploadSize
-                                totalUploadSize += file.size
-
-                                formData.append(`file${index}`, file);
-                            }
-
-                            if (totalUploadSize > maxBodyToServerSize) {
-                                console.log(`$na body size`);
-                                toast.error(`Please upload less than ${convertBtyes(maxBodyToServerSize, "mb")} MB at a time`);
-                                return
-                            }
-
-                            console.log(`$formData sent`, formData);
-                            invoiceFormDataSet(formData)
-                        }}
-                    />
-
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                        {invoiceFormData !== null && (
-                            <p>
-                                {Array.from(invoiceFormData.entries())
-                                    .map(([, value]) => {
-                                        const file = value as File;
-                                        return file.name;
-                                    })
-                                    .join(", ")}
-                            </p>
-                        )}
-
-                        {(formObj.invoices !== undefined && formObj.invoices.length > 0) && (
-                            <button
-                                onClick={async () => {
-                                    //reset local
-                                    invoiceFormDataSet(null)
-
-                                    if (formObj.invoices !== undefined) {
-                                        deleteFromServerInvoiceListSet(formObj.invoices.map(eachInvoice => eachInvoice.src))
-                                    }
-                                }}
-                            >
-                                <span className="material-symbols-outlined">
-                                    delete
-                                </span>
-                            </button>
-                        )}
-                    </div>
-                </div>
+                            return newFormObj
+                        })
+                    }}
+                />
             )}
 
             <button className='button1' style={{ justifySelf: "center" }}
