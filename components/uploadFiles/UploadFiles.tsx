@@ -4,17 +4,13 @@ import { convertBtyes } from '@/useful/usefulFunctions'
 import { maxDocumentUploadSize } from '@/types/uploadTypes'
 import React from 'react'
 import toast from 'react-hot-toast'
-import { dbFileUploadType } from '@/types'
+import { dbFileType, dbWithFileType } from '@/types'
 import { v4 as uuidV4 } from "uuid"
 import { makeValidFilename } from '@/utility/utility'
 
-export default function UploadFiles({ multiple = true, accept, allowedFileTypes, maxUploadSize = maxDocumentUploadSize, formDataSet, dbUploadedFiles, dbUploadedFilesSetter, newDbRecordSetter }: {
-    multiple?: boolean, accept: string, allowedFileTypes: string[], maxUploadSize?: number, formDataSet: React.Dispatch<React.SetStateAction<FormData | null>>, dbUploadedFiles: dbFileUploadType[], dbUploadedFilesSetter: (dbUpdatedFile: dbFileUploadType, index: number) => void, newDbRecordSetter: (dbFile: dbFileUploadType) => void
+export default function UploadFiles<T extends dbWithFileType>({ multiple = true, accept, allowedFileTypes, maxUploadSize = maxDocumentUploadSize, formDataSet, dbWithFileObjs, dbWithFileObjsSetter, newDbRecordSetter }: {
+    multiple?: boolean, accept: string, allowedFileTypes: string[], maxUploadSize?: number, formDataSet: React.Dispatch<React.SetStateAction<FormData | null>>, dbWithFileObjs: T[], dbWithFileObjsSetter: (dbWithFileObjs: T[]) => void, newDbRecordSetter: (dbFile: dbFileType) => void
 }) {
-    //handle formData set...
-    //handle states dbUploadedFiles..
-    //handle dbUploadedFiles set - upload, delete
-
     return (
         <div className='container'>
             <button className='button1'>
@@ -51,17 +47,17 @@ export default function UploadFiles({ multiple = true, accept, allowedFileTypes,
 
                         const newDate = new Date()
 
-                        const fileId = makeValidFilename(`${uuidV4()}__${newDate.toLocaleDateString()}__${newDate.toLocaleTimeString()}`, { replacement: "-" })
+                        const fileSrc = makeValidFilename(`${uuidV4()}__${newDate.toLocaleDateString()}__${newDate.toLocaleTimeString()}__${file.name}`, { replacement: "-" })
 
                         //add to formData
-                        formData.append(fileId, file);
+                        formData.append(fileSrc, file);
 
-                        const newDbUploadFile: dbFileUploadType = {
-                            src: fileId,
-                            createdAt: new Date(),
+                        const newDbUploadFile: dbFileType = {
+                            src: fileSrc,
+                            createdAt: newDate,
                             fileName: file.name,
                             status: "to-upload",
-                            uploaded: false
+                            uploadedAlready: false
                         }
 
                         //add onto dbUploadedFiles
@@ -79,19 +75,22 @@ export default function UploadFiles({ multiple = true, accept, allowedFileTypes,
 
             <div style={{ display: "flex", alignItems: "center" }}>
                 <ul style={{ display: "flex", flexWrap: "wrap", gap: "var(--spacingS)" }}>
-                    {dbUploadedFiles.map((eachDbUploadedFile, eachDbUploadedFileIndex) => {
-                        if (eachDbUploadedFile.status === "to-delete") return null
+                    {dbWithFileObjs.map((eachDbWithFileObj, eachDbWithFileObjIndex) => {
+                        if (eachDbWithFileObj.file.status === "to-delete") return null
+
                         return (
-                            <li key={eachDbUploadedFile.src} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--spacingS)" }} className='textResetMargin'>
-                                <p>{eachDbUploadedFile.fileName}</p>
+                            <li key={eachDbWithFileObj.file.src} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--spacingS)" }} className='textResetMargin'>
+                                <p>{eachDbWithFileObj.file.fileName}</p>
 
                                 <button
                                     onClick={() => {
                                         //change status
-                                        const updatedDbUploadFile = { ...eachDbUploadedFile }
-                                        updatedDbUploadFile.status = "to-delete"
+                                        const newDbWithFileObjs = [...dbWithFileObjs]
+                                        newDbWithFileObjs[eachDbWithFileObjIndex] = { ...newDbWithFileObjs[eachDbWithFileObjIndex] }
+                                        newDbWithFileObjs[eachDbWithFileObjIndex].file = { ...newDbWithFileObjs[eachDbWithFileObjIndex].file }
+                                        newDbWithFileObjs[eachDbWithFileObjIndex].file.status = "to-delete"
 
-                                        dbUploadedFilesSetter(updatedDbUploadFile, eachDbUploadedFileIndex)
+                                        dbWithFileObjsSetter(newDbWithFileObjs)
                                     }}
                                 >
                                     <span className="material-symbols-outlined">

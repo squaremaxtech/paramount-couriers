@@ -5,6 +5,7 @@ import { ensureDirectoryExists } from "@/utility/manageFiles";
 import { allowedInvoiceFileTypes, maxDocumentUploadSize, uploadedInvoicesDirectory } from "@/types/uploadTypes";
 import { convertBtyes } from "@/useful/usefulFunctions";
 import { sessionCheck } from "@/serverFunctions/handleAuth";
+import { dbFileTypeSchema } from "@/types";
 
 export async function POST(request: Request) {
     await sessionCheck()
@@ -12,19 +13,19 @@ export async function POST(request: Request) {
     const formData = await request.formData();
     const body = Object.fromEntries(formData);
 
-    const seenUploadType = body["type"]
+    const seenUploadType = dbFileTypeSchema.parse(body["type"])
     if (seenUploadType === undefined) throw new Error("not seeing upload type")
 
-    if (seenUploadType === "invoices") {
+    if (seenUploadType === "invoice") {
         //ensure invoices directory exists
         await ensureDirectoryExists(uploadedInvoicesDirectory)
 
         const addedInvoiceNamesPre = await Promise.all(Object.entries(body).map(async eachEntry => {
-            const eachEntryKey = eachEntry[0] //fileName
-            const eachEntryValueFile = eachEntry[1]
+            const eachEntryKey = eachEntry[0] //file id
+            const eachEntryValue = eachEntry[1]
             if (eachEntryKey === "type") return null //skip type declaration
 
-            const file = eachEntryValueFile as File;
+            const file = eachEntryValue as File;
             const documentPath = path.join(uploadedInvoicesDirectory, eachEntryKey)
 
             // Check if file proper file type
@@ -50,7 +51,7 @@ export async function POST(request: Request) {
             names: addedInvoiceNames,
         });
 
-    } else if (seenUploadType === "images") {
+    } else if (seenUploadType === "image") {
         return NextResponse.json({
             names: [],
         });

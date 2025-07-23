@@ -2,9 +2,9 @@
 import { uploadedImagesDirectory, uploadedInvoicesDirectory } from "@/types/uploadTypes"
 import path from "path";
 import fs from "fs/promises";
-import { dbFileUploadType } from "@/types";
+import { dbFileType } from "@/types";
 
-export async function deleteInvoices(invoiceSrcs: dbFileUploadType["src"][]) {
+export async function deleteInvoices(invoiceSrcs: dbFileType["src"][]) {
     //remove file
     await Promise.all(
         invoiceSrcs.map(async eachSrc => {
@@ -15,7 +15,7 @@ export async function deleteInvoices(invoiceSrcs: dbFileUploadType["src"][]) {
     )
 }
 
-export async function deleteImages(imageSrcs: dbFileUploadType["src"][]) {
+export async function deleteImages(imageSrcs: dbFileType["src"][]) {
     //remove file
     await Promise.all(
         imageSrcs.map(async eachSrc => {

@@ -7,7 +7,7 @@
 //check validations on getall functions
 //change documents api to files
 //add auth to functions - e.g db delete
-//
+//possibly recreate file management for with files outer objs
 //
 
 

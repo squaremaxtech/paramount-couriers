@@ -1,7 +1,7 @@
 "use server"
 import { db } from "@/db"
 import { preAlerts } from "@/db/schema"
-import { dbInvoiceType, dbFileUploadType, newPreAlertSchema, newPreAlertType, preAlertSchema, preAlertType, tableFilterTypes, updatePreAlertSchema } from "@/types"
+import { dbInvoiceType, dbFileType, newPreAlertSchema, newPreAlertType, preAlertSchema, preAlertType, tableFilterTypes, updatePreAlertSchema } from "@/types"
 import { and, desc, eq, SQLWrapper } from "drizzle-orm"
 import { deleteInvoices } from "./handleDocuments"
 

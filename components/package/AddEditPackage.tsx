@@ -482,8 +482,8 @@ export default function AddEditPackage({ sentPackage, submissionAction }: { sent
                             return newFormObj
                         })
                     }}
-                    dbUploadedFiles={formObj.images.map(eachDbImage => eachDbImage.file)}
-                    dbUploadedFilesSetter={(dbUpdatedFile, index) => {
+                    dbWithFileObjs={formObj.images.map(eachDbImage => eachDbImage.file)}
+                    dbWithFileObjsSetter={(dbUpdatedFile, index) => {
                         formObjSet(prevFormObj => {
                             const newFormObj = { ...prevFormObj }
                             if (newFormObj.images === undefined) return prevFormObj
@@ -533,8 +533,8 @@ export default function AddEditPackage({ sentPackage, submissionAction }: { sent
                             return newFormObj
                         })
                     }}
-                    dbUploadedFiles={formObj.invoices.map(eachDbInvoice => eachDbInvoice.file)}
-                    dbUploadedFilesSetter={(dbUpdatedFile, index) => {
+                    dbWithFileObjs={formObj.invoices.map(eachDbInvoice => eachDbInvoice.file)}
+                    dbWithFileObjsSetter={(dbUpdatedFile, index) => {
                         formObjSet(prevFormObj => {
                             const newFormObj = { ...prevFormObj }
                             if (newFormObj.invoices === undefined) return prevFormObj

@@ -3,6 +3,7 @@ import { auth } from "@/auth/auth";
 import { getSpecificUser } from "./handleUser";
 import { userType } from "@/types";
 import * as schema from "@/db/schema"
+import { getSpecificPackage } from "./handlePackages";
 
 type schemaType = typeof schema
 
@@ -218,93 +219,54 @@ type accessType = {
     [key in crudType]: boolean | undefined
 }
 
-
-
-export async function ensureCanAccessTable<T extends tableNames>(
-    tableName: T,
-    columnName?: tableColumns[T],
-    resourceId?: string
+export async function ensureCanAccessTable<T extends tableNames>(tableName: T, wantedCrud: crudType, columnName?: tableColumns[T], resourceId?: string
 ) {
-    const access: accessType = {
-        c: undefined,
-        r: undefined,
-        u: undefined,
-        d: undefined,
-        co: undefined,
-        ro: undefined,
-        uo: undefined,
-        do: undefined,
+    const session = await sessionCheck();
+
+    const table = tableAccess[tableName];
+    if (table === undefined) throw new Error(`No access rules for table '${tableName}'`);
+
+    const userType = getUserType(session.user);
+    let userCrud: crudType[] | null = null;
+
+    //column access list
+    if (columnName !== undefined) {
+        if (table.columns === undefined) throw new Error("not seeing columns on table")
+
+        const column = table.columns[columnName];
+        userCrud = column === undefined ? table.columnDefaultCrud[userType] : column[userType]
+
+    } else {
+        //table access list
+        userCrud = table.tableCrud[userType];
     }
-    const errors: string[] = []
 
-    try {
-        const session = await sessionCheck();
+    //if can't access crud type
+    if (!userCrud.includes(wantedCrud)) {
+        throw new Error("Not able to authorize task");
+    }
 
-        const table = tableAccess[tableName];
-        if (table === undefined) throw new Error(`No access rules for table '${tableName}'`);
+    //if access allows crud only - co, ro, uo, do - check for ownership
+    if (wantedCrud === "co" || wantedCrud === "ro" || wantedCrud === "uo" || wantedCrud === "do") {
+        if (resourceId === undefined) throw new Error("Not seeing resource ID for ownership check");
 
-        const userType = getUserType(session.user);
-        let accessList: crudType[] | null = null;
+        let ownershipId = "";
 
-        //column access list
-        if (columnName !== undefined) {
-            if (table.columns === undefined) throw new Error("not seeing columns on table")
+        //owenrship check on users table e.g
+        if (tableName === "users") {
+            const seenPackage = await getSpecificPackage(parseInt(resourceId));
+            if (seenPackage === undefined) throw new Error("Resource user's user id not found");
 
-            const column = table.columns[columnName];
-            accessList = column === undefined ? table.columnDefaultCrud[userType] : column[userType]
+            ownershipId = seenPackage.userId;
+
+        } else if (tableName === "preAlerts") {
+            //more tables
 
         } else {
-            //table access list
-            accessList = table.tableCrud[userType];
+            throw new Error("Ownership check not implemented for this table");
         }
 
-        //update values
-        accessList.forEach(eachCrudSeen => {
-            access[eachCrudSeen] = true
-        })
-
-        //if access allows crud only - co, ro, uo, do - check for ownership
-        if (access["co"] || access["ro"] || access["uo"] || access["do"]) {
-            try {
-                if (resourceId === undefined) throw new Error("Not seeing resource ID for ownership check");
-
-                let ownershipId = "";
-
-                //owenrship check on users table e.g
-                if (tableName === "users") {
-                    const resourceUser = await getSpecificUser(resourceId);
-                    if (resourceUser === undefined) throw new Error("Resource user user not found");
-
-                    ownershipId = resourceUser.id;
-
-                } else {
-                    throw new Error("Ownership check not implemented for this table");
-                }
-
-                if (session.user.id !== ownershipId) throw new Error("Not authorized as owner");
-
-            } catch (error) {
-                const seenError = error as Error
-
-                //update values to false
-                access["co"] = false
-                access["ro"] = false
-                access["uo"] = false
-                access["do"] = false
-
-                //send error up
-                throw new Error(seenError.message)
-            }
-        }
-
-    } catch (error) {
-        const seenError = error as Error
-        errors.push(seenError.message)
-    }
-
-    return {
-        access,
-        errors: errors.length > 0 ? errors : undefined
+        if (session.user.id !== ownershipId) throw new Error("Not authorized as owner");
     }
 }
 

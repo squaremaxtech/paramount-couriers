@@ -5,26 +5,35 @@ export const dateSchma = z.preprocess((val) => {
     return val;
 }, z.date())
 
-export const dbFileUploadSchema = z.object({
+export const dbFileSchema = z.object({
     createdAt: dateSchma,
     fileName: z.string().min(1),
     src: z.string().min(1),
-    status: z.enum(["to-delete", "to-upload"]),
-    uploaded: z.boolean()
+    status: z.enum(["to-delete", "to-upload", "uploaded"]),
+    uploadedAlready: z.boolean()
 })
-export type dbFileUploadType = z.infer<typeof dbFileUploadSchema>
+export type dbFileType = z.infer<typeof dbFileSchema>
+
+export const dbFileTypeSchema = z.enum(["invoice", "image"])
+export type dbFileTypeType = z.infer<typeof dbFileTypeSchema>
 
 export const dbImageSchema = z.object({
-    file: dbFileUploadSchema,
+    dbFileType: z.literal(dbFileTypeSchema.Values.image),
+    file: dbFileSchema,
     alt: z.string().min(1),
 })
 export type dbImageType = z.infer<typeof dbImageSchema>
 
 export const dbInvoiceSchema = z.object({
-    file: dbFileUploadSchema,
+    dbFileType: z.literal(dbFileTypeSchema.Values.invoice),
+    file: dbFileSchema,
     type: z.enum(["shipping", "internal"]),
 })
 export type dbInvoiceType = z.infer<typeof dbInvoiceSchema>
+
+export type dbWithFileType = {
+    file: dbFileType;
+} & Record<string, unknown>;
 
 export type tableFilterTypes<T> = {
     [key in keyof T]?: T[key]

@@ -11,11 +11,9 @@ import { useSession } from 'next-auth/react'
 import FormToggleButton from '../formToggleButton/FormToggleButton'
 import { allowedInvoiceFileTypes } from '@/types/uploadTypes'
 import UploadFiles from '../uploadFiles/UploadFiles'
+import { handleWithFiles } from '@/utility/handleWithFiles'
 
 export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { sentPreAlert?: preAlertType, submissionAction?: () => void }) {
-    //on success submit upload files
-    //on edit check sucess - identify differences, delete from server/upload
-
     const initialFormObj: newPreAlertType = {
         userId: "",
         trackingNumber: "",
@@ -87,50 +85,6 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
         }
     }
 
-    async function handleDbInvoicesUpload(dbInvoices: dbInvoiceType[]) {
-        //handle files 
-        const dbInvoicesToUpload = dbInvoices.filter(eachDbInvoice => eachDbInvoice.file.status === "to-upload")
-        if (dbInvoicesToUpload.length > 0 && invoiceFormData !== null) {
-            //set upload type
-            invoiceFormData.append("type", "invoices")
-
-            const response = await fetch(`/api/files/upload`, {
-                method: 'POST',
-                body: invoiceFormData,
-            })
-            const seenNamesObj = await response.json()
-            const seenUploadedFiles = seenNamesObj.names
-
-            toast.success("invoices uploaded")
-
-            dbInvoices = dbInvoices.map(eachDbInvoice => {
-                if (seenUploadedFiles.includes(eachDbInvoice.file.src)) {
-                    //react obj refresher
-                    eachDbInvoice.file = { ...eachDbInvoice.file }
-
-                    eachDbInvoice.file.uploaded = true
-                }
-
-                return eachDbInvoice
-            })
-        }
-
-        const dbInvoicesToDelete = dbInvoices.filter(eachDbInvoice => eachDbInvoice.file.status === "to-delete")
-        if (dbInvoicesToDelete.length > 0) {
-            if (sentPreAlert !== undefined) {
-                const deleteOnServer = dbInvoicesToDelete.filter(eachDbInvoice => eachDbInvoice.file.uploaded)
-
-                //delete on server
-                await deleteInvoiceOnPreAlert(sentPreAlert.id, deleteOnServer)
-            }
-
-            //delete locally
-            dbInvoices = dbInvoices.filter(eachDbInvoice => dbInvoicesToDelete.find(eachDbInvoiceToDelete => eachDbInvoiceToDelete.file.src === eachDbInvoice.file.src) === undefined)
-        }
-
-        return [...dbInvoices]
-    }
-
     async function handleSubmit() {
         try {
             toast.success("submittting")
@@ -140,7 +94,7 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
                 const validatedNewPreAlert = newPreAlertSchema.parse(formObj)
 
                 //files
-                validatedNewPreAlert.invoices = await handleDbInvoicesUpload(validatedNewPreAlert.invoices)
+                validatedNewPreAlert.invoices = await handleWithFiles(validatedNewPreAlert.invoices, invoiceFormData, "invoice")
 
                 //send up to server
                 await addPreAlert(validatedNewPreAlert)
@@ -156,10 +110,18 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
                 const validatedUpdatedPreAlert = updatePreAlertSchema.parse(formObj)
 
                 //files
-                validatedUpdatedPreAlert.invoices = await handleDbInvoicesUpload(validatedUpdatedPreAlert.invoices)
+                validatedUpdatedPreAlert.invoices = await handleWithFiles(validatedUpdatedPreAlert.invoices, invoiceFormData, "invoice", {
+                    delete: async (dbWithFilesObjs) => {
+                        if (sentPreAlert !== undefined) {
+                            await deleteInvoiceOnPreAlert(sentPreAlert.id, dbWithFilesObjs)
+                        }
+                    }
+                })
 
                 //update
                 await updatePreAlert(sentPreAlert.id, validatedUpdatedPreAlert)
+
+                formObjSet(validatedUpdatedPreAlert)
 
                 toast.success("pre alert updated")
             }
@@ -323,6 +285,7 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
                     newDbRecordSetter={(dbFile) => {
                         //make new dbInvoice
                         const newDbInvoice: dbInvoiceType = {
+                            dbFileType: "invoice",
                             type: "shipping",
                             file: dbFile
                         }
@@ -336,13 +299,13 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
                             return newFormObj
                         })
                     }}
-                    dbUploadedFiles={formObj.invoices.map(eachDbInvoice => eachDbInvoice.file)}
-                    dbUploadedFilesSetter={(dbUpdatedFile, index) => {
+                    dbWithFileObjs={formObj.invoices}
+                    dbWithFileObjsSetter={dbWithFileObjs => {
                         formObjSet(prevFormObj => {
                             const newFormObj = { ...prevFormObj }
                             if (newFormObj.invoices === undefined) return prevFormObj
 
-                            newFormObj.invoices[index].file = { ...dbUpdatedFile }
+                            newFormObj.invoices = [...dbWithFileObjs]
 
                             return newFormObj
                         })
