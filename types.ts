@@ -1,9 +1,55 @@
 import { z } from "zod";
+import * as schema from "@/db/schema"
 
 export const dateSchma = z.preprocess((val) => {
     if (typeof val === "string" || typeof val === "number") return new Date(val);
     return val;
 }, z.date())
+
+
+
+
+export type schemaType = typeof schema
+
+export type crudType = "c" | "r" | "u" | "d" | "co" | "ro" | "uo" | "do";
+export type userCrudType = {
+    admin: crudType[];
+    employee_regular: crudType[];
+    employee_warehouse: crudType[];
+    employee_elevated: crudType[];
+    employee_supervisor: crudType[];
+    customer: crudType[];
+};
+export type userCrudTypeKeys = keyof userCrudType;
+
+export type tableNames = keyof schemaType
+export type tableColumns = {
+    // used
+    users: keyof schemaType["users"]["$inferSelect"];
+    packages: keyof schemaType["packages"]["$inferSelect"];
+    preAlerts: keyof schemaType["preAlerts"]["$inferSelect"];
+
+    // not used
+    accounts: ""
+    sessions: ""
+    authenticators: ""
+    verificationTokens: ""
+    roleEnum: ""
+    accessLevelEnum: ""
+    statusEnum: ""
+    locationEnum: ""
+    userRelations: ""
+    packageRelations: ""
+    preAlertRelations: ""
+};
+
+export type wantedCrudObjType = {
+    crud: crudType,
+    resourceId?: string
+}
+
+
+
 
 export const dbFileSchema = z.object({
     createdAt: dateSchma,
@@ -35,6 +81,9 @@ export type dbWithFileType = {
     file: dbFileType;
 } & Record<string, unknown>;
 
+
+
+
 export type tableFilterTypes<T> = {
     [key in keyof T]?: T[key]
 }
@@ -53,6 +102,9 @@ export const uploadNamesResponseSchema = z.object({
     names: z.string().array(),
 })
 export type uploadNamesResponseType = z.infer<typeof uploadNamesResponseSchema>
+
+
+
 
 export type dashboardMenu = {
     icon: React.JSX.Element,
@@ -77,7 +129,9 @@ export type dashboardMenu = {
 
 
 
-//keep synced with db schema
+
+
+//refresh db on change
 export const roleOptions = ["admin", "employee", "customer"] as const
 export const roleSchema = z.enum(roleOptions)
 export type roleType = z.infer<typeof roleSchema>

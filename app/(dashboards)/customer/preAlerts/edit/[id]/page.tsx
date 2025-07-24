@@ -5,9 +5,9 @@ import React from 'react'
 
 export default async function Page({ params }: { params: Promise<{ id: preAlertType["id"] }> }) {
     const { id } = await params
-    const seenPreAlert = await getSpecificPreAlert(id)
 
     //validate
+    const seenPreAlert = await getSpecificPreAlert(id, { crud: "r", resourceId: id })
 
     if (seenPreAlert === undefined) return (<p>not seeing specific pre Alert</p>)
 

@@ -113,13 +113,13 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
                 validatedUpdatedPreAlert.invoices = await handleWithFiles(validatedUpdatedPreAlert.invoices, invoiceFormData, "invoice", {
                     delete: async (dbWithFilesObjs) => {
                         if (sentPreAlert !== undefined) {
-                            await deleteInvoiceOnPreAlert(sentPreAlert.id, dbWithFilesObjs)
+                            await deleteInvoiceOnPreAlert(sentPreAlert.id, dbWithFilesObjs, { crud: "d" })
                         }
                     }
                 })
 
                 //update
-                await updatePreAlert(sentPreAlert.id, validatedUpdatedPreAlert)
+                await updatePreAlert(sentPreAlert.id, validatedUpdatedPreAlert, { crud: "u" })
 
                 formObjSet(validatedUpdatedPreAlert)
 

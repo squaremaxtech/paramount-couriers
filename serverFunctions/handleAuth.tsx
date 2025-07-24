@@ -1,43 +1,7 @@
 "use server";
 import { auth } from "@/auth/auth";
-import { getSpecificUser } from "./handleUser";
-import { userType } from "@/types";
-import * as schema from "@/db/schema"
+import { crudType, tableColumns, tableNames, userCrudType, userCrudTypeKeys, userType, wantedCrudObjType } from "@/types";
 import { getSpecificPackage } from "./handlePackages";
-
-type schemaType = typeof schema
-
-type crudType = "c" | "r" | "u" | "d" | "co" | "ro" | "uo" | "do";
-type userCrudType = {
-    admin: crudType[];
-    employee_regular: crudType[];
-    employee_warehouse: crudType[];
-    employee_elevated: crudType[];
-    employee_supervisor: crudType[];
-    customer: crudType[];
-};
-type userCrudKeysType = keyof userCrudType;
-
-type tableNames = keyof schemaType
-type tableColumns = {
-    // used
-    users: keyof schemaType["users"]["$inferSelect"];
-    packages: keyof schemaType["packages"]["$inferSelect"];
-    preAlerts: keyof schemaType["preAlerts"]["$inferSelect"];
-
-    // not used
-    accounts: ""
-    sessions: ""
-    authenticators: ""
-    verificationTokens: ""
-    roleEnum: ""
-    accessLevelEnum: ""
-    statusEnum: ""
-    locationEnum: ""
-    userRelations: ""
-    packageRelations: ""
-    preAlertRelations: ""
-};
 
 const fullAccess: crudType[] = ["c", "r", "u", "d"];
 const read: crudType[] = ["r"];
@@ -163,6 +127,10 @@ const tableAccess: tableAccessType = {
             customer: ["c", "ro", "uo", "do"],
         },
         columns: {
+            id: fixedUserCrud,
+            userId: fixedUserCrud,
+            dateCreated: fixedUserCrud,
+
         },
     },
 
@@ -215,11 +183,7 @@ export async function customerCheck() {
     return session;
 }
 
-type accessType = {
-    [key in crudType]: boolean | undefined
-}
-
-export async function ensureCanAccessTable<T extends tableNames>(tableName: T, wantedCrud: crudType, columnName?: tableColumns[T], resourceId?: string
+export async function ensureCanAccessTable<T extends tableNames>(tableName: T, wantedCrudObj: wantedCrudObjType, columnName?: tableColumns[T]
 ) {
     const session = await sessionCheck();
 
@@ -242,20 +206,20 @@ export async function ensureCanAccessTable<T extends tableNames>(tableName: T, w
     }
 
     //if can't access crud type
-    if (!userCrud.includes(wantedCrud)) {
+    if (!userCrud.includes(wantedCrudObj.crud)) {
         throw new Error("Not able to authorize task");
     }
 
     //if access allows crud only - co, ro, uo, do - check for ownership
-    if (wantedCrud === "co" || wantedCrud === "ro" || wantedCrud === "uo" || wantedCrud === "do") {
-        if (resourceId === undefined) throw new Error("Not seeing resource ID for ownership check");
+    if (wantedCrudObj.crud === "co" || wantedCrudObj.crud === "ro" || wantedCrudObj.crud === "uo" || wantedCrudObj.crud === "do") {
+        if (wantedCrudObj.resourceId === undefined) throw new Error("Not seeing resource ID for ownership check");
 
         let ownershipId = "";
 
-        //owenrship check on users table e.g
-        if (tableName === "users") {
-            const seenPackage = await getSpecificPackage(parseInt(resourceId));
-            if (seenPackage === undefined) throw new Error("Resource user's user id not found");
+        //owenrship check on packages table e.g
+        if (tableName === "packages") {
+            const seenPackage = await getSpecificPackage(parseInt(wantedCrudObj.resourceId));
+            if (seenPackage === undefined) throw new Error(`Resource id not found for ${tableName}`);
 
             ownershipId = seenPackage.userId;
 
@@ -270,8 +234,8 @@ export async function ensureCanAccessTable<T extends tableNames>(tableName: T, w
     }
 }
 
-function getUserType(user: userType): userCrudKeysType {
+function getUserType(user: userType): userCrudTypeKeys {
     return user.role === "employee"
-        ? `employee_${user.accessLevel}` as userCrudKeysType
+        ? `${user.role}_${user.accessLevel}` as userCrudTypeKeys
         : user.role;
 }

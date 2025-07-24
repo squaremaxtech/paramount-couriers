@@ -224,7 +224,7 @@ export default function AddEditPackage({ sentPackage, submissionAction }: { sent
                             searchObj={preAlertsSearchObj}
                             searchObjSet={preAlertsSearchObjSet}
                             searchFunc={async (seenFilters) => {
-                                return await getPreAlerts({ ...seenFilters }, preAlertsSearchObj.limit, preAlertsSearchObj.offset)
+                                return await getPreAlerts({ ...seenFilters }, { crud: "r" }, preAlertsSearchObj.limit, preAlertsSearchObj.offset)
                             }}
                             showPage={true}
                             searchFilters={{
@@ -306,7 +306,7 @@ export default function AddEditPackage({ sentPackage, submissionAction }: { sent
 
                                                         async function handleUpdatePreAlert(acknowledged: boolean) {
                                                             //update preAlert on server then re-search
-                                                            await updatePreAlert(eachPreAlert.id, { acknowledged: acknowledged })
+                                                            await updatePreAlert(eachPreAlert.id, { acknowledged: acknowledged }, { crud: "u" })
 
                                                             preAlertsSearchObjSet(prevPreAlertsSearchObj => {
                                                                 const newPreAlertsSearchObj = { ...prevPreAlertsSearchObj }

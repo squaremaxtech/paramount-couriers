@@ -1,12 +1,14 @@
 "use server"
 import { db } from "@/db"
 import { preAlerts } from "@/db/schema"
-import { dbInvoiceType, dbFileType, newPreAlertSchema, newPreAlertType, preAlertSchema, preAlertType, tableFilterTypes, updatePreAlertSchema } from "@/types"
+import { crudType, dbInvoiceType, newPreAlertSchema, newPreAlertType, preAlertSchema, preAlertType, tableFilterTypes, updatePreAlertSchema, wantedCrudObjType } from "@/types"
 import { and, desc, eq, SQLWrapper } from "drizzle-orm"
 import { deleteInvoices } from "./handleDocuments"
+import { ensureCanAccessTable } from "./handleAuth"
 
 export async function addPreAlert(newPreAlertObj: newPreAlertType) {
-    //security check 
+    //auth check
+    await ensureCanAccessTable("preAlerts", { crud: 'c' })
 
     //validation
     newPreAlertSchema.parse(newPreAlertObj)
@@ -17,37 +19,75 @@ export async function addPreAlert(newPreAlertObj: newPreAlertType) {
     })
 }
 
-export async function updatePreAlert(preAlertId: preAlertType["id"], updatedPreAlertObj: Partial<preAlertType>) {
-    //security check  
+export async function updatePreAlert(preAlertId: preAlertType["id"], updatedPreAlertObj: Partial<preAlertType>, wantedCrudObj: wantedCrudObjType) {
+    //first validate on client
+    //client only sends key value pairs that can be updated
+    //server validates again, shows any errors
 
-    updatePreAlertSchema.partial().parse(updatedPreAlertObj)
+    // id;
+    // userId;
+    // dateCreated;
+    // trackingNumber;
+    // store;
+    // consignee;
+    // description;
+    // price;
+    // invoices
+    // acknowledged
+
+    //go over all key values
+    const updatedPreAlertObjEntries = Object.entries(updatedPreAlertObj)
+
+    const validatedUpdatedPreAlertObjPre = await Promise.all(
+        updatedPreAlertObjEntries.map(async eachEntry => {
+            const eachKey = eachEntry[0] as keyof preAlertType
+            const eachValue = eachEntry[1]
+
+            if (eachKey === "fromUser") return null
+
+            //auth check
+            await ensureCanAccessTable("preAlerts", wantedCrudObj, eachKey)
+
+            //pass validation return info
+            return [eachKey, eachValue]
+        })
+    )
+
+    const validatedUpdatedPreAlertObj: Partial<preAlertType> = Object.fromEntries(validatedUpdatedPreAlertObjPre.filter(eachEntryArr => eachEntryArr !== null))
+
+    updatePreAlertSchema.partial().parse(validatedUpdatedPreAlertObj)
 
     await db.update(preAlerts)
         .set({
-            ...updatedPreAlertObj
+            ...validatedUpdatedPreAlertObj
         })
         .where(eq(preAlerts.id, preAlertId));
 }
 
-export async function deletePreAlert(preAlertId: preAlertType["id"]) {
+export async function deletePreAlert(preAlertId: preAlertType["id"], wantedCrudObj: wantedCrudObjType) {
+    //auth check
+    await ensureCanAccessTable("preAlerts", wantedCrudObj)
+
     //validation
     preAlertSchema.shape.id.parse(preAlertId)
 
     await db.delete(preAlerts).where(eq(preAlerts.id, preAlertId));
 }
 
-export async function deleteInvoiceOnPreAlert(preAlertId: preAlertType["id"], dbInvoiceType: dbInvoiceType[]) {
+export async function deleteInvoiceOnPreAlert(preAlertId: preAlertType["id"], dbInvoiceType: dbInvoiceType[], wantedCrudObj: wantedCrudObjType) {
     //validation
     preAlertSchema.shape.id.parse(preAlertId)
 
-    //validate that user can delete
+    //auth check
+    await ensureCanAccessTable("preAlerts", wantedCrudObj)
 
     //delete from folder
     await deleteInvoices(dbInvoiceType.map(eachDbInvoiceType => eachDbInvoiceType.file.src))
 }
 
-export async function getSpecificPreAlert(preAlertId: preAlertType["id"]): Promise<preAlertType | undefined> {
-    //security check
+export async function getSpecificPreAlert(preAlertId: preAlertType["id"], wantedCrudObj: wantedCrudObjType): Promise<preAlertType | undefined> {
+    //auth check
+    await ensureCanAccessTable("preAlerts", wantedCrudObj)
 
     preAlertSchema.shape.id.parse(preAlertId)
 
@@ -58,7 +98,10 @@ export async function getSpecificPreAlert(preAlertId: preAlertType["id"]): Promi
     return result
 }
 
-export async function getPreAlerts(filter: tableFilterTypes<preAlertType>, limit = 50, offset = 0): Promise<preAlertType[]> {
+export async function getPreAlerts(filter: tableFilterTypes<preAlertType>, wantedCrudObj: wantedCrudObjType, limit = 50, offset = 0): Promise<preAlertType[]> {
+    //auth check
+    await ensureCanAccessTable("preAlerts", wantedCrudObj)
+
     // Collect conditions dynamically
     const whereClauses: SQLWrapper[] = []
 
