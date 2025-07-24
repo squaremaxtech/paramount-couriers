@@ -48,6 +48,10 @@ export type wantedCrudObjType = {
     resourceId?: string
 }
 
+export type clientSideAuthTableViewType<T> = {
+    [key in keyof T]?: boolean
+}
+
 
 
 
@@ -229,5 +233,5 @@ export type preAlertType = z.infer<typeof preAlertSchema> & {
 export const newPreAlertSchema = preAlertSchema.omit({ id: true, dateCreated: true })
 export type newPreAlertType = z.infer<typeof newPreAlertSchema>
 
-export const updatePreAlertSchema = preAlertSchema.omit({ id: true, dateCreated: true, userId: true })
-export type updatePreAlertType = z.infer<typeof updatePreAlertSchema>
+// export const updatePreAlertSchema = preAlertSchema.omit({ id: true, dateCreated: true, userId: true })
+// export type updatePreAlertType = z.infer<typeof updatePreAlertSchema>

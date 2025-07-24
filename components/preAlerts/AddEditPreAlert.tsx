@@ -4,7 +4,7 @@ import styles from "./style.module.css"
 import { deepClone } from '@/utility/utility'
 import toast from 'react-hot-toast'
 import TextInput from '../textInput/TextInput'
-import { dbInvoiceType, newPreAlertSchema, newPreAlertType, preAlertSchema, preAlertType, updatePreAlertSchema } from '@/types'
+import { dbInvoiceType, newPreAlertSchema, newPreAlertType, preAlertSchema, preAlertType } from '@/types'
 import { addPreAlert, deleteInvoiceOnPreAlert, updatePreAlert } from '@/serverFunctions/handlePreAlerts'
 import { consoleAndToastError } from '@/useful/consoleErrorWithToast'
 import { useSession } from 'next-auth/react'
@@ -12,8 +12,14 @@ import FormToggleButton from '../formToggleButton/FormToggleButton'
 import { allowedInvoiceFileTypes } from '@/types/uploadTypes'
 import UploadFiles from '../uploadFiles/UploadFiles'
 import { handleWithFiles } from '@/utility/handleWithFiles'
+import useAuthTableView from '../useAuthTableView/UseAuthTableView'
 
 export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { sentPreAlert?: preAlertType, submissionAction?: () => void }) {
+    //get pre alert
+    //look at each column in pre alert
+    //can view or not boolean
+    const { authTableView, filterObjByAuth } = useAuthTableView({ tableName: "preAlerts", wantedCrudObj: { crud: "uo", resourceId: sentPreAlert?.id }, tableRecordObject: sentPreAlert })
+
     const initialFormObj: newPreAlertType = {
         userId: "",
         trackingNumber: "",
@@ -26,7 +32,7 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
     }
 
     //assign either a new form, or the safe values on an update form
-    const [formObj, formObjSet] = useState<Partial<newPreAlertType>>(deepClone(sentPreAlert === undefined ? initialFormObj : updatePreAlertSchema.parse(sentPreAlert)))
+    const [formObj, formObjSet] = useState<Partial<preAlertType>>(deepClone(sentPreAlert === undefined ? initialFormObj : preAlertSchema.partial().parse(sentPreAlert)))
 
     const [invoiceFormData, invoiceFormDataSet] = useState<FormData | null>(null)
 
@@ -38,7 +44,7 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
     useEffect(() => {
         if (sentPreAlert === undefined) return
 
-        formObjSet(deepClone(updatePreAlertSchema.parse(sentPreAlert)))
+        formObjSet(deepClone(preAlertSchema.partial().parse(sentPreAlert)))
 
     }, [sentPreAlert])
 
@@ -107,21 +113,27 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
 
             } else {
                 //validate
-                const validatedUpdatedPreAlert = updatePreAlertSchema.parse(formObj)
+                const validatedPreAlert = preAlertSchema.parse(formObj)
+
+                //auth
+                const filteredPreAlert = filterObjByAuth(validatedPreAlert)
 
                 //files
-                validatedUpdatedPreAlert.invoices = await handleWithFiles(validatedUpdatedPreAlert.invoices, invoiceFormData, "invoice", {
-                    delete: async (dbWithFilesObjs) => {
-                        if (sentPreAlert !== undefined) {
-                            await deleteInvoiceOnPreAlert(sentPreAlert.id, dbWithFilesObjs, { crud: "d" })
+                if (filteredPreAlert.invoices !== undefined) {
+                    filteredPreAlert.invoices = await handleWithFiles(filteredPreAlert.invoices, invoiceFormData, "invoice", {
+                        delete: async (dbWithFilesObjs) => {
+                            if (sentPreAlert !== undefined) {
+                                await deleteInvoiceOnPreAlert(sentPreAlert.id, dbWithFilesObjs, { crud: "d" })
+                            }
                         }
-                    }
-                })
+                    })
+                }
 
                 //update
-                await updatePreAlert(sentPreAlert.id, validatedUpdatedPreAlert, { crud: "u" })
+                await updatePreAlert(sentPreAlert.id, filteredPreAlert, { crud: "uo", resourceId: sentPreAlert.id })
 
-                formObjSet(validatedUpdatedPreAlert)
+                // might not need
+                // formObjSet(filteredPreAlert)
 
                 toast.success("pre alert updated")
             }
@@ -135,6 +147,7 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
         }
     }
 
+    console.log(`$authTableView`, authTableView);
     return (
         <form className={styles.form} action={() => { }}>
             {session !== null && session.user.role !== "customer" && formObj.userId !== undefined && (
@@ -311,6 +324,31 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
                         })
                     }}
                 />
+            )}
+
+            {formObj.id !== undefined && (
+                <>
+                    <TextInput
+                        name={"id"}
+                        value={formObj.id}
+                        type={"text"}
+                        label={"id"}
+                        placeHolder={"enter id"}
+                        disabled={!authTableView["id"]}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            formObjSet(prevFormObj => {
+                                const newFormObj = { ...prevFormObj }
+                                if (newFormObj.id === undefined) return prevFormObj
+
+                                newFormObj.id = e.target.value
+
+                                return newFormObj
+                            })
+                        }}
+                        onBlur={() => { checkIfValid(formObj, "id") }}
+                        errors={formErrors["id"]}
+                    />
+                </>
             )}
 
             <button className='button1' style={{ justifySelf: "center" }}

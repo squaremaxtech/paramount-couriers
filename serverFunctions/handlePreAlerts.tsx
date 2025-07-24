@@ -1,7 +1,7 @@
 "use server"
 import { db } from "@/db"
 import { preAlerts } from "@/db/schema"
-import { crudType, dbInvoiceType, newPreAlertSchema, newPreAlertType, preAlertSchema, preAlertType, tableFilterTypes, updatePreAlertSchema, wantedCrudObjType } from "@/types"
+import { dbInvoiceType, newPreAlertSchema, newPreAlertType, preAlertSchema, preAlertType, tableFilterTypes, wantedCrudObjType } from "@/types"
 import { and, desc, eq, SQLWrapper } from "drizzle-orm"
 import { deleteInvoices } from "./handleDocuments"
 import { ensureCanAccessTable } from "./handleAuth"
@@ -35,6 +35,8 @@ export async function updatePreAlert(preAlertId: preAlertType["id"], updatedPreA
     // invoices
     // acknowledged
 
+    console.log(`$sent updatedPreAlertObj`, JSON.stringify(updatedPreAlertObj, null, 2));
+
     //go over all key values
     const updatedPreAlertObjEntries = Object.entries(updatedPreAlertObj)
 
@@ -55,7 +57,10 @@ export async function updatePreAlert(preAlertId: preAlertType["id"], updatedPreA
 
     const validatedUpdatedPreAlertObj: Partial<preAlertType> = Object.fromEntries(validatedUpdatedPreAlertObjPre.filter(eachEntryArr => eachEntryArr !== null))
 
-    updatePreAlertSchema.partial().parse(validatedUpdatedPreAlertObj)
+    console.log(`$validatedUpdatedPreAlertObj server`, JSON.stringify(validatedUpdatedPreAlertObj, null, 2));
+
+
+    preAlertSchema.partial().parse(validatedUpdatedPreAlertObj)
 
     await db.update(preAlerts)
         .set({
@@ -85,9 +90,11 @@ export async function deleteInvoiceOnPreAlert(preAlertId: preAlertType["id"], db
     await deleteInvoices(dbInvoiceType.map(eachDbInvoiceType => eachDbInvoiceType.file.src))
 }
 
-export async function getSpecificPreAlert(preAlertId: preAlertType["id"], wantedCrudObj: wantedCrudObjType): Promise<preAlertType | undefined> {
-    //auth check
-    await ensureCanAccessTable("preAlerts", wantedCrudObj)
+export async function getSpecificPreAlert(preAlertId: preAlertType["id"], wantedCrudObj: wantedCrudObjType, runAuth = true): Promise<preAlertType | undefined> {
+    if (runAuth) {
+        //auth check
+        await ensureCanAccessTable("preAlerts", wantedCrudObj)
+    }
 
     preAlertSchema.shape.id.parse(preAlertId)
 

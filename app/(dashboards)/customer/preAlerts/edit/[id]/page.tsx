@@ -7,7 +7,7 @@ export default async function Page({ params }: { params: Promise<{ id: preAlertT
     const { id } = await params
 
     //validate
-    const seenPreAlert = await getSpecificPreAlert(id, { crud: "r", resourceId: id })
+    const seenPreAlert = await getSpecificPreAlert(id, { crud: "ro", resourceId: id })
 
     if (seenPreAlert === undefined) return (<p>not seeing specific pre Alert</p>)
 

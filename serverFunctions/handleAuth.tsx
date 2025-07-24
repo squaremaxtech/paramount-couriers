@@ -2,6 +2,7 @@
 import { auth } from "@/auth/auth";
 import { crudType, tableColumns, tableNames, userCrudType, userCrudTypeKeys, userType, wantedCrudObjType } from "@/types";
 import { getSpecificPackage } from "./handlePackages";
+import { getSpecificPreAlert } from "./handlePreAlerts";
 
 const fullAccess: crudType[] = ["c", "r", "u", "d"];
 const read: crudType[] = ["r"];
@@ -130,7 +131,6 @@ const tableAccess: tableAccessType = {
             id: fixedUserCrud,
             userId: fixedUserCrud,
             dateCreated: fixedUserCrud,
-
         },
     },
 
@@ -225,6 +225,10 @@ export async function ensureCanAccessTable<T extends tableNames>(tableName: T, w
 
         } else if (tableName === "preAlerts") {
             //more tables
+            const seenPreAlert = await getSpecificPreAlert(wantedCrudObj.resourceId, { crud: "r" }, false);
+            if (seenPreAlert === undefined) throw new Error(`Resource id not found for ${tableName}`);
+
+            ownershipId = seenPreAlert.userId;
 
         } else {
             throw new Error("Ownership check not implemented for this table");

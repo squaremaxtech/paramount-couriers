@@ -1,3 +1,5 @@
+import { errorZodErrorAsString } from "@/useful/consoleErrorWithToast";
+
 export function deepClone<T>(object: T): T {
     return JSON.parse(JSON.stringify(object))
 }
@@ -31,4 +33,13 @@ export function makeValidFilename(input: string, options: { replacement?: string
         // Replace invalid characters
         .replace(/[<>:"/\\|?*\x00-\x1F]/g, replacement)
         .replace(/[. ]+$/, "")
+}
+
+export async function safeServerErrors(func: () => Promise<void>) {
+    try {
+        await func()
+
+    } catch (error) {
+        return errorZodErrorAsString(error)
+    }
 }
