@@ -4,7 +4,7 @@ import { preAlerts } from "@/db/schema"
 import { dbInvoiceType, newPreAlertSchema, newPreAlertType, preAlertSchema, preAlertType, tableFilterTypes, wantedCrudObjType } from "@/types"
 import { and, desc, eq, SQLWrapper } from "drizzle-orm"
 import { deleteInvoices } from "./handleDocuments"
-import { ensureCanAccessTable } from "./handleAuth"
+import { ensureCanAccessTable, validateTableObjectByAuth } from "./handleAuth"
 
 export async function addPreAlert(newPreAlertObj: newPreAlertType) {
     //auth check
@@ -20,47 +20,12 @@ export async function addPreAlert(newPreAlertObj: newPreAlertType) {
 }
 
 export async function updatePreAlert(preAlertId: preAlertType["id"], updatedPreAlertObj: Partial<preAlertType>, wantedCrudObj: wantedCrudObjType) {
-    //first validate on client
-    //client only sends key value pairs that can be updated
-    //server validates again, shows any errors
-
-    // id;
-    // userId;
-    // dateCreated;
-    // trackingNumber;
+    // eg
     // store;
-    // consignee;
-    // description;
-    // price;
-    // invoices
-    // acknowledged
+    preAlertSchema.partial().parse(updatedPreAlertObj)
 
-    console.log(`$sent updatedPreAlertObj`, JSON.stringify(updatedPreAlertObj, null, 2));
-
-    //go over all key values
-    const updatedPreAlertObjEntries = Object.entries(updatedPreAlertObj)
-
-    const validatedUpdatedPreAlertObjPre = await Promise.all(
-        updatedPreAlertObjEntries.map(async eachEntry => {
-            const eachKey = eachEntry[0] as keyof preAlertType
-            const eachValue = eachEntry[1]
-
-            if (eachKey === "fromUser") return null
-
-            //auth check
-            await ensureCanAccessTable("preAlerts", wantedCrudObj, eachKey)
-
-            //pass validation return info
-            return [eachKey, eachValue]
-        })
-    )
-
-    const validatedUpdatedPreAlertObj: Partial<preAlertType> = Object.fromEntries(validatedUpdatedPreAlertObjPre.filter(eachEntryArr => eachEntryArr !== null))
-
+    const validatedUpdatedPreAlertObj = await validateTableObjectByAuth(updatedPreAlertObj, "preAlerts", wantedCrudObj)
     console.log(`$validatedUpdatedPreAlertObj server`, JSON.stringify(validatedUpdatedPreAlertObj, null, 2));
-
-
-    preAlertSchema.partial().parse(validatedUpdatedPreAlertObj)
 
     await db.update(preAlerts)
         .set({

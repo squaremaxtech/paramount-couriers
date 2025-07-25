@@ -1,4 +1,7 @@
 //To Do
+//one access table function
+//
+//
 //start with small update example - query each object key to see if we can update it
 //keys will be underfined or have a value - if a defned key gets rejected from auth - throw errors
 

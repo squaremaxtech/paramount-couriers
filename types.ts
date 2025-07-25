@@ -48,7 +48,7 @@ export type wantedCrudObjType = {
     resourceId?: string
 }
 
-export type clientSideAuthTableViewType<T> = {
+export type tableAuthViewType<T> = {
     [key in keyof T]?: boolean
 }
 

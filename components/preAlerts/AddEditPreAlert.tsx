@@ -12,13 +12,13 @@ import FormToggleButton from '../formToggleButton/FormToggleButton'
 import { allowedInvoiceFileTypes } from '@/types/uploadTypes'
 import UploadFiles from '../uploadFiles/UploadFiles'
 import { handleWithFiles } from '@/utility/handleWithFiles'
-import useAuthTableView from '../useAuthTableView/UseAuthTableView'
+import useTableAuthView from '../useTableAuthView/UseTableAuthView'
 
 export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { sentPreAlert?: preAlertType, submissionAction?: () => void }) {
     //get pre alert
     //look at each column in pre alert
     //can view or not boolean
-    const { authTableView, filterObjByAuth } = useAuthTableView({ tableName: "preAlerts", wantedCrudObj: { crud: "uo", resourceId: sentPreAlert?.id }, tableRecordObject: sentPreAlert })
+    const { tableAuthView, filterTableObjectByAuth } = useTableAuthView({ tableName: "preAlerts", tableRecordObject: sentPreAlert, wantedCrudObj: { crud: "uo", resourceId: sentPreAlert?.id } })
 
     const initialFormObj: newPreAlertType = {
         userId: "",
@@ -116,7 +116,7 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
                 const validatedPreAlert = preAlertSchema.parse(formObj)
 
                 //auth
-                const filteredPreAlert = filterObjByAuth(validatedPreAlert)
+                const filteredPreAlert = filterTableObjectByAuth(validatedPreAlert)
 
                 //files
                 if (filteredPreAlert.invoices !== undefined) {
@@ -147,7 +147,7 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
         }
     }
 
-    console.log(`$authTableView`, authTableView);
+    console.log(`$tableAuthView`, tableAuthView);
     return (
         <form className={styles.form} action={() => { }}>
             {session !== null && session.user.role !== "customer" && formObj.userId !== undefined && (
@@ -334,7 +334,7 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
                         type={"text"}
                         label={"id"}
                         placeHolder={"enter id"}
-                        disabled={!authTableView["id"]}
+                        disabled={!tableAuthView["id"]}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                             formObjSet(prevFormObj => {
                                 const newFormObj = { ...prevFormObj }
