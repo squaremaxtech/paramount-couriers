@@ -20,23 +20,5 @@ export default function useTableColumnAccess<T extends Object>({ tableName, tabl
 
     }, [])
 
-    //filter not true records - make partial obj
-    function filterTableObjectByColumnAccess<T extends Object>(sentTableRecordObject: T): Partial<T> {
-        const newTableRecordObject = deepClone(sentTableRecordObject)
-
-        //get object
-        Object.entries(tableColumnAccess).map(eachEntry => {
-            const eachKey = eachEntry[0] as keyof Object
-            const eachValue = eachEntry[1]
-
-            //delete values going up to server that are not authorised
-            if (eachValue !== true) {
-                delete newTableRecordObject[eachKey]
-            }
-        })
-
-        return newTableRecordObject
-    }
-
-    return { tableColumnAccess, filterTableObjectByColumnAccess }
+    return { tableColumnAccess }
 }

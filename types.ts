@@ -53,7 +53,8 @@ export type tableColumnAccessType = {
 }
 
 export type ensureCanAccessTableReturnType = {
-    errors?: string,
+    tableErrors?: string,
+    columnErrors?: string,
     tableColumnAccess: tableColumnAccessType
 }
 
@@ -223,8 +224,8 @@ export const preAlertSchema = z.object({
     dateCreated: dateSchma,
 
     userId: z.string().min(1),
-    acknowledged: z.boolean(),
     trackingNumber: z.string().min(1),
+    acknowledged: z.boolean(),
     store: z.string().min(1),
     consignee: z.string().min(1),
     description: z.string().min(1),

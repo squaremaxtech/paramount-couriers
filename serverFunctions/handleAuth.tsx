@@ -130,29 +130,21 @@ const tableAccess: tableAccessType = {
         },
         columnDefaultCrud: {
             admin: fullAccess,
-            employee_regular: ["r"],
-            employee_warehouse: ["r", "u"],
-            employee_elevated: ["r", "u"],
-            employee_supervisor: ["r", "u"],
+            employee_regular: ["c", "r"],
+            employee_warehouse: ["c", "r", "u"],
+            employee_elevated: ["c", "r", "u"],
+            employee_supervisor: ["c", "r", "u"],
             customer: ["c", "ro", "uo", "do"],
         },
         columns: {
             id: fixedUserCrud,
             dateCreated: fixedUserCrud,
-            userId: {//employee admin good, customer na
-                admin: ["r", "u"],
-                employee_regular: ["r", "u"],
-                employee_warehouse: ["r", "u"],
-                employee_elevated: ["r", "u"],
-                employee_supervisor: ["r", "u"],
-                customer: ["ro"],
-            },
             acknowledged: {
-                admin: ["r", "u"],
-                employee_regular: ["r", "u"],
-                employee_warehouse: ["r", "u"],
-                employee_elevated: ["r", "u"],
-                employee_supervisor: ["r", "u"],
+                admin: ["c", "r", "u"],
+                employee_regular: ["c", "r", "u"],
+                employee_warehouse: ["c", "r", "u"],
+                employee_elevated: ["c", "r", "u"],
+                employee_supervisor: ["c", "r", "u"],
                 customer: ["ro"],
             },
         },
@@ -208,7 +200,8 @@ export async function customerCheck() {
 }
 
 export async function ensureCanAccessTable<T extends tableNames>(tableName: T, wantedCrudObj: wantedCrudObjType, columnNames?: tableColumns[T][]): Promise<ensureCanAccessTableReturnType> {
-    const errors: string[] = []
+    const tableErrors: string[] = []
+    const columnErrors: string[] = []
     const tableColumnAccess: tableColumnAccessType = {}
 
     try {
@@ -216,7 +209,7 @@ export async function ensureCanAccessTable<T extends tableNames>(tableName: T, w
 
         const table = tableAccess[tableName];
         if (table === undefined) {
-            errors.push(`No access rules for table '${tableName}'`);
+            tableErrors.push(`No access rules for table '${tableName}'`);
 
         } else {
             const userType = getUserType(session.user);
@@ -229,7 +222,7 @@ export async function ensureCanAccessTable<T extends tableNames>(tableName: T, w
             if (columnNames !== undefined) {
                 columnNames.forEach(eachColumnName => {
                     if (table.columns === undefined) {
-                        errors.push("not seeing columns on table")
+                        columnErrors.push("not seeing columns on table")
 
                     } else {
                         const column = table.columns[eachColumnName];
@@ -253,9 +246,11 @@ export async function ensureCanAccessTable<T extends tableNames>(tableName: T, w
                     if (columnName !== undefined) {
                         //update tableColumnAccess
                         tableColumnAccess[columnName] = false
-                    }
+                        columnErrors.push(`Not able to authorize task on column ${columnName}`);
 
-                    errors.push("Not able to authorize task");
+                    } else {
+                        tableErrors.push("Not able to authorize task on table");
+                    }
 
                 } else {
                     //can access
@@ -269,7 +264,7 @@ export async function ensureCanAccessTable<T extends tableNames>(tableName: T, w
             //check for ownership - co, ro, uo, do
             if (wantedCrudObj.crud.includes("o")) {
                 if (wantedCrudObj.resourceId === undefined) {
-                    errors.push("Not seeing resource ID for ownership check");
+                    tableErrors.push("Not seeing resource ID for ownership check");
 
                 } else {
                     let ownershipId = "";
@@ -278,7 +273,7 @@ export async function ensureCanAccessTable<T extends tableNames>(tableName: T, w
                     if (tableName === "packages") {
                         const seenPackage = await getSpecificPackage(parseInt(wantedCrudObj.resourceId));
                         if (seenPackage === undefined) {
-                            errors.push(`Resource id not found for ${tableName}`);
+                            tableErrors.push(`Resource id not found for ${tableName}`);
 
                         } else {
                             ownershipId = seenPackage.userId;
@@ -288,27 +283,28 @@ export async function ensureCanAccessTable<T extends tableNames>(tableName: T, w
                         //more tables
                         const seenPreAlert = await getSpecificPreAlert(wantedCrudObj.resourceId, { crud: "r" }, false);
                         if (seenPreAlert === undefined) {
-                            errors.push(`Resource id not found for ${tableName}`);
+                            tableErrors.push(`Resource id not found for ${tableName}`);
 
                         } else {
                             ownershipId = seenPreAlert.userId;
                         }
 
                     } else {
-                        errors.push("Ownership check not implemented for this table");
+                        tableErrors.push("Ownership check not implemented for this table");
                     }
 
-                    if (session.user.id !== ownershipId) errors.push("Not authorized as owner");
+                    if (session.user.id !== ownershipId) tableErrors.push("Not authorized as owner");
                 }
             }
         }
 
     } catch (error) {
-        errors.push(errorZodErrorAsString(error))
+        tableErrors.push(errorZodErrorAsString(error))
     }
 
     return {
-        errors: errors.length > 0 ? errors.join(", ") : undefined,
+        tableErrors: tableErrors.length > 0 ? tableErrors.join(", ") : undefined,
+        columnErrors: columnErrors.length > 0 ? columnErrors.join(", ") : undefined,
         tableColumnAccess: tableColumnAccess
     }
 }

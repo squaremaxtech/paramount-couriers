@@ -13,35 +13,17 @@ import { allowedInvoiceFileTypes } from '@/types/uploadTypes'
 import UploadFiles from '../uploadFiles/UploadFiles'
 import { handleWithFiles } from '@/utility/handleWithFiles'
 import useTableColumnAccess from '../useTableColumnAccess/UseTableColumnAccess'
+import { filterTableObjectByColumnAccess } from '@/useful/usefulFunctions'
+import { initialNewPreAlertFormObj } from '@/lib/initialFormData'
 
 export default function AddEditPreAlert({ sentPreAlert, wantedCrudObj, submissionAction }: { sentPreAlert?: preAlertType, wantedCrudObj: wantedCrudObjType, submissionAction?: () => void }) {
-    //who can create the columns
-    //who can edit it
+    //make validation function that uses inital formObj replace if not allowed
+    //maybe just check on server
 
-    //take values from client
-    //but dont show em options
-
-    //define who can "c" for each of these key value pairs
-    //if cant c then use default provided by db
-    //that means make undefined
-    //if on server and not getting expected results. e.g userId
-    //then add the user id
-
-    const initialFormObj: newPreAlertType = {
-        userId: "",
-        trackingNumber: "",
-        store: "",
-        consignee: "",
-        description: "",
-        price: "0.00",
-        invoices: [],
-        acknowledged: false
-    }
-
-    const [formObj, formObjSet] = useState<Partial<preAlertType>>(deepClone(sentPreAlert === undefined ? initialFormObj : preAlertSchema.partial().parse(sentPreAlert)))
+    const [formObj, formObjSet] = useState<Partial<preAlertType>>(deepClone(sentPreAlert === undefined ? initialNewPreAlertFormObj : preAlertSchema.partial().parse(sentPreAlert)))
 
     const { data: session } = useSession()
-    const { tableColumnAccess, filterTableObjectByColumnAccess } = useTableColumnAccess({ tableName: "preAlerts", tableRecordObject: formObj, wantedCrudObj: wantedCrudObj })
+    const { tableColumnAccess } = useTableColumnAccess({ tableName: "preAlerts", tableRecordObject: formObj, wantedCrudObj: wantedCrudObj })
 
     const [invoiceFormData, invoiceFormDataSet] = useState<FormData | null>(null)
 
@@ -104,31 +86,31 @@ export default function AddEditPreAlert({ sentPreAlert, wantedCrudObj, submissio
 
             //new preAlert
             if (sentPreAlert === undefined) {
-                const filteredPreAlert = filterTableObjectByColumnAccess(formObj)
+                //validate - replace with initial defaults if no access to "c"
+                const filteredPreAlert = filterTableObjectByColumnAccess(tableColumnAccess, formObj, initialNewPreAlertFormObj)
 
                 //files
                 if (filteredPreAlert.invoices !== undefined) {
                     filteredPreAlert.invoices = await handleWithFiles(filteredPreAlert.invoices, invoiceFormData, "invoice")
                 }
 
-                //validate
                 const validatedNewPreAlert = newPreAlertSchema.parse(filteredPreAlert)
 
                 //send up to server
-                await addPreAlert(validatedNewPreAlert, wantedCrudObj)
+                await addPreAlert(validatedNewPreAlert)
 
                 toast.success("submitted")
 
                 //reset
                 invoiceFormDataSet(null)
-                formObjSet(deepClone(initialFormObj))
+                formObjSet(deepClone(initialNewPreAlertFormObj))
 
             } else {
                 //validate
                 const validatedPreAlert = preAlertSchema.parse(formObj)
 
                 //auth
-                const filteredPreAlert = filterTableObjectByColumnAccess(validatedPreAlert)
+                const filteredPreAlert = filterTableObjectByColumnAccess(tableColumnAccess, validatedPreAlert)
 
                 //files
                 if (filteredPreAlert.invoices !== undefined) {
@@ -158,13 +140,12 @@ export default function AddEditPreAlert({ sentPreAlert, wantedCrudObj, submissio
 
     return (
         <form className={styles.form} action={() => { }}>
-            {formObj.userId !== undefined && tableColumnAccess["userId"] && (
+            {formObj.userId !== undefined && tableColumnAccess["userId"] && session !== null && session.user.role !== "customer" && (//+ special rule for userId
                 <>
                     <TextInput
                         name={"userId"}
                         value={formObj.userId}
                         type={"text"}
-                        disabled={!tableColumnAccess["userId"]}
                         label={"user id"}
                         placeHolder={"enter user id"}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -181,27 +162,28 @@ export default function AddEditPreAlert({ sentPreAlert, wantedCrudObj, submissio
                         errors={formErrors["userId"]}
                     />
 
-                    {formObj.acknowledged !== undefined && (
-                        <>
-                            <FormToggleButton
-                                label='pre alert acknowledged?'
-                                onClick={() => {
-                                    if (!tableColumnAccess["acknowledged"]) return
+                </>
+            )}
 
-                                    formObjSet(prevFormObj => {
-                                        const newFormObj = { ...prevFormObj }
-                                        if (newFormObj.acknowledged === undefined) return prevFormObj
+            {formObj.acknowledged !== undefined && tableColumnAccess["acknowledged"] && (
+                <>
+                    <FormToggleButton
+                        label='pre alert acknowledged?'
+                        onClick={() => {
+                            if (!tableColumnAccess["acknowledged"]) return
 
-                                        newFormObj.acknowledged = !newFormObj.acknowledged
+                            formObjSet(prevFormObj => {
+                                const newFormObj = { ...prevFormObj }
+                                if (newFormObj.acknowledged === undefined) return prevFormObj
 
-                                        return newFormObj
-                                    })
-                                }}
-                                value={formObj.acknowledged}
-                                errors={formErrors["acknowledged"]}
-                            />
-                        </>
-                    )}
+                                newFormObj.acknowledged = !newFormObj.acknowledged
+
+                                return newFormObj
+                            })
+                        }}
+                        value={formObj.acknowledged}
+                        errors={formErrors["acknowledged"]}
+                    />
                 </>
             )}
 
@@ -211,7 +193,6 @@ export default function AddEditPreAlert({ sentPreAlert, wantedCrudObj, submissio
                         name={"trackingNumber"}
                         value={formObj.trackingNumber}
                         type={"text"}
-                        disabled={!tableColumnAccess["trackingNumber"]}
                         label={"tracking number"}
                         placeHolder={"enter tracking number"}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -230,13 +211,12 @@ export default function AddEditPreAlert({ sentPreAlert, wantedCrudObj, submissio
                 </>
             )}
 
-            {formObj.store !== undefined && (
+            {formObj.store !== undefined && tableColumnAccess["store"] && (
                 <>
                     <TextInput
                         name={"store"}
                         value={formObj.store}
                         type={"text"}
-                        disabled={!tableColumnAccess["store"]}
                         label={"store"}
                         placeHolder={"enter store"}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -255,13 +235,12 @@ export default function AddEditPreAlert({ sentPreAlert, wantedCrudObj, submissio
                 </>
             )}
 
-            {formObj.consignee !== undefined && (
+            {formObj.consignee !== undefined && tableColumnAccess["consignee"] && (
                 <>
                     <TextInput
                         name={"consignee"}
                         value={formObj.consignee}
                         type={"text"}
-                        disabled={!tableColumnAccess["consignee"]}
                         label={"consignee"}
                         placeHolder={"consignee"}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -280,13 +259,12 @@ export default function AddEditPreAlert({ sentPreAlert, wantedCrudObj, submissio
                 </>
             )}
 
-            {formObj.description !== undefined && (
+            {formObj.description !== undefined && tableColumnAccess["description"] && (
                 <>
                     <TextInput
                         name={"description"}
                         value={formObj.description}
                         type={"text"}
-                        disabled={!tableColumnAccess["description"]}
                         label={"description"}
                         placeHolder={"enter description"}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {

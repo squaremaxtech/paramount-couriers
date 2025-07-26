@@ -6,18 +6,30 @@ import { and, desc, eq, SQLWrapper } from "drizzle-orm"
 import { deleteInvoices } from "./handleDocuments"
 import { ensureCanAccessTable } from "./handleAuth"
 import { handleEnsureCanAccessTableResults } from "@/utility/utility"
+import { filterTableObjectByColumnAccess } from "@/useful/usefulFunctions"
+import { initialNewPreAlertFormObj } from "@/lib/initialFormData"
 
-export async function addPreAlert(newPreAlertObj: newPreAlertType, wantedCrudObj: wantedCrudObjType) {
+export async function addPreAlert(newPreAlertObj: newPreAlertType) {
     //auth check
-    const accessTableResults = await ensureCanAccessTable("preAlerts", wantedCrudObj, Object.keys(newPreAlertObj) as tableColumns["preAlerts"][])
-    handleEnsureCanAccessTableResults(accessTableResults)
+    //possibility
+    //client already replaced with default values
+    //server validates
+    //also replaces with default values if doesn't match
+    //validate full new preAlert
+
+    //repond to table errors only, if column errors just replace with original object
+    const accessTableResults = await ensureCanAccessTable("preAlerts", { crud: "c" }, Object.keys(newPreAlertObj) as tableColumns["preAlerts"][])
+    handleEnsureCanAccessTableResults(accessTableResults, "table")
+
+    //validate on server as well - if no rights then it'll replace
+    const filteredPreAlert = filterTableObjectByColumnAccess(accessTableResults.tableColumnAccess, newPreAlertObj, initialNewPreAlertFormObj)
 
     //validation
-    newPreAlertSchema.parse(newPreAlertObj)
+    const validatedPreAlert = newPreAlertSchema.parse(filteredPreAlert)
 
     //add new request
     await db.insert(preAlerts).values({
-        ...newPreAlertObj
+        ...validatedPreAlert
     })
 }
 
@@ -27,7 +39,7 @@ export async function updatePreAlert(preAlertId: preAlertType["id"], updatedPreA
 
     //auth
     const accessTableResults = await ensureCanAccessTable("preAlerts", wantedCrudObj, Object.keys(updatedPreAlertObj) as tableColumns["preAlerts"][])
-    handleEnsureCanAccessTableResults(accessTableResults)
+    handleEnsureCanAccessTableResults(accessTableResults, "both")
 
     await db.update(preAlerts)
         .set({
@@ -39,7 +51,7 @@ export async function updatePreAlert(preAlertId: preAlertType["id"], updatedPreA
 export async function deletePreAlert(preAlertId: preAlertType["id"], wantedCrudObj: wantedCrudObjType) {
     //auth check
     const accessTableResults = await ensureCanAccessTable("preAlerts", wantedCrudObj)
-    handleEnsureCanAccessTableResults(accessTableResults)
+    handleEnsureCanAccessTableResults(accessTableResults, "both")
 
     //validation
     preAlertSchema.shape.id.parse(preAlertId)
@@ -53,7 +65,7 @@ export async function deleteInvoiceOnPreAlert(preAlertId: preAlertType["id"], db
 
     //auth check
     const accessTableResults = await ensureCanAccessTable("preAlerts", wantedCrudObj)
-    handleEnsureCanAccessTableResults(accessTableResults)
+    handleEnsureCanAccessTableResults(accessTableResults, "both")
 
     //delete from folder
     await deleteInvoices(dbInvoiceType.map(eachDbInvoiceType => eachDbInvoiceType.file.src))
@@ -63,7 +75,7 @@ export async function getSpecificPreAlert(preAlertId: preAlertType["id"], wanted
     if (runAuth) {
         //auth check
         const accessTableResults = await ensureCanAccessTable("preAlerts", wantedCrudObj)
-        handleEnsureCanAccessTableResults(accessTableResults)
+        handleEnsureCanAccessTableResults(accessTableResults, "both")
     }
 
     preAlertSchema.shape.id.parse(preAlertId)
@@ -78,7 +90,7 @@ export async function getSpecificPreAlert(preAlertId: preAlertType["id"], wanted
 export async function getPreAlerts(filter: tableFilterTypes<preAlertType>, wantedCrudObj: wantedCrudObjType, limit = 50, offset = 0): Promise<preAlertType[]> {
     //auth check
     const accessTableResults = await ensureCanAccessTable("preAlerts", wantedCrudObj)
-    handleEnsureCanAccessTableResults(accessTableResults)
+    handleEnsureCanAccessTableResults(accessTableResults, "both")
 
     // Collect conditions dynamically
     const whereClauses: SQLWrapper[] = []

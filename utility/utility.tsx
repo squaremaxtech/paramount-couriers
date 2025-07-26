@@ -45,8 +45,16 @@ export async function safeServerErrors(func: () => Promise<void>) {
     }
 }
 
-export function handleEnsureCanAccessTableResults(ensureCanAccessTableReturn: ensureCanAccessTableReturnType) {
-    if (ensureCanAccessTableReturn.errors !== undefined) throw new Error(`${ensureCanAccessTableReturn.errors}`)
+export function handleEnsureCanAccessTableResults(ensureCanAccessTableReturn: ensureCanAccessTableReturnType, option: "table" | "column" | "both") {
+    if (option === "both" && ((ensureCanAccessTableReturn.columnErrors !== undefined) || (ensureCanAccessTableReturn.columnErrors !== undefined))) {
+        throw new Error(`${ensureCanAccessTableReturn.tableErrors} ${ensureCanAccessTableReturn.columnErrors}`)
+
+    } else if (option === "table" && ensureCanAccessTableReturn.tableErrors !== undefined) {
+        throw new Error(ensureCanAccessTableReturn.tableErrors)
+
+    } else if (option === "column" && ensureCanAccessTableReturn.columnErrors !== undefined) {
+        throw new Error(ensureCanAccessTableReturn.columnErrors)
+    }
 
     return ensureCanAccessTableReturn.tableColumnAccess
 }
