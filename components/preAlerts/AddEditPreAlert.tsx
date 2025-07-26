@@ -12,13 +12,13 @@ import FormToggleButton from '../formToggleButton/FormToggleButton'
 import { allowedInvoiceFileTypes } from '@/types/uploadTypes'
 import UploadFiles from '../uploadFiles/UploadFiles'
 import { handleWithFiles } from '@/utility/handleWithFiles'
-import useTableAuthView from '../useTableAuthView/UseTableAuthView'
+import useTableColumnAccess from '../useTableColumnAccess/UseTableColumnAccess'
 
 export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { sentPreAlert?: preAlertType, submissionAction?: () => void }) {
     //get pre alert
     //look at each column in pre alert
     //can view or not boolean
-    const { tableAuthView, filterTableObjectByAuth } = useTableAuthView({ tableName: "preAlerts", tableRecordObject: sentPreAlert, wantedCrudObj: { crud: "uo", resourceId: sentPreAlert?.id } })
+    const { tableColumnAccess, filterTableObjectByColumnAccess } = useTableColumnAccess({ tableName: "preAlerts", tableRecordObject: sentPreAlert, wantedCrudObj: { crud: "uo", resourceId: sentPreAlert?.id } })
 
     const initialFormObj: newPreAlertType = {
         userId: "",
@@ -116,7 +116,7 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
                 const validatedPreAlert = preAlertSchema.parse(formObj)
 
                 //auth
-                const filteredPreAlert = filterTableObjectByAuth(validatedPreAlert)
+                const filteredPreAlert = filterTableObjectByColumnAccess(validatedPreAlert)
 
                 //files
                 if (filteredPreAlert.invoices !== undefined) {
@@ -132,9 +132,6 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
                 //update
                 await updatePreAlert(sentPreAlert.id, filteredPreAlert, { crud: "uo", resourceId: sentPreAlert.id })
 
-                // might not need
-                // formObjSet(filteredPreAlert)
-
                 toast.success("pre alert updated")
             }
 
@@ -147,7 +144,8 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
         }
     }
 
-    console.log(`$tableAuthView`, tableAuthView);
+    console.log(`$tableColumnAccess`, tableColumnAccess);
+
     return (
         <form className={styles.form} action={() => { }}>
             {session !== null && session.user.role !== "customer" && formObj.userId !== undefined && (
@@ -334,7 +332,7 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
                         type={"text"}
                         label={"id"}
                         placeHolder={"enter id"}
-                        disabled={!tableAuthView["id"]}
+                        disabled={!tableColumnAccess["id"]}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                             formObjSet(prevFormObj => {
                                 const newFormObj = { ...prevFormObj }

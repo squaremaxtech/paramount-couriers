@@ -1,3 +1,4 @@
+import { ensureCanAccessTableReturnType } from "@/types";
 import { errorZodErrorAsString } from "@/useful/consoleErrorWithToast";
 
 export function deepClone<T>(object: T): T {
@@ -42,4 +43,10 @@ export async function safeServerErrors(func: () => Promise<void>) {
     } catch (error) {
         return errorZodErrorAsString(error)
     }
+}
+
+export function handleEnsureCanAccessTableResults(ensureCanAccessTableReturn: ensureCanAccessTableReturnType) {
+    if (ensureCanAccessTableReturn.errors !== undefined) throw new Error(`${ensureCanAccessTableReturn.errors}`)
+
+    return ensureCanAccessTableReturn.tableColumnAccess
 }

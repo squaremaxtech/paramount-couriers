@@ -1,14 +1,16 @@
 "use server"
 import { db } from "@/db"
 import { preAlerts } from "@/db/schema"
-import { dbInvoiceType, newPreAlertSchema, newPreAlertType, preAlertSchema, preAlertType, tableFilterTypes, wantedCrudObjType } from "@/types"
+import { dbInvoiceType, newPreAlertSchema, newPreAlertType, preAlertSchema, preAlertType, tableColumns, tableFilterTypes, tableNames, wantedCrudObjType } from "@/types"
 import { and, desc, eq, SQLWrapper } from "drizzle-orm"
 import { deleteInvoices } from "./handleDocuments"
-import { ensureCanAccessTable, validateTableObjectByAuth } from "./handleAuth"
+import { ensureCanAccessTable } from "./handleAuth"
+import { handleEnsureCanAccessTableResults } from "@/utility/utility"
 
 export async function addPreAlert(newPreAlertObj: newPreAlertType) {
     //auth check
-    await ensureCanAccessTable("preAlerts", { crud: 'c' })
+    const accessTableResults = await ensureCanAccessTable("preAlerts", { crud: 'c' })
+    handleEnsureCanAccessTableResults(accessTableResults)
 
     //validation
     newPreAlertSchema.parse(newPreAlertObj)
@@ -20,23 +22,24 @@ export async function addPreAlert(newPreAlertObj: newPreAlertType) {
 }
 
 export async function updatePreAlert(preAlertId: preAlertType["id"], updatedPreAlertObj: Partial<preAlertType>, wantedCrudObj: wantedCrudObjType) {
-    // eg
-    // store;
+    //validation
     preAlertSchema.partial().parse(updatedPreAlertObj)
 
-    const validatedUpdatedPreAlertObj = await validateTableObjectByAuth(updatedPreAlertObj, "preAlerts", wantedCrudObj)
-    console.log(`$validatedUpdatedPreAlertObj server`, JSON.stringify(validatedUpdatedPreAlertObj, null, 2));
+    //auth
+    const accessTableResults = await ensureCanAccessTable("preAlerts", wantedCrudObj, Object.keys(updatedPreAlertObj) as tableColumns["preAlerts"][])
+    handleEnsureCanAccessTableResults(accessTableResults)
 
     await db.update(preAlerts)
         .set({
-            ...validatedUpdatedPreAlertObj
+            ...updatedPreAlertObj
         })
         .where(eq(preAlerts.id, preAlertId));
 }
 
 export async function deletePreAlert(preAlertId: preAlertType["id"], wantedCrudObj: wantedCrudObjType) {
     //auth check
-    await ensureCanAccessTable("preAlerts", wantedCrudObj)
+    const accessTableResults = await ensureCanAccessTable("preAlerts", wantedCrudObj)
+    handleEnsureCanAccessTableResults(accessTableResults)
 
     //validation
     preAlertSchema.shape.id.parse(preAlertId)
@@ -49,7 +52,8 @@ export async function deleteInvoiceOnPreAlert(preAlertId: preAlertType["id"], db
     preAlertSchema.shape.id.parse(preAlertId)
 
     //auth check
-    await ensureCanAccessTable("preAlerts", wantedCrudObj)
+    const accessTableResults = await ensureCanAccessTable("preAlerts", wantedCrudObj)
+    handleEnsureCanAccessTableResults(accessTableResults)
 
     //delete from folder
     await deleteInvoices(dbInvoiceType.map(eachDbInvoiceType => eachDbInvoiceType.file.src))
@@ -58,7 +62,8 @@ export async function deleteInvoiceOnPreAlert(preAlertId: preAlertType["id"], db
 export async function getSpecificPreAlert(preAlertId: preAlertType["id"], wantedCrudObj: wantedCrudObjType, runAuth = true): Promise<preAlertType | undefined> {
     if (runAuth) {
         //auth check
-        await ensureCanAccessTable("preAlerts", wantedCrudObj)
+        const accessTableResults = await ensureCanAccessTable("preAlerts", wantedCrudObj)
+        handleEnsureCanAccessTableResults(accessTableResults)
     }
 
     preAlertSchema.shape.id.parse(preAlertId)
@@ -72,7 +77,8 @@ export async function getSpecificPreAlert(preAlertId: preAlertType["id"], wanted
 
 export async function getPreAlerts(filter: tableFilterTypes<preAlertType>, wantedCrudObj: wantedCrudObjType, limit = 50, offset = 0): Promise<preAlertType[]> {
     //auth check
-    await ensureCanAccessTable("preAlerts", wantedCrudObj)
+    const accessTableResults = await ensureCanAccessTable("preAlerts", wantedCrudObj)
+    handleEnsureCanAccessTableResults(accessTableResults)
 
     // Collect conditions dynamically
     const whereClauses: SQLWrapper[] = []

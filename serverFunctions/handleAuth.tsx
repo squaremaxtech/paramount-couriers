@@ -1,8 +1,9 @@
 "use server";
 import { auth } from "@/auth/auth";
-import { crudType, tableColumns, tableNames, userCrudType, userCrudTypeKeys, userType, wantedCrudObjType } from "@/types";
+import { crudType, ensureCanAccessTableReturnType, tableColumnAccessType, tableColumns, tableNames, userCrudType, userCrudTypeKeys, userType, wantedCrudObjType } from "@/types";
 import { getSpecificPackage } from "./handlePackages";
 import { getSpecificPreAlert } from "./handlePreAlerts";
+import { errorZodErrorAsString } from "@/useful/consoleErrorWithToast";
 
 const fullAccess: crudType[] = ["c", "r", "u", "d"];
 const read: crudType[] = ["r"];
@@ -184,7 +185,7 @@ export async function customerCheck() {
 }
 
 
-export async function ensureCanAccessTable<T extends tableNames>(tableName: T, wantedCrudObj: wantedCrudObjType, columnName?: tableColumns[T]
+export async function ensureCanAccessTableOld<T extends tableNames>(tableName: T, wantedCrudObj: wantedCrudObjType, columnName?: tableColumns[T]
 ) {
     const session = await sessionCheck();
 
@@ -253,74 +254,98 @@ export async function ensureCanAccessTable<T extends tableNames>(tableName: T, w
 
 
 
+export async function ensureCanAccessTable<T extends tableNames>(tableName: T, wantedCrudObj: wantedCrudObjType, columnNames?: tableColumns[T][]): Promise<ensureCanAccessTableReturnType> {
+    const errors: string[] = []
 
+    const tableColumnAccess: tableColumnAccessType = {}
 
-export async function ensureCanAccessTableUp<T extends tableNames>(tableName: T, wantedCrudObj: wantedCrudObjType, columnNames?: tableColumns[T][]
-) {
-    const session = await sessionCheck();
+    try {
+        const session = await sessionCheck();
 
-    const table = tableAccess[tableName];
-    if (table === undefined) throw new Error(`No access rules for table '${tableName}'`);
+        const table = tableAccess[tableName];
+        if (table === undefined) throw new Error(`No access rules for table '${tableName}'`);
 
-    const userType = getUserType(session.user);
-    let userCrud: crudType[] | null = null;
+        const userType = getUserType(session.user);
+        let userCrud: crudType[] | null = null;
 
-    //validate user crud found for table alone
-    //if column names passed - go over each of them and ensure we can access - return a list of yes no for column names
+        //validate user crud found for table alone
+        //if column names passed - go over each of them and ensure we can access - return a list of yes no for column names
 
-    //column access list
-    if (columnNames !== undefined) {
-        columnNames.forEach(eachColumnName => {
-            if (table.columns === undefined) throw new Error("not seeing columns on table")
+        //column access list
+        if (columnNames !== undefined) {
+            columnNames.forEach(eachColumnName => {
+                if (table.columns === undefined) throw new Error("not seeing columns on table")
 
-            const column = table.columns[eachColumnName];
-            userCrud = column === undefined ? table.columnDefaultCrud[userType] : column[userType]
+                const column = table.columns[eachColumnName];
+                userCrud = column === undefined ? table.columnDefaultCrud[userType] : column[userType]
 
-            //verify with column names
-            validateUserCrud(userCrud)
-        })
-
-    } else {
-        //table access list
-        userCrud = table.tableCrud[userType];
-
-        validateUserCrud(userCrud)
-    }
-
-    function validateUserCrud(userCrud: crudType[]) {
-        //if can't access crud type
-        if (!userCrud.includes(wantedCrudObj.crud)) {
-            throw new Error("Not able to authorize task");
-        }
-    }
-
-
-
-    //check for ownership - co, ro, uo, do
-    if (wantedCrudObj.crud.includes("o")) {
-        if (wantedCrudObj.resourceId === undefined) throw new Error("Not seeing resource ID for ownership check");
-
-        let ownershipId = "";
-
-        //owenrship check on packages table e.g
-        if (tableName === "packages") {
-            const seenPackage = await getSpecificPackage(parseInt(wantedCrudObj.resourceId));
-            if (seenPackage === undefined) throw new Error(`Resource id not found for ${tableName}`);
-
-            ownershipId = seenPackage.userId;
-
-        } else if (tableName === "preAlerts") {
-            //more tables
-            const seenPreAlert = await getSpecificPreAlert(wantedCrudObj.resourceId, { crud: "r" }, false);
-            if (seenPreAlert === undefined) throw new Error(`Resource id not found for ${tableName}`);
-
-            ownershipId = seenPreAlert.userId;
+                //verify with column names
+                validateUserCrud(userCrud, eachColumnName)
+            })
 
         } else {
-            throw new Error("Ownership check not implemented for this table");
+            //table access list
+            userCrud = table.tableCrud[userType];
+
+            validateUserCrud(userCrud)
         }
 
-        if (session.user.id !== ownershipId) throw new Error("Not authorized as owner");
+        function validateUserCrud(userCrud: crudType[], columnName?: tableColumns[T]) {
+            //if can't access crud type
+            if (!userCrud.includes(wantedCrudObj.crud)) {
+                //can access
+                if (columnName !== undefined) {
+                    //update columnNameAccess
+                    tableColumnAccess[columnName] = false
+                    errors.push(`Not able to ${wantedCrudObj.crud} on ${tableName}: ${columnName}`)
+
+                } else {
+                    throw new Error("Not able to authorize task");
+                }
+
+            } else {
+                //can access
+                if (columnName !== undefined) {
+                    //update columnNameAccess
+                    tableColumnAccess[columnName] = true
+                }
+            }
+        }
+
+        //check for ownership - co, ro, uo, do
+        if (wantedCrudObj.crud.includes("o")) {
+            if (wantedCrudObj.resourceId === undefined) throw new Error("Not seeing resource ID for ownership check");
+
+            let ownershipId = "";
+
+            //owenrship check on packages table e.g
+            if (tableName === "packages") {
+                const seenPackage = await getSpecificPackage(parseInt(wantedCrudObj.resourceId));
+                if (seenPackage === undefined) throw new Error(`Resource id not found for ${tableName}`);
+
+                ownershipId = seenPackage.userId;
+
+            } else if (tableName === "preAlerts") {
+                //more tables
+                const seenPreAlert = await getSpecificPreAlert(wantedCrudObj.resourceId, { crud: "r" }, false);
+                if (seenPreAlert === undefined) throw new Error(`Resource id not found for ${tableName}`);
+
+                ownershipId = seenPreAlert.userId;
+
+            } else {
+                throw new Error("Ownership check not implemented for this table");
+            }
+
+            if (session.user.id !== ownershipId) throw new Error("Not authorized as owner");
+        }
+
+    } catch (error) {
+        errors.push(errorZodErrorAsString(error))
+    }
+
+    return {
+        errors: errors.length > 0 ? errors.join(", ") : undefined,
+        tableColumnAccess: tableColumnAccess
     }
 }
 
@@ -345,24 +370,4 @@ function getUserType(user: userType): userCrudTypeKeys {
     return user.role === "employee"
         ? `${user.role}_${user.accessLevel}` as userCrudTypeKeys
         : user.role;
-}
-
-//filter not true records - make partial obj
-export async function validateTableObjectByAuth<T extends Object>(sentTableRecordObject: T, tableName: tableNames, wantedCrudObj: wantedCrudObjType): Promise<T> {
-    const objEntries = Object.entries(sentTableRecordObject)
-    const validatedObjEntries = await Promise.all(
-        objEntries.map(async eachEntry => {
-            const eachKey = eachEntry[0] as keyof Object
-            const eachValue = eachEntry[1]
-
-            //auth check
-            await ensureCanAccessTable(tableName, wantedCrudObj, eachKey as tableColumns[tableNames])
-
-            //pass validation return info
-            return [eachKey, eachValue]
-        })
-    )
-    const validatedObj: T = Object.fromEntries(validatedObjEntries)
-
-    return validatedObj
 }

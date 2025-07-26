@@ -48,8 +48,13 @@ export type wantedCrudObjType = {
     resourceId?: string
 }
 
-export type tableAuthViewType<T> = {
-    [key in keyof T]?: boolean
+export type tableColumnAccessType = {
+    [key in tableColumns[tableNames]]?: boolean
+}
+
+export type ensureCanAccessTableReturnType = {
+    errors?: string,
+    tableColumnAccess: tableColumnAccessType
 }
 
 
