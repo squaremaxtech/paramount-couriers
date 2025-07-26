@@ -144,8 +144,6 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
         }
     }
 
-    console.log(`$tableColumnAccess`, tableColumnAccess);
-
     return (
         <form className={styles.form} action={() => { }}>
             {session !== null && session.user.role !== "customer" && formObj.userId !== undefined && (
@@ -154,6 +152,7 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
                         name={"userId"}
                         value={formObj.userId}
                         type={"text"}
+                        disabled={!tableColumnAccess["userId"]}
                         label={"user id"}
                         placeHolder={"enter user id"}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -175,6 +174,8 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
                             <FormToggleButton
                                 label='pre alert acknowledged?'
                                 onClick={() => {
+                                    if (!tableColumnAccess["acknowledged"]) return
+
                                     formObjSet(prevFormObj => {
                                         const newFormObj = { ...prevFormObj }
                                         if (newFormObj.acknowledged === undefined) return prevFormObj
@@ -198,6 +199,7 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
                         name={"trackingNumber"}
                         value={formObj.trackingNumber}
                         type={"text"}
+                        disabled={!tableColumnAccess["trackingNumber"]}
                         label={"tracking number"}
                         placeHolder={"enter tracking number"}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -222,6 +224,7 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
                         name={"store"}
                         value={formObj.store}
                         type={"text"}
+                        disabled={!tableColumnAccess["store"]}
                         label={"store"}
                         placeHolder={"enter store"}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -246,6 +249,7 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
                         name={"consignee"}
                         value={formObj.consignee}
                         type={"text"}
+                        disabled={!tableColumnAccess["consignee"]}
                         label={"consignee"}
                         placeHolder={"consignee"}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -270,6 +274,7 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
                         name={"description"}
                         value={formObj.description}
                         type={"text"}
+                        disabled={!tableColumnAccess["description"]}
                         label={"description"}
                         placeHolder={"enter description"}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -288,7 +293,7 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
                 </>
             )}
 
-            {formObj.invoices !== undefined && (
+            {formObj.invoices !== undefined && tableColumnAccess["invoices"] && (
                 <UploadFiles
                     accept='.pdf,.doc,.docx,.txt'
                     allowedFileTypes={allowedInvoiceFileTypes}
@@ -322,31 +327,6 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
                         })
                     }}
                 />
-            )}
-
-            {formObj.id !== undefined && (
-                <>
-                    <TextInput
-                        name={"id"}
-                        value={formObj.id}
-                        type={"text"}
-                        label={"id"}
-                        placeHolder={"enter id"}
-                        disabled={!tableColumnAccess["id"]}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                            formObjSet(prevFormObj => {
-                                const newFormObj = { ...prevFormObj }
-                                if (newFormObj.id === undefined) return prevFormObj
-
-                                newFormObj.id = e.target.value
-
-                                return newFormObj
-                            })
-                        }}
-                        onBlur={() => { checkIfValid(formObj, "id") }}
-                        errors={formErrors["id"]}
-                    />
-                </>
             )}
 
             <button className='button1' style={{ justifySelf: "center" }}

@@ -130,7 +130,6 @@ const tableAccess: tableAccessType = {
         },
         columns: {
             id: fixedUserCrud,
-            userId: fixedUserCrud,
             dateCreated: fixedUserCrud,
         },
     },
@@ -184,159 +183,100 @@ export async function customerCheck() {
     return session;
 }
 
-
-export async function ensureCanAccessTableOld<T extends tableNames>(tableName: T, wantedCrudObj: wantedCrudObjType, columnName?: tableColumns[T]
-) {
-    const session = await sessionCheck();
-
-    const table = tableAccess[tableName];
-    if (table === undefined) throw new Error(`No access rules for table '${tableName}'`);
-
-    const userType = getUserType(session.user);
-    let userCrud: crudType[] | null = null;
-
-    //column access list
-    if (columnName !== undefined) {
-        if (table.columns === undefined) throw new Error("not seeing columns on table")
-
-        const column = table.columns[columnName];
-        userCrud = column === undefined ? table.columnDefaultCrud[userType] : column[userType]
-
-    } else {
-        //table access list
-        userCrud = table.tableCrud[userType];
-    }
-
-    //if can't access crud type
-    if (!userCrud.includes(wantedCrudObj.crud)) {
-        throw new Error("Not able to authorize task");
-    }
-
-    //check for ownership - co, ro, uo, do
-    if (wantedCrudObj.crud.includes("o")) {
-        if (wantedCrudObj.resourceId === undefined) throw new Error("Not seeing resource ID for ownership check");
-
-        let ownershipId = "";
-
-        //owenrship check on packages table e.g
-        if (tableName === "packages") {
-            const seenPackage = await getSpecificPackage(parseInt(wantedCrudObj.resourceId));
-            if (seenPackage === undefined) throw new Error(`Resource id not found for ${tableName}`);
-
-            ownershipId = seenPackage.userId;
-
-        } else if (tableName === "preAlerts") {
-            //more tables
-            const seenPreAlert = await getSpecificPreAlert(wantedCrudObj.resourceId, { crud: "r" }, false);
-            if (seenPreAlert === undefined) throw new Error(`Resource id not found for ${tableName}`);
-
-            ownershipId = seenPreAlert.userId;
-
-        } else {
-            throw new Error("Ownership check not implemented for this table");
-        }
-
-        if (session.user.id !== ownershipId) throw new Error("Not authorized as owner");
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export async function ensureCanAccessTable<T extends tableNames>(tableName: T, wantedCrudObj: wantedCrudObjType, columnNames?: tableColumns[T][]): Promise<ensureCanAccessTableReturnType> {
     const errors: string[] = []
-
     const tableColumnAccess: tableColumnAccessType = {}
 
     try {
         const session = await sessionCheck();
 
         const table = tableAccess[tableName];
-        if (table === undefined) throw new Error(`No access rules for table '${tableName}'`);
-
-        const userType = getUserType(session.user);
-        let userCrud: crudType[] | null = null;
-
-        //validate user crud found for table alone
-        //if column names passed - go over each of them and ensure we can access - return a list of yes no for column names
-
-        //column access list
-        if (columnNames !== undefined) {
-            columnNames.forEach(eachColumnName => {
-                if (table.columns === undefined) throw new Error("not seeing columns on table")
-
-                const column = table.columns[eachColumnName];
-                userCrud = column === undefined ? table.columnDefaultCrud[userType] : column[userType]
-
-                //verify with column names
-                validateUserCrud(userCrud, eachColumnName)
-            })
+        if (table === undefined) {
+            errors.push(`No access rules for table '${tableName}'`);
 
         } else {
-            //table access list
-            userCrud = table.tableCrud[userType];
+            const userType = getUserType(session.user);
+            let userCrud: crudType[] | null = null;
 
-            validateUserCrud(userCrud)
-        }
+            //validate user crud found for table alone
+            //if column names passed - go over each of them and ensure we can access - return a list of yes no for column names
 
-        function validateUserCrud(userCrud: crudType[], columnName?: tableColumns[T]) {
-            //if can't access crud type
-            if (!userCrud.includes(wantedCrudObj.crud)) {
-                //can access
-                if (columnName !== undefined) {
-                    //update columnNameAccess
-                    tableColumnAccess[columnName] = false
-                    errors.push(`Not able to ${wantedCrudObj.crud} on ${tableName}: ${columnName}`)
+            //column access list
+            if (columnNames !== undefined) {
+                columnNames.forEach(eachColumnName => {
+                    if (table.columns === undefined) {
+                        errors.push("not seeing columns on table")
+
+                    } else {
+                        const column = table.columns[eachColumnName];
+                        userCrud = column === undefined ? table.columnDefaultCrud[userType] : column[userType]
+
+                        //verify with column names
+                        validateUserCrud(userCrud, eachColumnName)
+                    }
+                })
+
+            } else {
+                //table access list
+                userCrud = table.tableCrud[userType];
+
+                validateUserCrud(userCrud)
+            }
+
+            function validateUserCrud(userCrud: crudType[], columnName?: tableColumns[T]) {
+                //if can't access crud type
+                if (!userCrud.includes(wantedCrudObj.crud)) {
+                    if (columnName !== undefined) {
+                        //update tableColumnAccess
+                        tableColumnAccess[columnName] = false
+                    }
+
+                    errors.push("Not able to authorize task");
 
                 } else {
-                    throw new Error("Not able to authorize task");
-                }
-
-            } else {
-                //can access
-                if (columnName !== undefined) {
-                    //update columnNameAccess
-                    tableColumnAccess[columnName] = true
+                    //can access
+                    if (columnName !== undefined) {
+                        //update tableColumnAccess
+                        tableColumnAccess[columnName] = true
+                    }
                 }
             }
-        }
 
-        //check for ownership - co, ro, uo, do
-        if (wantedCrudObj.crud.includes("o")) {
-            if (wantedCrudObj.resourceId === undefined) throw new Error("Not seeing resource ID for ownership check");
+            //check for ownership - co, ro, uo, do
+            if (wantedCrudObj.crud.includes("o")) {
+                if (wantedCrudObj.resourceId === undefined) {
+                    errors.push("Not seeing resource ID for ownership check");
 
-            let ownershipId = "";
+                } else {
+                    let ownershipId = "";
 
-            //owenrship check on packages table e.g
-            if (tableName === "packages") {
-                const seenPackage = await getSpecificPackage(parseInt(wantedCrudObj.resourceId));
-                if (seenPackage === undefined) throw new Error(`Resource id not found for ${tableName}`);
+                    //owenrship check on packages table e.g
+                    if (tableName === "packages") {
+                        const seenPackage = await getSpecificPackage(parseInt(wantedCrudObj.resourceId));
+                        if (seenPackage === undefined) {
+                            errors.push(`Resource id not found for ${tableName}`);
 
-                ownershipId = seenPackage.userId;
+                        } else {
+                            ownershipId = seenPackage.userId;
+                        }
 
-            } else if (tableName === "preAlerts") {
-                //more tables
-                const seenPreAlert = await getSpecificPreAlert(wantedCrudObj.resourceId, { crud: "r" }, false);
-                if (seenPreAlert === undefined) throw new Error(`Resource id not found for ${tableName}`);
+                    } else if (tableName === "preAlerts") {
+                        //more tables
+                        const seenPreAlert = await getSpecificPreAlert(wantedCrudObj.resourceId, { crud: "r" }, false);
+                        if (seenPreAlert === undefined) {
+                            errors.push(`Resource id not found for ${tableName}`);
 
-                ownershipId = seenPreAlert.userId;
+                        } else {
+                            ownershipId = seenPreAlert.userId;
+                        }
 
-            } else {
-                throw new Error("Ownership check not implemented for this table");
+                    } else {
+                        errors.push("Ownership check not implemented for this table");
+                    }
+
+                    if (session.user.id !== ownershipId) errors.push("Not authorized as owner");
+                }
             }
-
-            if (session.user.id !== ownershipId) throw new Error("Not authorized as owner");
         }
 
     } catch (error) {
@@ -349,25 +289,63 @@ export async function ensureCanAccessTable<T extends tableNames>(tableName: T, w
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function getUserType(user: userType): userCrudTypeKeys {
     return user.role === "employee"
         ? `${user.role}_${user.accessLevel}` as userCrudTypeKeys
         : user.role;
 }
+
+// export async function ensureCanAccessTableOld<T extends tableNames>(tableName: T, wantedCrudObj: wantedCrudObjType, columnName?: tableColumns[T]
+// ) {
+//     const session = await sessionCheck();
+
+//     const table = tableAccess[tableName];
+//     if (table === undefined) throw new Error(`No access rules for table '${tableName}'`);
+
+//     const userType = getUserType(session.user);
+//     let userCrud: crudType[] | null = null;
+
+//     //column access list
+//     if (columnName !== undefined) {
+//         if (table.columns === undefined) throw new Error("not seeing columns on table")
+
+//         const column = table.columns[columnName];
+//         userCrud = column === undefined ? table.columnDefaultCrud[userType] : column[userType]
+
+//     } else {
+//         //table access list
+//         userCrud = table.tableCrud[userType];
+//     }
+
+//     //if can't access crud type
+//     if (!userCrud.includes(wantedCrudObj.crud)) {
+//         throw new Error("Not able to authorize task");
+//     }
+
+//     //check for ownership - co, ro, uo, do
+//     if (wantedCrudObj.crud.includes("o")) {
+//         if (wantedCrudObj.resourceId === undefined) throw new Error("Not seeing resource ID for ownership check");
+
+//         let ownershipId = "";
+
+//         //owenrship check on packages table e.g
+//         if (tableName === "packages") {
+//             const seenPackage = await getSpecificPackage(parseInt(wantedCrudObj.resourceId));
+//             if (seenPackage === undefined) throw new Error(`Resource id not found for ${tableName}`);
+
+//             ownershipId = seenPackage.userId;
+
+//         } else if (tableName === "preAlerts") {
+//             //more tables
+//             const seenPreAlert = await getSpecificPreAlert(wantedCrudObj.resourceId, { crud: "r" }, false);
+//             if (seenPreAlert === undefined) throw new Error(`Resource id not found for ${tableName}`);
+
+//             ownershipId = seenPreAlert.userId;
+
+//         } else {
+//             throw new Error("Ownership check not implemented for this table");
+//         }
+
+//         if (session.user.id !== ownershipId) throw new Error("Not authorized as owner");
+//     }
+// }

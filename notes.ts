@@ -1,31 +1,22 @@
 //To Do
-//one access table function
-//
-//
-//start with small update example - query each object key to see if we can update it
-//keys will be underfined or have a value - if a defned key gets rejected from auth - throw errors
-
+//change shipping invoice to proper type
 //preAlerts...
 //packages
 ////build user selection...
 ////build pre alert selection / integration
 //customer view packages
-//check validations on getall functions
-//change documents api to files
-//add auth to functions - e.g db delete
-//possibly recreate file management for with files outer objs
-//
+//check validations on detall functions
 
 
 
 
 //Ideas
 
-
 //naming
 //schema - plural
 //type - singular with Type added - e.g userType
 //serverFunctions - handlePlural e.g handleUsers - singular function names - e.g addUser - getAll remains plural - e.g getUsers
+
 
 
 
