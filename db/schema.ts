@@ -71,13 +71,13 @@ export const preAlerts = pgTable("preAlerts", {
     dateCreated: timestamp("dateCreated", { mode: "date" }).notNull().defaultNow(),
 
     userId: text("userId").notNull().references(() => users.id),
+    acknowledged: boolean("acknowledged").notNull(),
     trackingNumber: text("trackingNumber").notNull(),
     store: text("store").notNull(),
     consignee: text("consignee").notNull(),
     description: text("description").notNull(),
     price: decimal("price").notNull(),
     invoices: json("invoices").$type<dbInvoiceType[]>().notNull(),
-    acknowledged: boolean("acknowledged").notNull(),
 },
     (table) => {
         return {

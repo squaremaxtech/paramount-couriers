@@ -7,9 +7,9 @@ import { deleteInvoices } from "./handleDocuments"
 import { ensureCanAccessTable } from "./handleAuth"
 import { handleEnsureCanAccessTableResults } from "@/utility/utility"
 
-export async function addPreAlert(newPreAlertObj: newPreAlertType) {
+export async function addPreAlert(newPreAlertObj: newPreAlertType, wantedCrudObj: wantedCrudObjType) {
     //auth check
-    const accessTableResults = await ensureCanAccessTable("preAlerts", { crud: 'c' })
+    const accessTableResults = await ensureCanAccessTable("preAlerts", wantedCrudObj, Object.keys(newPreAlertObj) as tableColumns["preAlerts"][])
     handleEnsureCanAccessTableResults(accessTableResults)
 
     //validation

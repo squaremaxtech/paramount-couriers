@@ -4,27 +4,24 @@ import { tableColumnAccessType, tableColumns, tableNames, wantedCrudObjType } fr
 import { deepClone } from '@/utility/utility';
 import { useEffect, useState } from 'react'
 
-export default function useTableColumnAccess<T extends Object>({ tableName, tableRecordObject, wantedCrudObj }: { tableName: tableNames, tableRecordObject?: T, wantedCrudObj: wantedCrudObjType, }) {
+export default function useTableColumnAccess<T extends Object>({ tableName, tableRecordObject, wantedCrudObj }: { tableName: tableNames, tableRecordObject: T, wantedCrudObj: wantedCrudObjType, }) {
     const [tableColumnAccess, tableColumnAccessSet] = useState<tableColumnAccessType>({})
 
     useEffect(() => {
         const search = async () => {
             //only run on updates
-            if (tableRecordObject === undefined) return
-
             const tableRecordObjectKeys = Object.keys(tableRecordObject) as tableColumns[tableNames][]
-            console.log(`$tableRecordObjectKeys`, tableRecordObjectKeys);
 
-            const columnNameAccess = await ensureCanAccessTable(tableName, wantedCrudObj, tableRecordObjectKeys)
-            tableColumnAccessSet(columnNameAccess.tableColumnAccess)
-            console.log(`$columnNameAccess`, columnNameAccess);
+            const ensureCanAccessTableReturn = await ensureCanAccessTable(tableName, wantedCrudObj, tableRecordObjectKeys)
+            tableColumnAccessSet(ensureCanAccessTableReturn.tableColumnAccess)
+            console.log(`$ensureCanAccessTableReturn`, ensureCanAccessTableReturn);
         }
         search()
 
     }, [])
 
     //filter not true records - make partial obj
-    function filterTableObjectByColumnAccess<T extends Object>(sentTableRecordObject: T): T {
+    function filterTableObjectByColumnAccess<T extends Object>(sentTableRecordObject: T): Partial<T> {
         const newTableRecordObject = deepClone(sentTableRecordObject)
 
         //get object

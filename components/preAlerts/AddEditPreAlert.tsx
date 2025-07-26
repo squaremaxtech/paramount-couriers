@@ -4,7 +4,7 @@ import styles from "./style.module.css"
 import { deepClone } from '@/utility/utility'
 import toast from 'react-hot-toast'
 import TextInput from '../textInput/TextInput'
-import { dbInvoiceType, newPreAlertSchema, newPreAlertType, preAlertSchema, preAlertType } from '@/types'
+import { dbInvoiceType, newPreAlertSchema, newPreAlertType, preAlertSchema, preAlertType, wantedCrudObjType } from '@/types'
 import { addPreAlert, deleteInvoiceOnPreAlert, updatePreAlert } from '@/serverFunctions/handlePreAlerts'
 import { consoleAndToastError } from '@/useful/consoleErrorWithToast'
 import { useSession } from 'next-auth/react'
@@ -14,11 +14,18 @@ import UploadFiles from '../uploadFiles/UploadFiles'
 import { handleWithFiles } from '@/utility/handleWithFiles'
 import useTableColumnAccess from '../useTableColumnAccess/UseTableColumnAccess'
 
-export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { sentPreAlert?: preAlertType, submissionAction?: () => void }) {
-    //get pre alert
-    //look at each column in pre alert
-    //can view or not boolean
-    const { tableColumnAccess, filterTableObjectByColumnAccess } = useTableColumnAccess({ tableName: "preAlerts", tableRecordObject: sentPreAlert, wantedCrudObj: { crud: "uo", resourceId: sentPreAlert?.id } })
+export default function AddEditPreAlert({ sentPreAlert, wantedCrudObj, submissionAction }: { sentPreAlert?: preAlertType, wantedCrudObj: wantedCrudObjType, submissionAction?: () => void }) {
+    //who can create the columns
+    //who can edit it
+
+    //take values from client
+    //but dont show em options
+
+    //define who can "c" for each of these key value pairs
+    //if cant c then use default provided by db
+    //that means make undefined
+    //if on server and not getting expected results. e.g userId
+    //then add the user id
 
     const initialFormObj: newPreAlertType = {
         userId: "",
@@ -31,14 +38,14 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
         acknowledged: false
     }
 
-    //assign either a new form, or the safe values on an update form
     const [formObj, formObjSet] = useState<Partial<preAlertType>>(deepClone(sentPreAlert === undefined ? initialFormObj : preAlertSchema.partial().parse(sentPreAlert)))
+
+    const { data: session } = useSession()
+    const { tableColumnAccess, filterTableObjectByColumnAccess } = useTableColumnAccess({ tableName: "preAlerts", tableRecordObject: formObj, wantedCrudObj: wantedCrudObj })
 
     const [invoiceFormData, invoiceFormDataSet] = useState<FormData | null>(null)
 
     const [formErrors, formErrorsSet] = useState<Partial<{ [key in keyof preAlertType]: string }>>({})
-
-    const { data: session } = useSession()
 
     //handle changes from above
     useEffect(() => {
@@ -97,13 +104,18 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
 
             //new preAlert
             if (sentPreAlert === undefined) {
-                const validatedNewPreAlert = newPreAlertSchema.parse(formObj)
+                const filteredPreAlert = filterTableObjectByColumnAccess(formObj)
 
                 //files
-                validatedNewPreAlert.invoices = await handleWithFiles(validatedNewPreAlert.invoices, invoiceFormData, "invoice")
+                if (filteredPreAlert.invoices !== undefined) {
+                    filteredPreAlert.invoices = await handleWithFiles(filteredPreAlert.invoices, invoiceFormData, "invoice")
+                }
+
+                //validate
+                const validatedNewPreAlert = newPreAlertSchema.parse(filteredPreAlert)
 
                 //send up to server
-                await addPreAlert(validatedNewPreAlert)
+                await addPreAlert(validatedNewPreAlert, wantedCrudObj)
 
                 toast.success("submitted")
 
@@ -130,7 +142,7 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
                 }
 
                 //update
-                await updatePreAlert(sentPreAlert.id, filteredPreAlert, { crud: "uo", resourceId: sentPreAlert.id })
+                await updatePreAlert(sentPreAlert.id, filteredPreAlert, wantedCrudObj)
 
                 toast.success("pre alert updated")
             }
@@ -146,7 +158,7 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
 
     return (
         <form className={styles.form} action={() => { }}>
-            {session !== null && session.user.role !== "customer" && formObj.userId !== undefined && (
+            {formObj.userId !== undefined && tableColumnAccess["userId"] && (
                 <>
                     <TextInput
                         name={"userId"}
@@ -193,7 +205,7 @@ export default function AddEditPreAlert({ sentPreAlert, submissionAction }: { se
                 </>
             )}
 
-            {formObj.trackingNumber !== undefined && (
+            {formObj.trackingNumber !== undefined && tableColumnAccess["trackingNumber"] && (
                 <>
                     <TextInput
                         name={"trackingNumber"}

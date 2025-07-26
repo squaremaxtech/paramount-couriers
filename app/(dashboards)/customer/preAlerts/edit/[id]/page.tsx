@@ -8,12 +8,11 @@ export default async function Page({ params }: { params: Promise<{ id: preAlertT
 
     //validate
     const seenPreAlert = await getSpecificPreAlert(id, { crud: "ro", resourceId: id })
-
     if (seenPreAlert === undefined) return (<p>not seeing specific pre Alert</p>)
 
     return (
         <main>
-            <AddEditPreAlert sentPreAlert={seenPreAlert} />
+            <AddEditPreAlert sentPreAlert={seenPreAlert} wantedCrudObj={{ crud: "uo", resourceId: seenPreAlert.id }} />
         </main>
     )
 }
