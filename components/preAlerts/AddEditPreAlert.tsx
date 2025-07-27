@@ -1,10 +1,10 @@
 "use client"
 import React, { useEffect, useState } from 'react'
 import styles from "./style.module.css"
-import { deepClone } from '@/utility/utility'
+import { deepClone, formatAsMoney } from '@/utility/utility'
 import toast from 'react-hot-toast'
 import TextInput from '../textInput/TextInput'
-import { dbInvoiceType, newPreAlertSchema, newPreAlertType, preAlertSchema, preAlertType, wantedCrudObjType } from '@/types'
+import { dbInvoiceType, newPreAlertSchema, preAlertSchema, preAlertType, wantedCrudObjType } from '@/types'
 import { addPreAlert, deleteInvoiceOnPreAlert, updatePreAlert } from '@/serverFunctions/handlePreAlerts'
 import { consoleAndToastError } from '@/useful/consoleErrorWithToast'
 import { useSession } from 'next-auth/react'
@@ -14,20 +14,17 @@ import UploadFiles from '../uploadFiles/UploadFiles'
 import { handleWithFiles } from '@/utility/handleWithFiles'
 import useTableColumnAccess from '../useTableColumnAccess/UseTableColumnAccess'
 import { filterTableObjectByColumnAccess } from '@/useful/usefulFunctions'
-import { initialNewPreAlertFormObj } from '@/lib/initialFormData'
+import { initialNewPreAlertObj } from '@/lib/initialFormData'
+import UseFormErrors from '../useFormErrors/UseFormErrors'
 
 export default function AddEditPreAlert({ sentPreAlert, wantedCrudObj, submissionAction }: { sentPreAlert?: preAlertType, wantedCrudObj: wantedCrudObjType, submissionAction?: () => void }) {
-    //make validation function that uses inital formObj replace if not allowed
-    //maybe just check on server
-
-    const [formObj, formObjSet] = useState<Partial<preAlertType>>(deepClone(sentPreAlert === undefined ? initialNewPreAlertFormObj : preAlertSchema.partial().parse(sentPreAlert)))
+    const [formObj, formObjSet] = useState<Partial<preAlertType>>(deepClone(sentPreAlert === undefined ? initialNewPreAlertObj : preAlertSchema.partial().parse(sentPreAlert)))
 
     const { data: session } = useSession()
+    const { formErrors, checkIfValid } = UseFormErrors<preAlertType>({ schema: preAlertSchema.partial() })
     const { tableColumnAccess } = useTableColumnAccess({ tableName: "preAlerts", tableRecordObject: formObj, wantedCrudObj: wantedCrudObj })
 
     const [invoiceFormData, invoiceFormDataSet] = useState<FormData | null>(null)
-
-    const [formErrors, formErrorsSet] = useState<Partial<{ [key in keyof preAlertType]: string }>>({})
 
     //handle changes from above
     useEffect(() => {
@@ -42,7 +39,6 @@ export default function AddEditPreAlert({ sentPreAlert, wantedCrudObj, submissio
         if (session === null) return
 
         if (session.user.role === "customer") {
-
             formObjSet(prevFormObj => {
                 const newFormObj = { ...prevFormObj }
                 newFormObj.userId = session.user.id
@@ -51,35 +47,6 @@ export default function AddEditPreAlert({ sentPreAlert, wantedCrudObj, submissio
         }
     }, [session])
 
-    function checkIfValid(seenFormObj: Partial<preAlertType>, seenName: keyof preAlertType) {
-        // @ts-expect-error type
-        const testSchema = preAlertSchema.pick({ [seenName]: true }).safeParse(seenFormObj);
-
-        if (testSchema.success) {//worked
-            formErrorsSet(prevObj => {
-                const newObj = { ...prevObj }
-                delete newObj[seenName]
-
-                return newObj
-            })
-
-        } else {
-            formErrorsSet(prevObj => {
-                const newObj = { ...prevObj }
-
-                let errorMessage = ""
-
-                JSON.parse(testSchema.error.message).forEach((eachErrorObj: Error) => {
-                    errorMessage += ` ${eachErrorObj.message}`
-                })
-
-                newObj[seenName] = errorMessage
-
-                return newObj
-            })
-        }
-    }
-
     async function handleSubmit() {
         try {
             toast.success("submittting")
@@ -87,7 +54,7 @@ export default function AddEditPreAlert({ sentPreAlert, wantedCrudObj, submissio
             //new preAlert
             if (sentPreAlert === undefined) {
                 //validate - replace with initial defaults if no access to "c"
-                const filteredPreAlert = filterTableObjectByColumnAccess(tableColumnAccess, formObj, initialNewPreAlertFormObj)
+                const filteredPreAlert = filterTableObjectByColumnAccess(tableColumnAccess, formObj, initialNewPreAlertObj)
 
                 //files
                 if (filteredPreAlert.invoices !== undefined) {
@@ -103,7 +70,7 @@ export default function AddEditPreAlert({ sentPreAlert, wantedCrudObj, submissio
 
                 //reset
                 invoiceFormDataSet(null)
-                formObjSet(deepClone(initialNewPreAlertFormObj))
+                formObjSet(deepClone(initialNewPreAlertObj))
 
             } else {
                 //validate
@@ -255,6 +222,30 @@ export default function AddEditPreAlert({ sentPreAlert, wantedCrudObj, submissio
                         }}
                         onBlur={() => { checkIfValid(formObj, "consignee") }}
                         errors={formErrors["consignee"]}
+                    />
+                </>
+            )}
+
+            {formObj.price !== undefined && tableColumnAccess["price"] && (
+                <>
+                    <TextInput
+                        name={"price"}
+                        value={formObj.price}
+                        type={"text"}
+                        label={`price ${formatAsMoney(formObj.price)}`}
+                        placeHolder={"enter price"}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            formObjSet(prevFormObj => {
+                                const newFormObj = { ...prevFormObj }
+                                if (newFormObj.price === undefined) return prevFormObj
+
+                                newFormObj.price = e.target.value
+
+                                return newFormObj
+                            })
+                        }}
+                        onBlur={() => { checkIfValid(formObj, "price") }}
+                        errors={formErrors["price"]}
                     />
                 </>
             )}

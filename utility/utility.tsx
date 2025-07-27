@@ -27,6 +27,28 @@ export function formatLocalDateTime(seenDate: Date) {
     return customDateTime
 }
 
+export function formatAsMoney(input: string) {
+    const num = Number(input)
+    if (isNaN(num)) return ""
+
+    return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+    }).format(num)
+}
+
+export function formatWithCommas(input: string) {
+    const num = Number(input)
+    if (isNaN(num)) return ""
+
+    return new Intl.NumberFormat("en-US", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+    }).format(num)
+}
+
+
 export function makeValidFilename(input: string, options: { replacement?: string } = {}) {
     const { replacement = "_" } = options;
 

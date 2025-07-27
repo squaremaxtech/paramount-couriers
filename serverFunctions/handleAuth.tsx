@@ -10,6 +10,8 @@ const read: crudType[] = ["r"];
 const readOwn: crudType[] = ["ro"];
 const readUpdate: crudType[] = ["r", "u"];
 const createReadUpdateOwn: crudType[] = ["c", "r", "uo", "do"];
+const createReadUpdate: crudType[] = ["c", "r", "u"];
+const createReadUpdateDeleteOwn: crudType[] = ["c", "ro", "uo", "do"];
 const fixedUserCrud: userCrudType = {
     admin: read,
     employee_regular: read,
@@ -109,6 +111,7 @@ const tableAccess: tableAccessType = {
             customer: readOwn,
         },
         columns: {
+            dateCreated: fixedUserCrud,
             comments: {
                 admin: fullAccess,
                 employee_regular: createReadUpdateOwn,
@@ -126,26 +129,26 @@ const tableAccess: tableAccessType = {
             employee_warehouse: read,
             employee_elevated: fullAccess,
             employee_supervisor: fullAccess,
-            customer: ["c", "ro", "uo", "do"],
+            customer: createReadUpdateDeleteOwn,
         },
         columnDefaultCrud: {
             admin: fullAccess,
             employee_regular: ["c", "r"],
-            employee_warehouse: ["c", "r", "u"],
-            employee_elevated: ["c", "r", "u"],
-            employee_supervisor: ["c", "r", "u"],
-            customer: ["c", "ro", "uo", "do"],
+            employee_warehouse: createReadUpdate,
+            employee_elevated: createReadUpdate,
+            employee_supervisor: createReadUpdate,
+            customer: createReadUpdateDeleteOwn,
         },
         columns: {
             id: fixedUserCrud,
             dateCreated: fixedUserCrud,
             acknowledged: {
-                admin: ["c", "r", "u"],
-                employee_regular: ["c", "r", "u"],
-                employee_warehouse: ["c", "r", "u"],
-                employee_elevated: ["c", "r", "u"],
-                employee_supervisor: ["c", "r", "u"],
-                customer: ["ro"],
+                admin: createReadUpdate,
+                employee_regular: createReadUpdate,
+                employee_warehouse: createReadUpdate,
+                employee_elevated: createReadUpdate,
+                employee_supervisor: createReadUpdate,
+                customer: readOwn,
             },
         },
     },
@@ -271,7 +274,7 @@ export async function ensureCanAccessTable<T extends tableNames>(tableName: T, w
 
                     //owenrship check on packages table e.g
                     if (tableName === "packages") {
-                        const seenPackage = await getSpecificPackage(parseInt(wantedCrudObj.resourceId));
+                        const seenPackage = await getSpecificPackage(parseInt(wantedCrudObj.resourceId), { crud: "r" }, false);
                         if (seenPackage === undefined) {
                             tableErrors.push(`Resource id not found for ${tableName}`);
 

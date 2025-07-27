@@ -1,7 +1,6 @@
 "use client"
 import { ensureCanAccessTable } from '@/serverFunctions/handleAuth'
 import { tableColumnAccessType, tableColumns, tableNames, wantedCrudObjType } from '@/types'
-import { deepClone } from '@/utility/utility';
 import { useEffect, useState } from 'react'
 
 export default function useTableColumnAccess<T extends Object>({ tableName, tableRecordObject, wantedCrudObj }: { tableName: tableNames, tableRecordObject: T, wantedCrudObj: wantedCrudObjType, }) {

@@ -1,5 +1,5 @@
 "use client"
-import { searchObjType, tableFilterTypes, userType } from '@/types'
+import { searchObjType, tableFilterTypes } from '@/types'
 import { consoleAndToastError } from '@/useful/consoleErrorWithToast'
 import React, { useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
@@ -192,14 +192,14 @@ export default function Search<T>({ searchObj, searchObjSet, searchFunc, showPag
 
     return (
         <div style={{ display: "grid", alignContent: "flex-start", gap: "var(--spacingR)" }}>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: ".5rem", alignItems: "center" }}>
-                <button className='mainButton'
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--spacingS)", alignItems: "center" }} className='textResetMargin'>
+                <button className='button1'
                     onClick={async () => {
                         handleSearch()
                     }}
                 >search</button>
 
-                <button className='thirdButton'
+                <button className='button2'
                     onClick={() => {
                         //decrease offset
                         handleOffset("decrement")
@@ -209,7 +209,7 @@ export default function Search<T>({ searchObj, searchObjSet, searchFunc, showPag
                     }}
                 >prev</button>
 
-                <button className='thirdButton'
+                <button className='button2'
                     onClick={() => {
                         //increase offset
                         handleOffset("increment")
@@ -268,10 +268,10 @@ export default function Search<T>({ searchObj, searchObjSet, searchFunc, showPag
                                 const label = spaceCamelCase(eachFilterKeyStringType.charAt(0).toUpperCase() + eachFilterKeyStringType.slice(1))
 
                                 return (
-                                    <div key={eachFilterKeyStringType} style={{ display: "grid", alignContent: "flex-start", gap: ".5rem" }}>
+                                    <div key={eachFilterKeyStringType} style={{ display: "grid", alignContent: "flex-start", gap: "var(--spacingS)" }}>
                                         <label>{label}</label>
 
-                                        <div style={{ display: "grid", alignContent: "flex-start", gridTemplateColumns: "1fr auto", gap: ".5rem" }}>
+                                        <div style={{ display: "grid", alignContent: "flex-start", gridTemplateColumns: "1fr auto", gap: "var(--spacingS)" }}>
                                             {typeof eachFilterValue.value === "boolean" && (
                                                 <button className='button1' style={{ backgroundColor: activeSearchFilters[eachFilterKey] ? "" : "rgb(var(--color2))" }}
                                                     onClick={() => {
@@ -293,7 +293,7 @@ export default function Search<T>({ searchObj, searchObjSet, searchFunc, showPag
                                             )}
 
                                             {(typeof eachFilterValue.value === "string" || typeof eachFilterValue.value === "number") && (
-                                                <input type={typeof eachFilterValue.value === "number" ? "number" : "text"} value={eachFilterValue.value} placeholder={`enter ${label}`}
+                                                <input type={typeof eachFilterValue.value === "number" ? "number" : "text"} value={eachFilterValue.value} placeholder={`enter${label}`}
                                                     onChange={(e) => {
                                                         let seenText: string | number = e.target.value
 

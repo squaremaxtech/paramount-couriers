@@ -1,28 +1,21 @@
 "use server"
 import { db } from "@/db"
 import { preAlerts } from "@/db/schema"
-import { dbInvoiceType, newPreAlertSchema, newPreAlertType, preAlertSchema, preAlertType, tableColumns, tableFilterTypes, tableNames, wantedCrudObjType } from "@/types"
+import { dbInvoiceType, newPreAlertSchema, newPreAlertType, preAlertSchema, preAlertType, tableColumns, tableFilterTypes, wantedCrudObjType } from "@/types"
 import { and, desc, eq, SQLWrapper } from "drizzle-orm"
 import { deleteInvoices } from "./handleDocuments"
 import { ensureCanAccessTable } from "./handleAuth"
 import { handleEnsureCanAccessTableResults } from "@/utility/utility"
 import { filterTableObjectByColumnAccess } from "@/useful/usefulFunctions"
-import { initialNewPreAlertFormObj } from "@/lib/initialFormData"
+import { initialNewPreAlertObj } from "@/lib/initialFormData"
 
 export async function addPreAlert(newPreAlertObj: newPreAlertType) {
-    //auth check
-    //possibility
-    //client already replaced with default values
-    //server validates
-    //also replaces with default values if doesn't match
-    //validate full new preAlert
-
     //repond to table errors only, if column errors just replace with original object
     const accessTableResults = await ensureCanAccessTable("preAlerts", { crud: "c" }, Object.keys(newPreAlertObj) as tableColumns["preAlerts"][])
     handleEnsureCanAccessTableResults(accessTableResults, "table")
 
     //validate on server as well - if no rights then it'll replace
-    const filteredPreAlert = filterTableObjectByColumnAccess(accessTableResults.tableColumnAccess, newPreAlertObj, initialNewPreAlertFormObj)
+    const filteredPreAlert = filterTableObjectByColumnAccess(accessTableResults.tableColumnAccess, newPreAlertObj, initialNewPreAlertObj)
 
     //validation
     const validatedPreAlert = newPreAlertSchema.parse(filteredPreAlert)

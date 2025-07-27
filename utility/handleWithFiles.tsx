@@ -1,4 +1,4 @@
-import { dbFileTypeType, dbWithFileType } from "@/types";
+import { dbFileTypeType, dbWithFileType, uploadFileApiResponseSchema } from "@/types";
 import toast from "react-hot-toast";
 import { deepClone } from "./utility";
 
@@ -21,7 +21,10 @@ export async function handleWithFiles<T extends dbWithFileType>(dbWithFileObjs: 
         })
         //get the srcs of files uploaded - confirmation
         const seenNamesObj = await response.json()
-        const seenUploadedFileSrcs = seenNamesObj.names
+
+        //validate
+        const validatedUploadFileApiResponse = uploadFileApiResponseSchema.parse(seenNamesObj)
+        const seenUploadedFileSrcs = validatedUploadFileApiResponse.names
 
         //notify
         toast.success(`${dbFileUpload} uploaded`)

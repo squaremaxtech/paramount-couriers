@@ -33,7 +33,7 @@ export default async function EmployeeLayout({
               package_2
             </span>
           ),
-          link: `/employee/packages`,
+          link: `/employee/packages/add`,
           title: "packages"
         },
         {

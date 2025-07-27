@@ -6,6 +6,9 @@ export const dateSchma = z.preprocess((val) => {
     return val;
 }, z.date())
 
+export const decimalStringSchema = z.string()
+    .regex(/^(0|[1-9]\d*)(\.\d{1,2})?$/, "Must be a valid number (max 2 decimal places)")
+
 
 
 
@@ -108,10 +111,10 @@ export type searchObjType<T> = {
     refreshAll?: boolean
 }
 
-export const uploadNamesResponseSchema = z.object({
+export const uploadFileApiResponseSchema = z.object({
     names: z.string().array(),
 })
-export type uploadNamesResponseType = z.infer<typeof uploadNamesResponseSchema>
+export type uploadFileApiResponseType = z.infer<typeof uploadFileApiResponseSchema>
 
 
 
@@ -197,14 +200,14 @@ export const packageSchema = z.object({
     location: locationSchema,
     status: statusSchema,
     trackingNumber: z.string().min(1),
-    images: dbImageSchema.array(),
-    weight: z.string(),
-    payment: z.string(),
     store: z.string().min(1),
     consignee: z.string().min(1),
     description: z.string().min(1),
-    price: z.string(),
+    price: decimalStringSchema,
     invoices: dbInvoiceSchema.array(),
+    images: dbImageSchema.array(),
+    weight: decimalStringSchema,
+    payment: decimalStringSchema,
     comments: z.string(),
 })
 export type packageType = z.infer<typeof packageSchema> & {
@@ -214,8 +217,6 @@ export type packageType = z.infer<typeof packageSchema> & {
 export const newPackageSchema = packageSchema.omit({ id: true, dateCreated: true })
 export type newPackageType = z.infer<typeof newPackageSchema>
 
-export const updatePackageSchema = packageSchema.omit({ id: true, dateCreated: true, userId: true })
-export type updatePackageType = z.infer<typeof updatePackageSchema>
 
 
 
@@ -229,7 +230,7 @@ export const preAlertSchema = z.object({
     store: z.string().min(1),
     consignee: z.string().min(1),
     description: z.string().min(1),
-    price: z.string(),
+    price: decimalStringSchema,
     invoices: dbInvoiceSchema.array(),
 })
 export type preAlertType = z.infer<typeof preAlertSchema> & {

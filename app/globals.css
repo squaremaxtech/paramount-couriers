@@ -128,6 +128,7 @@ main {
   border-radius: var(--borderRadiusES);
   text-transform: uppercase;
   font-weight: 700;
+  margin-left: var(--spacingS);
 }
 
 .button1:hover {
@@ -137,6 +138,7 @@ main {
 .button2 {
   background-color: var(--c3);
   color: var(--textC1);
+  padding: var(--spacingS);
 }
 
 .button2:hover {
@@ -185,6 +187,11 @@ textarea:focus {
   outline: none;
 }
 
+input::placeholder,
+textarea::placeholder {
+  text-transform: capitalize;
+}
+
 
 /* custom classes */
 .material-symbols-outlined {
@@ -202,7 +209,12 @@ textarea:focus {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
-.textResetMargin>* {
+.textResetMargin>p,
+.textResetMargin>h1,
+.textResetMargin>h2,
+.textResetMargin>h3,
+.textResetMargin>h4,
+.textResetMargin>h5 {
   margin: 0;
 }
 
@@ -233,4 +245,19 @@ textarea:focus {
 
 .snap>* {
   scroll-snap-align: start;
+}
+
+.gridColumn {
+  display: grid;
+  align-content: flex-start;
+  grid-auto-flow: column;
+  gap: var(--spacingR);
+  grid-auto-columns: min(50%, 350px);
+  overflow: auto;
+}
+
+.card {
+  overflow: auto;
+  padding: var(--spacingR);
+  background-color: var(--c3);
 }

@@ -1,9 +1,10 @@
 import React from 'react'
+import AddEditPackage from '@/components/packages/AddEditPackage'
 
 export default function Page() {
     return (
         <main>
-            add package
+            <AddEditPackage wantedCrudObj={{ crud: "c" }} />
         </main>
     )
 }

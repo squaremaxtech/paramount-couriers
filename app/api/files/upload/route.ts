@@ -2,7 +2,7 @@ import path from "path";
 import fs from "fs/promises";
 import { NextResponse } from "next/server";
 import { ensureDirectoryExists } from "@/utility/manageFiles";
-import { allowedInvoiceFileTypes, maxDocumentUploadSize, uploadedInvoicesDirectory } from "@/types/uploadTypes";
+import { allowedImageFileTypes, allowedInvoiceFileTypes, maxDocumentUploadSize, uploadedImagesDirectory, uploadedInvoicesDirectory } from "@/types/uploadTypes";
 import { convertBtyes } from "@/useful/usefulFunctions";
 import { sessionCheck } from "@/serverFunctions/handleAuth";
 import { dbFileTypeSchema } from "@/types";
@@ -16,22 +16,25 @@ export async function POST(request: Request) {
     const seenUploadType = dbFileTypeSchema.parse(body["type"])
     if (seenUploadType === undefined) throw new Error("not seeing upload type")
 
-    if (seenUploadType === "invoice") {
-        //ensure invoices directory exists
-        await ensureDirectoryExists(uploadedInvoicesDirectory)
+    //ensure invoices directory exists
+    await ensureDirectoryExists(uploadedInvoicesDirectory)
 
-        const addedInvoiceNamesPre = await Promise.all(Object.entries(body).map(async eachEntry => {
+    const addedFileNamesPre = await Promise.all(
+        Object.entries(body).map(async eachEntry => {
             const eachEntryKey = eachEntry[0] //file id
             const eachEntryValue = eachEntry[1]
             if (eachEntryKey === "type") return null //skip type declaration
 
             const file = eachEntryValue as File;
-            const documentPath = path.join(uploadedInvoicesDirectory, eachEntryKey)
+
+            const mainDirectory = seenUploadType === "invoice" ? uploadedInvoicesDirectory : seenUploadType === "image" ? uploadedImagesDirectory : null
+            if (mainDirectory === null) throw new Error("mainDirectory null")
+            const documentPath = path.join(mainDirectory, eachEntryKey)
 
             // Check if file proper file type
-            if (!allowedInvoiceFileTypes.includes(file.type)) {
-                throw new Error("Invalid file type. Only PDF, DOC, DOCX, or TXT allowed.");
-            }
+            const allowedFileTypes = seenUploadType === "invoice" ? allowedInvoiceFileTypes : seenUploadType === "image" ? allowedImageFileTypes : null
+            if (allowedFileTypes === null) throw new Error("allowedFileTypes null")
+            if (!allowedFileTypes.includes(file.type)) throw new Error("Invalid file type");
 
             // Check the file size
             if (file.size > maxDocumentUploadSize) {
@@ -44,17 +47,10 @@ export async function POST(request: Request) {
 
             return eachEntryKey
         })
-        )
-        const addedInvoiceNames = addedInvoiceNamesPre.filter(eachInvoiceName => eachInvoiceName !== null)
+    )
+    const addedFileNames = addedFileNamesPre.filter(eachInvoiceName => eachInvoiceName !== null)
 
-        return NextResponse.json({
-            names: addedInvoiceNames,
-        });
-
-    } else if (seenUploadType === "image") {
-        return NextResponse.json({
-            names: [],
-        });
-
-    } else throw new Error("invalid upload type selected")
+    return NextResponse.json({
+        names: addedFileNames,
+    });
 }

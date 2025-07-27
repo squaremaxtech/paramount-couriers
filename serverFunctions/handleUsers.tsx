@@ -1,25 +1,36 @@
 "use server"
 import { db } from "@/db"
 import { users } from "@/db/schema"
-import { newUserSchema, newUserType, tableFilterTypes, updateUserSchema, userSchema, userType } from "@/types"
-import { and, desc, eq, SQLWrapper } from "drizzle-orm"
+import { newUserSchema, newUserType, userSchema, userType, tableColumns, tableFilterTypes, wantedCrudObjType } from "@/types"
+import { and, eq, SQLWrapper } from "drizzle-orm"
+import { ensureCanAccessTable } from "./handleAuth"
+import { handleEnsureCanAccessTableResults } from "@/utility/utility"
+import { filterTableObjectByColumnAccess } from "@/useful/usefulFunctions"
+import { initialNewUserObj } from "@/lib/initialFormData"
 
 export async function addUser(newUserObj: newUserType) {
-    //security check 
+    const accessTableResults = await ensureCanAccessTable("users", { crud: "c" }, Object.keys(newUserObj) as tableColumns["users"][])
+    handleEnsureCanAccessTableResults(accessTableResults, "table")
+
+    //validate on server as well - if no rights then it'll replace
+    const filteredUser = filterTableObjectByColumnAccess(accessTableResults.tableColumnAccess, newUserObj, initialNewUserObj)
 
     //validation
-    newUserSchema.parse(newUserObj)
+    const validatedUser = newUserSchema.parse(filteredUser)
 
     //add new request
     await db.insert(users).values({
-        ...newUserObj
+        ...validatedUser
     })
 }
 
-export async function updateUser(userId: userType["id"], updatedUserObj: Partial<userType>) {
-    //security check  
+export async function updateUser(userId: userType["id"], updatedUserObj: Partial<userType>, wantedCrudObj: wantedCrudObjType) {
+    //validation
+    userSchema.partial().parse(updatedUserObj)
 
-    updateUserSchema.partial().parse(updatedUserObj)
+    //auth
+    const accessTableResults = await ensureCanAccessTable("users", wantedCrudObj, Object.keys(updatedUserObj) as tableColumns["users"][])
+    handleEnsureCanAccessTableResults(accessTableResults, "both")
 
     await db.update(users)
         .set({
@@ -28,15 +39,23 @@ export async function updateUser(userId: userType["id"], updatedUserObj: Partial
         .where(eq(users.id, userId));
 }
 
-export async function deleteUser(userId: userType["id"]) {
+export async function deleteUser(userId: userType["id"], wantedCrudObj: wantedCrudObjType) {
+    //auth check
+    const accessTableResults = await ensureCanAccessTable("users", wantedCrudObj)
+    handleEnsureCanAccessTableResults(accessTableResults, "both")
+
     //validation
     userSchema.shape.id.parse(userId)
 
     await db.delete(users).where(eq(users.id, userId));
 }
 
-export async function getSpecificUser(userId: userType["id"]): Promise<userType | undefined> {
-    //security check
+export async function getSpecificUser(userId: userType["id"], wantedCrudObj: wantedCrudObjType, runAuth = true): Promise<userType | undefined> {
+    if (runAuth) {
+        //auth check
+        const accessTableResults = await ensureCanAccessTable("users", wantedCrudObj)
+        handleEnsureCanAccessTableResults(accessTableResults, "both")
+    }
 
     userSchema.shape.id.parse(userId)
 
@@ -47,7 +66,10 @@ export async function getSpecificUser(userId: userType["id"]): Promise<userType 
     return result
 }
 
-export async function getUsers(filter: tableFilterTypes<userType>, limit = 50, offset = 0): Promise<userType[]> {
+export async function getUsers(filter: tableFilterTypes<userType>, wantedCrudObj: wantedCrudObjType, limit = 50, offset = 0): Promise<userType[]> {
+    //auth check
+    const accessTableResults = await ensureCanAccessTable("users", wantedCrudObj)
+    handleEnsureCanAccessTableResults(accessTableResults, "both")
     // Collect conditions dynamically
     const whereClauses: SQLWrapper[] = []
 
