@@ -276,6 +276,7 @@ export default function AddEditPreAlert({ sentPreAlert, wantedCrudObj, submissio
 
             {formObj.invoices !== undefined && tableColumnAccess["invoices"] && (
                 <UploadFiles
+                    id='uploadInvoices'
                     accept='.pdf,.doc,.docx,.txt'
                     allowedFileTypes={allowedInvoiceFileTypes}
                     formDataSet={invoiceFormDataSet}

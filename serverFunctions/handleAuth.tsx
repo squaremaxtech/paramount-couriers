@@ -111,6 +111,7 @@ const tableAccess: tableAccessType = {
             customer: readOwn,
         },
         columns: {
+            id: fixedUserCrud,
             dateCreated: fixedUserCrud,
             comments: {
                 admin: fullAccess,

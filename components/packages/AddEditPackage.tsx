@@ -140,8 +140,6 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
         }
     }
 
-    console.log(`$formobj`, formObj);
-
     return (
         <form className={styles.form} action={() => { }}>
             <ShowMore
@@ -243,12 +241,6 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                         onBlur={() => { checkIfValid(formObj, "id") }}
                         errors={formErrors["id"]}
                     />
-                </>
-            )}
-
-            {formObj.dateCreated !== undefined && tableColumnAccess["dateCreated"] && (
-                <>
-
                 </>
             )}
 
@@ -490,7 +482,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                     <label>upload invoices</label>
 
                     <UploadFiles
-                        key={1}
+                        id='uploadInvoices'
                         accept={invoiceFileInputAccept}
                         allowedFileTypes={allowedInvoiceFileTypes}
                         formDataSet={invoiceFormDataSet}
@@ -531,7 +523,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                     <label>Upload Images</label>
 
                     <UploadFiles
-                        key={2}
+                        id='uploadImages'
                         accept={imageFileInputAccept}
                         allowedFileTypes={allowedImageFileTypes}
                         formDataSet={imageFormDataSet}
@@ -540,7 +532,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                             const newDbImage: dbImageType = {
                                 dbFileType: "image",
                                 file: dbFile,
-                                alt: "",
+                                alt: dbFile.fileName,
                             }
 
                             formObjSet(prevFormObj => {

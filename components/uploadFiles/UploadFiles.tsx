@@ -8,18 +8,16 @@ import { dbFileType, dbWithFileType } from '@/types'
 import { v4 as uuidV4 } from "uuid"
 import { makeValidFilename } from '@/utility/utility'
 
-export default function UploadFiles<T extends dbWithFileType>({ multiple = true, accept, allowedFileTypes, maxUploadSize = maxDocumentUploadSize, formDataSet, dbWithFileObjs, dbWithFileObjsSetter, newDbRecordSetter }: {
-    multiple?: boolean, accept: string, allowedFileTypes: string[], maxUploadSize?: number, formDataSet: React.Dispatch<React.SetStateAction<FormData | null>>, dbWithFileObjs: T[], dbWithFileObjsSetter: (dbWithFileObjs: T[]) => void, newDbRecordSetter: (dbFile: dbFileType) => void
-}) {
+export default function UploadFiles<T extends dbWithFileType>({ id, multiple = true, accept, allowedFileTypes, maxUploadSize = maxDocumentUploadSize, formDataSet, dbWithFileObjs, dbWithFileObjsSetter, newDbRecordSetter }: { id: string, multiple?: boolean, accept: string, allowedFileTypes: string[], maxUploadSize?: number, formDataSet: React.Dispatch<React.SetStateAction<FormData | null>>, dbWithFileObjs: T[], dbWithFileObjsSetter: (dbWithFileObjs: T[]) => void, newDbRecordSetter: (dbFile: dbFileType) => void }) {
     return (
         <div className='container'>
             <button className='button1'>
-                <label htmlFor='fileUpload' style={{ cursor: "pointer" }}>
+                <label htmlFor={id} style={{ cursor: "pointer" }}>
                     upload
                 </label>
             </button>
 
-            <input id='fileUpload' type="file" placeholder='Upload invoices' multiple={multiple} accept={accept} style={{ display: "none" }}
+            <input id={id} type="file" placeholder='Upload invoices' multiple={multiple} accept={accept} style={{ display: "none" }}
                 onChange={(e) => {
                     if (!e.target.files) return
 

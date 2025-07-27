@@ -16,9 +16,6 @@ export async function POST(request: Request) {
     const seenUploadType = dbFileTypeSchema.parse(body["type"])
     if (seenUploadType === undefined) throw new Error("not seeing upload type")
 
-    //ensure invoices directory exists
-    await ensureDirectoryExists(uploadedInvoicesDirectory)
-
     const addedFileNamesPre = await Promise.all(
         Object.entries(body).map(async eachEntry => {
             const eachEntryKey = eachEntry[0] //file id
@@ -29,6 +26,10 @@ export async function POST(request: Request) {
 
             const mainDirectory = seenUploadType === "invoice" ? uploadedInvoicesDirectory : seenUploadType === "image" ? uploadedImagesDirectory : null
             if (mainDirectory === null) throw new Error("mainDirectory null")
+
+            //ensure directory exists
+            await ensureDirectoryExists(mainDirectory)
+
             const documentPath = path.join(mainDirectory, eachEntryKey)
 
             // Check if file proper file type
