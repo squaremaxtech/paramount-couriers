@@ -25,6 +25,5 @@
 
 .table input {
     padding: var(--spacingS);
-    /* width: 100%; */
     font-size: var(--fontSizeS);
 }

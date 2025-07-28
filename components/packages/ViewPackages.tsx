@@ -22,7 +22,7 @@ type filterSearchType =
     } |
     {
         type: "number",
-        value: number
+        value: number | undefined,
         base: baseFilterSearchType,
     } |
     {
@@ -55,7 +55,7 @@ export default function ViewPackages({ packages, hideColumns, mandatorySearchFil
     const allPackageFilters = useRef<allFilters>({
         id: {
             type: "number",
-            value: 0,
+            value: undefined,
             base: {},
         },
         location: {
@@ -210,7 +210,6 @@ export default function ViewPackages({ packages, hideColumns, mandatorySearchFil
                             const filterSearchType: filterSearchType | undefined = allPackageFilters.current[eachTableHeading]
                             if (filterSearchType === undefined) {
                                 //assign for first time
-
                                 allPackageFilters.current[eachTableHeading] = {
                                     type: "string",
                                     value: "",
@@ -258,7 +257,7 @@ export default function ViewPackages({ packages, hideColumns, mandatorySearchFil
                                             )}
 
                                             {filterSearchType.type === "number" && (
-                                                <input type='number' value={filterSearchType.value}
+                                                <input type='number' value={filterSearchType.value !== undefined ? filterSearchType.value : ""}
                                                     onChange={(e) => {
                                                         if (allPackageFilters.current[eachTableHeading] === undefined) return
 
@@ -267,11 +266,14 @@ export default function ViewPackages({ packages, hideColumns, mandatorySearchFil
 
                                                         if (allPackageFilters.current[eachTableHeading].type === "number") {
                                                             const seenNumber = parseInt(e.target.value)
-                                                            if (isNaN(seenNumber)) return
+                                                            if (isNaN(seenNumber)) {
+                                                                allPackageFilters.current[eachTableHeading].value = undefined
+                                                                allPackageFilters.current[eachTableHeading].base.using = false
 
-                                                            allPackageFilters.current[eachTableHeading].value = seenNumber
-
-                                                            allPackageFilters.current[eachTableHeading].base.using = true
+                                                            } else {
+                                                                allPackageFilters.current[eachTableHeading].value = seenNumber
+                                                                allPackageFilters.current[eachTableHeading].base.using = true
+                                                            }
                                                         }
 
                                                         runSameOnAll()
@@ -494,7 +496,7 @@ export default function ViewPackages({ packages, hideColumns, mandatorySearchFil
                                             {typeof packgeData === "number" && (
                                                 <>
                                                     {eachTableHeading === "id" ? (
-                                                        <Link href={`/customer/packages/view/${generateTrackingNumber(packgeData)}`} style={{ display: "grid", justifyItems: "center", width: "100%" }}>
+                                                        <Link href={`/customer/packages/view/${generateTrackingNumber(packgeData)}`}>
                                                             <button className='button3'>
                                                                 {generateTrackingNumber(packgeData)}
 
