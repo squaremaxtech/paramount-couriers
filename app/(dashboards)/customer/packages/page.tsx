@@ -1,4 +1,3 @@
-import { auth } from '@/auth/auth'
 import ViewPackages from '@/components/packages/ViewPackages'
 import { sessionCheck } from '@/serverFunctions/handleAuth'
 import { getPackages } from '@/serverFunctions/handlePackages'

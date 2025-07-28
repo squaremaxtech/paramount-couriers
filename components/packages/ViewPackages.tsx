@@ -6,7 +6,6 @@ import { formatAsMoney, formatWeight, generateTrackingNumber, makeDateTimeLocalI
 import CheckInput from '../checkInput/CheckInput'
 import Link from 'next/link'
 import { getPackages } from '@/serverFunctions/handlePackages'
-import { useSession } from 'next-auth/react'
 import { consoleAndToastError } from '@/useful/consoleErrorWithToast'
 
 type baseFilterSearchType = {
@@ -39,6 +38,11 @@ type filterSearchType =
     {
         type: "date",
         value: Date | undefined
+        base: baseFilterSearchType,
+    } |
+    {
+        type: "array",
+        value: [] | undefined
         base: baseFilterSearchType,
     }
 
@@ -74,7 +78,17 @@ export default function ViewPackages({ packages, hideColumns, mandatorySearchFil
             type: "date",
             value: undefined,
             base: {},
-        }
+        },
+        invoices: {
+            type: "array",
+            value: undefined,
+            base: {},
+        },
+        images: {
+            type: "array",
+            value: undefined,
+            base: {},
+        },
     })
 
     const tableHeadings = ["id", "userId", "trackingNumber", "store", "description", "location", "status", "consignee", "price", "dateCreated", "invoices", "images", "weight", "payment", "comments"]
@@ -123,6 +137,9 @@ export default function ViewPackages({ packages, hideColumns, mandatorySearchFil
 
             } else if (allPackageFilters.current[eachTableHeading].type === "date") {
                 allPackageFilters.current[eachTableHeading].value = undefined
+
+            } else if (allPackageFilters.current[eachTableHeading].type === "array") {
+                allPackageFilters.current[eachTableHeading].value = undefined
             }
         })
     }
@@ -130,7 +147,7 @@ export default function ViewPackages({ packages, hideColumns, mandatorySearchFil
     //searchFilters exist for each key in object...
     //there are different types: string, number, boolean, options, dateAfter...
     //dynamically make filters at each column name...
-    //gather all filters pass them to search function
+    //gather all filters pass them to search function...
     //handle pages - page size/offset
 
     async function handleSearch() {
@@ -188,7 +205,7 @@ export default function ViewPackages({ packages, hideColumns, mandatorySearchFil
             <table className={`${styles.table} recordTable`}>
                 <thead>
                     <tr className={styles.row} style={{ alignItems: "flex-start" }}>
-                        <th className='smaller center noBorder'>
+                        <th className='smaller center noBorder' style={{ alignSelf: "center" }}>
                             <CheckInput
                                 checked={packagesSelected.length >= packagesSearchObj.searchItems.length}
                                 name='checkedAll'
@@ -215,14 +232,6 @@ export default function ViewPackages({ packages, hideColumns, mandatorySearchFil
                                     value: "",
                                     base: {}
                                 }
-                            }
-
-                            let showMoreCont: React.JSX.Element | undefined = undefined
-
-                            const putInShowMore = (content: React.JSX.Element) => {
-                                showMoreCont = content
-
-                                return null
                             }
 
                             return (
@@ -305,39 +314,6 @@ export default function ViewPackages({ packages, hideColumns, mandatorySearchFil
                                                     {filterSearchType.value !== undefined && (
                                                         <p>{filterSearchType.value}</p>
                                                     )}
-
-                                                    {putInShowMore(
-                                                        <>
-                                                            <label>select {eachTableHeading}</label>
-
-                                                            <select value={filterSearchType.value}
-                                                                onChange={async (event: React.ChangeEvent<HTMLSelectElement>) => {
-                                                                    const eachOption = event.target.value
-
-                                                                    if (allPackageFilters.current[eachTableHeading] === undefined) return
-
-                                                                    //react refresh
-                                                                    allPackageFilters.current[eachTableHeading] = { ...allPackageFilters.current[eachTableHeading] }
-
-                                                                    if (allPackageFilters.current[eachTableHeading].type === "options") {
-                                                                        allPackageFilters.current[eachTableHeading].value = eachOption
-
-                                                                        allPackageFilters.current[eachTableHeading].base.using = true
-                                                                    }
-
-                                                                    runSameOnAll()
-                                                                }}
-                                                            >
-                                                                {filterSearchType.options.map(eachOption => {
-
-                                                                    return (
-                                                                        <option key={eachOption} value={eachOption}
-                                                                        >{eachOption}</option>
-                                                                    )
-                                                                })}
-                                                            </select>
-                                                        </>
-                                                    )}
                                                 </>
                                             )}
 
@@ -367,6 +343,30 @@ export default function ViewPackages({ packages, hideColumns, mandatorySearchFil
                                                 />
                                             )}
 
+                                            {filterSearchType.type === "array" && (
+                                                <button className='button2'
+                                                    onClick={() => {
+                                                        if (allPackageFilters.current[eachTableHeading] === undefined) return
+
+                                                        //react refresh
+                                                        allPackageFilters.current[eachTableHeading] = { ...allPackageFilters.current[eachTableHeading] }
+
+                                                        if (allPackageFilters.current[eachTableHeading].type === "array") {
+                                                            if (allPackageFilters.current[eachTableHeading].value === undefined) {
+                                                                allPackageFilters.current[eachTableHeading].value = []
+                                                                allPackageFilters.current[eachTableHeading].base.using = true
+
+                                                            } else {
+                                                                allPackageFilters.current[eachTableHeading].value = undefined
+                                                                allPackageFilters.current[eachTableHeading].base.using = false
+                                                            }
+                                                        }
+
+                                                        runSameOnAll()
+                                                    }}
+                                                >{filterSearchType.value !== undefined ? "has items" : "no preference"}</button>
+                                            )}
+
                                             <label htmlFor={`${eachTableHeading}checkbox`} style={{ margin: "0 auto", cursor: "pointer" }}>
                                                 <span className="material-symbols-outlined">
                                                     dehaze
@@ -376,7 +376,38 @@ export default function ViewPackages({ packages, hideColumns, mandatorySearchFil
                                             <input id={`${eachTableHeading}checkbox`} className="visibilityCheckbox" type="checkbox" style={{ display: "none" }} />
                                             <span className={`${styles.moreCont} container`}
                                             >
-                                                {showMoreCont}
+                                                {filterSearchType.type === "options" && (//additional options
+                                                    <>
+                                                        <label>select {eachTableHeading}</label>
+
+                                                        <select value={filterSearchType.value}
+                                                            onChange={async (event: React.ChangeEvent<HTMLSelectElement>) => {
+                                                                const eachOption = event.target.value
+
+                                                                if (allPackageFilters.current[eachTableHeading] === undefined) return
+
+                                                                //react refresh
+                                                                allPackageFilters.current[eachTableHeading] = { ...allPackageFilters.current[eachTableHeading] }
+
+                                                                if (allPackageFilters.current[eachTableHeading].type === "options") {
+                                                                    allPackageFilters.current[eachTableHeading].value = eachOption
+
+                                                                    allPackageFilters.current[eachTableHeading].base.using = true
+                                                                }
+
+                                                                runSameOnAll()
+                                                            }}
+                                                        >
+                                                            {filterSearchType.options.map(eachOption => {
+
+                                                                return (
+                                                                    <option key={eachOption} value={eachOption}
+                                                                    >{eachOption}</option>
+                                                                )
+                                                            })}
+                                                        </select>
+                                                    </>
+                                                )}
 
                                                 <label className='resetTextMargin' style={{ color: filterSearchType.base.using ? "var(--c4)" : "var(--textC3)", }}
                                                     onClick={() => {
