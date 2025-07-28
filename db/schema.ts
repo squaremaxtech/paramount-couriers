@@ -49,6 +49,7 @@ export const packages = pgTable("packages", {
     weight: decimal("weight").notNull(),
     payment: decimal("payment").notNull(),
     comments: text("comments").notNull(),
+    needAttention: boolean("needAttention").notNull(),
 },
     (table) => {
         return {

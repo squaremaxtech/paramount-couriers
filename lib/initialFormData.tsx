@@ -25,6 +25,7 @@ export const initialNewPackageObj: newPackageType = {
     price: "",
     invoices: [],//
     comments: "",
+    needAttention: false
 }
 
 export const initialNewUserObj: newUserType = {

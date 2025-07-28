@@ -1,9 +1,6 @@
 import React from 'react'
 import styles from "./style.module.css"
-
-type withId = {
-    id: string;
-} & Record<string, unknown>
+import { withId } from '@/types'
 
 export default function ViewItems<T extends withId>({ itemObjs, selectionAction, selectedId }: { itemObjs: { item: T, Element: React.JSX.Element }[], selectionAction?: (eachItem: T) => void, selectedId?: withId["id"] }) {
     return (
@@ -25,7 +22,7 @@ export function ViewItem<T extends withId>({ itemObj, selectionAction, selectedI
     itemObj: {
         item: T,
         Element: React.JSX.Element
-    }, selectionAction?: (eachItem: T) => void, selectedId?: string
+    }, selectionAction?: (eachItem: T) => void, selectedId?: string | number
 }) {
     const selected = selectedId === itemObj.item.id
 

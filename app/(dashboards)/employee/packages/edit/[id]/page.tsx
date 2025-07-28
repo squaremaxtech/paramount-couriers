@@ -7,7 +7,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
     //validate
     const seenPackage = await getSpecificPackage(parseInt(id), { crud: "r" })
-    if (seenPackage === undefined) return (<p>not seeing specific pre Alert</p>)
+    if (seenPackage === undefined) return (<p>not seeing specific package</p>)
 
     return (
         <main>

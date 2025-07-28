@@ -1,5 +1,6 @@
 import { z } from "zod";
 import * as schema from "@/db/schema"
+import { PgTableWithColumns } from "drizzle-orm/pg-core";
 
 export const dateSchma = z.preprocess((val) => {
     if (typeof val === "string" || typeof val === "number") return new Date(val);
@@ -91,6 +92,10 @@ export type dbWithFileType = {
     file: dbFileType;
 } & Record<string, unknown>;
 
+export type withId = {
+    id: string | number;
+} & Record<string, unknown>
+
 
 
 
@@ -125,6 +130,53 @@ export type dashboardMenu = {
 
 
 
+
+export type baseFilterSearchType = {
+    using?: true, //only use if true
+    hide?: true, //if undefined not hiding
+}
+
+export type filterSearchType =
+    {
+        type: "string",
+        value?: string,
+        base: baseFilterSearchType,
+    } |
+    {
+        type: "stringNumber",
+        value?: string,
+        base: baseFilterSearchType,
+    } |
+    {
+        type: "number",
+        value?: number,
+        base: baseFilterSearchType,
+    } |
+    {
+        type: "boolean",
+        value?: boolean
+        base: baseFilterSearchType,
+    } |
+    {
+        type: "options",
+        options: readonly string[],
+        value?: string,
+        base: baseFilterSearchType,
+    } |
+    {
+        type: "date",
+        value?: Date
+        base: baseFilterSearchType,
+    } |
+    {
+        type: "array",
+        value?: []
+        base: baseFilterSearchType,
+    }
+
+export type allFilters<T> = {
+    [key in keyof T]?: filterSearchType
+}
 
 
 
@@ -206,6 +258,7 @@ export const packageSchema = z.object({
     weight: decimalStringSchema,
     payment: decimalStringSchema,
     comments: z.string(),
+    needAttention: z.boolean(),
 })
 export type packageType = z.infer<typeof packageSchema> & {
     fromUser?: userType,

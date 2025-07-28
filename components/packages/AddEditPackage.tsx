@@ -21,6 +21,7 @@ import { getSpecificUser, getUsers } from '@/serverFunctions/handleUsers'
 import { ViewPreAlert } from '../preAlerts/ViewPreAlert'
 import { ViewUser } from '../users/ViewUser'
 import ViewItems from '../items/ViewItem'
+import FormToggleButton from '../formToggleButton/FormToggleButton'
 
 export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionAction }: { sentPackage?: packageType, wantedCrudObj: wantedCrudObjType, submissionAction?: () => void }) {
     const [formObj, formObjSet] = useState<Partial<packageType>>(deepClone(sentPackage === undefined ? initialNewPackageObj : packageSchema.partial().parse(sentPackage)))
@@ -672,6 +673,28 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                         }}
                         onBlur={() => { checkIfValid(formObj, "comments") }}
                         errors={formErrors["comments"]}
+                    />
+                </>
+            )}
+
+            {formObj.needAttention !== undefined && tableColumnAccess["needAttention"] && (
+                <>
+                    <FormToggleButton
+                        label='package needs attention?'
+                        onClick={() => {
+                            if (!tableColumnAccess["needAttention"]) return
+
+                            formObjSet(prevFormObj => {
+                                const newFormObj = { ...prevFormObj }
+                                if (newFormObj.needAttention === undefined) return prevFormObj
+
+                                newFormObj.needAttention = !newFormObj.needAttention
+
+                                return newFormObj
+                            })
+                        }}
+                        value={formObj.needAttention}
+                        errors={formErrors["needAttention"]}
                     />
                 </>
             )}
