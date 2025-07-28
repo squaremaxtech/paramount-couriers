@@ -91,9 +91,12 @@ export default function AddEditPreAlert({ sentPreAlert, wantedCrudObj, submissio
                 }
 
                 //update
-                await updatePreAlert(sentPreAlert.id, filteredPreAlert, wantedCrudObj)
+                const updatedPreAlert = await updatePreAlert(sentPreAlert.id, filteredPreAlert, wantedCrudObj)
 
                 toast.success("pre alert updated")
+
+                //set to updated
+                formObjSet(updatedPreAlert)
             }
 
             if (submissionAction !== undefined) {

@@ -1,9 +1,9 @@
 "use server"
 import { db } from "@/db"
 import { preAlerts } from "@/db/schema"
-import { dbInvoiceType, newPreAlertSchema, newPreAlertType, preAlertSchema, preAlertType, tableColumns, tableFilterTypes, wantedCrudObjType } from "@/types"
+import { dbImageType, dbInvoiceType, newPreAlertSchema, newPreAlertType, preAlertSchema, preAlertType, tableColumns, tableFilterTypes, wantedCrudObjType } from "@/types"
 import { and, desc, eq, SQLWrapper } from "drizzle-orm"
-import { deleteInvoices } from "./handleDocuments"
+import { deleteImages, deleteInvoices } from "./handleDocuments"
 import { ensureCanAccessTable } from "./handleAuth"
 import { handleEnsureCanAccessTableResults } from "@/utility/utility"
 import { filterTableObjectByColumnAccess } from "@/useful/usefulFunctions"
@@ -26,7 +26,7 @@ export async function addPreAlert(newPreAlertObj: newPreAlertType) {
     })
 }
 
-export async function updatePreAlert(preAlertId: preAlertType["id"], updatedPreAlertObj: Partial<preAlertType>, wantedCrudObj: wantedCrudObjType) {
+export async function updatePreAlert(preAlertId: preAlertType["id"], updatedPreAlertObj: Partial<preAlertType>, wantedCrudObj: wantedCrudObjType): Promise<preAlertType> {
     //validation
     preAlertSchema.partial().parse(updatedPreAlertObj)
 
@@ -34,11 +34,13 @@ export async function updatePreAlert(preAlertId: preAlertType["id"], updatedPreA
     const accessTableResults = await ensureCanAccessTable("preAlerts", wantedCrudObj, Object.keys(updatedPreAlertObj) as tableColumns["preAlerts"][])
     handleEnsureCanAccessTableResults(accessTableResults, "both")
 
-    await db.update(preAlerts)
+    const [result] = await db.update(preAlerts)
         .set({
             ...updatedPreAlertObj
         })
-        .where(eq(preAlerts.id, preAlertId));
+        .where(eq(preAlerts.id, preAlertId)).returning()
+
+    return result
 }
 
 export async function deletePreAlert(preAlertId: preAlertType["id"], wantedCrudObj: wantedCrudObjType) {
@@ -62,6 +64,18 @@ export async function deleteInvoiceOnPreAlert(preAlertId: preAlertType["id"], db
 
     //delete from folder
     await deleteInvoices(dbInvoiceType.map(eachDbInvoiceType => eachDbInvoiceType.file.src))
+}
+
+export async function deleteImageeOnPreAlert(preAlertId: preAlertType["id"], dbImageType: dbImageType[], wantedCrudObj: wantedCrudObjType) {
+    //validation
+    preAlertSchema.shape.id.parse(preAlertId)
+
+    //auth check
+    const accessTableResults = await ensureCanAccessTable("preAlerts", wantedCrudObj)
+    handleEnsureCanAccessTableResults(accessTableResults, "both")
+
+    //delete from folder
+    await deleteImages(dbImageType.map(eachDbImage => eachDbImage.file.src))
 }
 
 export async function getSpecificPreAlert(preAlertId: preAlertType["id"], wantedCrudObj: wantedCrudObjType, runAuth = true): Promise<preAlertType | undefined> {

@@ -192,7 +192,7 @@ export default function Search<T>({ searchObj, searchObjSet, searchFunc, showPag
 
     return (
         <div style={{ display: "grid", alignContent: "flex-start", gap: "var(--spacingR)" }}>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--spacingS)", alignItems: "center" }} className='textResetMargin'>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--spacingS)", alignItems: "center" }} className='resetTextMargin'>
                 <button className='button1'
                     onClick={async () => {
                         handleSearch()

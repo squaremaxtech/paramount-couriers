@@ -5,7 +5,7 @@ import { dbImageType, dbInvoiceType, newPackageSchema, newPackageType, packageSc
 import { and, desc, eq, SQLWrapper } from "drizzle-orm"
 import { deleteImages, deleteInvoices } from "./handleDocuments"
 import { ensureCanAccessTable } from "./handleAuth"
-import { handleEnsureCanAccessTableResults } from "@/utility/utility"
+import { handleEnsureCanAccessTableResults, makeWhereClauses } from "@/utility/utility"
 import { filterTableObjectByColumnAccess } from "@/useful/usefulFunctions"
 import { initialNewPackageObj } from "@/lib/initialFormData"
 
@@ -25,7 +25,7 @@ export async function addPackage(newPackageObj: newPackageType) {
     })
 }
 
-export async function updatePackage(packageId: packageType["id"], updatedPackageObj: Partial<packageType>, wantedCrudObj: wantedCrudObjType) {
+export async function updatePackage(packageId: packageType["id"], updatedPackageObj: Partial<packageType>, wantedCrudObj: wantedCrudObjType): Promise<packageType> {
     //validation
     packageSchema.partial().parse(updatedPackageObj)
 
@@ -33,11 +33,13 @@ export async function updatePackage(packageId: packageType["id"], updatedPackage
     const accessTableResults = await ensureCanAccessTable("packages", wantedCrudObj, Object.keys(updatedPackageObj) as tableColumns["packages"][])
     handleEnsureCanAccessTableResults(accessTableResults, "both")
 
-    await db.update(packages)
+    const [result] = await db.update(packages)
         .set({
             ...updatedPackageObj
         })
-        .where(eq(packages.id, packageId));
+        .where(eq(packages.id, packageId)).returning()
+
+    return result
 }
 
 export async function deletePackage(packageId: packageType["id"], wantedCrudObj: wantedCrudObjType) {
@@ -92,65 +94,19 @@ export async function getSpecificPackage(packageId: packageType["id"], wantedCru
 }
 
 export async function getPackages(filter: tableFilterTypes<packageType>, wantedCrudObj: wantedCrudObjType, limit = 50, offset = 0): Promise<packageType[]> {
-    //auth check
-    const accessTableResults = await ensureCanAccessTable("packages", wantedCrudObj)
-    handleEnsureCanAccessTableResults(accessTableResults, "both")
-    // Collect conditions dynamically
-    const whereClauses: SQLWrapper[] = []
+    // Auth check
+    const accessTableResults = await ensureCanAccessTable("packages", wantedCrudObj);
+    handleEnsureCanAccessTableResults(accessTableResults, "both");
 
-    //validate filter
-    // packageSchema.partial().parse(filter)
-
-    if (filter.id !== undefined) {
-        whereClauses.push(eq(packages.id, filter.id))
-    }
-
-    if (filter.dateCreated !== undefined) {
-        whereClauses.push(eq(packages.dateCreated, filter.dateCreated))
-    }
-
-    if (filter.userId !== undefined) {
-        whereClauses.push(eq(packages.userId, filter.userId))
-    }
-
-    if (filter.location !== undefined) {
-        whereClauses.push(eq(packages.location, filter.location))
-    }
-
-    if (filter.status !== undefined) {
-        whereClauses.push(eq(packages.status, filter.status))
-    }
-
-    if (filter.trackingNumber !== undefined) {
-        whereClauses.push(eq(packages.trackingNumber, filter.trackingNumber))
-    }
-
-    if (filter.weight !== undefined) {
-        whereClauses.push(eq(packages.weight, filter.weight))
-    }
-
-    if (filter.payment !== undefined) {
-        whereClauses.push(eq(packages.payment, filter.payment))
-    }
-
-    if (filter.store !== undefined) {
-        whereClauses.push(eq(packages.store, filter.store))
-    }
-
-    if (filter.consignee !== undefined) {
-        whereClauses.push(eq(packages.consignee, filter.consignee))
-    }
-
-    if (filter.price !== undefined) {
-        whereClauses.push(eq(packages.price, filter.price))
-    }
+    //compile filters into proper where clauses
+    const whereClauses: SQLWrapper[] = makeWhereClauses(packageSchema.partial(), filter, packages)
 
     const results = await db.query.packages.findMany({
         where: and(...whereClauses),
-        limit: limit,
-        offset: offset,
+        limit,
+        offset,
         orderBy: [desc(packages.dateCreated)],
     });
 
-    return results
+    return results;
 }

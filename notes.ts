@@ -1,12 +1,7 @@
 //To Do
-//
+//add limit to packages server page
 //change shipping invoice to proper type
-//preAlerts...
-//packages
-////build user selection...
-////build pre alert selection / integration
 //customer view packages
-//check validations on detall functions
 
 
 

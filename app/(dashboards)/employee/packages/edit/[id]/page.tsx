@@ -1,6 +1,5 @@
 import AddEditPackage from '@/components/packages/AddEditPackage'
 import { getSpecificPackage } from '@/serverFunctions/handlePackages'
-import { packageType } from '@/types'
 import React from 'react'
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {

@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useState } from 'react'
 import styles from "./style.module.css"
-import { deepClone, formatAsMoney, formatWithCommas } from '@/utility/utility'
+import { deepClone, formatAsMoney, formatWeight } from '@/utility/utility'
 import toast from 'react-hot-toast'
 import TextInput from '../textInput/TextInput'
 import { dbInvoiceType, newPackageSchema, packageType, wantedCrudObjType, packageSchema, searchObjType, preAlertType, userType, locationType, locationOptions, statusType, statusOptions, dbImageType } from '@/types'
@@ -16,10 +16,11 @@ import { initialNewPackageObj } from '@/lib/initialFormData'
 import UseFormErrors from '../useFormErrors/UseFormErrors'
 import ShowMore from '../showMore/ShowMore'
 import Search from '../search/Search'
-import { getPreAlerts, updatePreAlert } from '@/serverFunctions/handlePreAlerts'
+import { deleteImageeOnPreAlert, deleteInvoiceOnPreAlert, getPreAlerts, updatePreAlert } from '@/serverFunctions/handlePreAlerts'
 import { getSpecificUser, getUsers } from '@/serverFunctions/handleUsers'
-import ViewPreAlerts from '../preAlerts/ViewPreAlert'
-import ViewUsers, { ViewUser } from '../users/ViewUser'
+import { ViewPreAlert } from '../preAlerts/ViewPreAlert'
+import { ViewUser } from '../users/ViewUser'
+import ViewItems from '../items/ViewItem'
 
 export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionAction }: { sentPackage?: packageType, wantedCrudObj: wantedCrudObjType, submissionAction?: () => void }) {
     const [formObj, formObjSet] = useState<Partial<packageType>>(deepClone(sentPackage === undefined ? initialNewPackageObj : packageSchema.partial().parse(sentPackage)))
@@ -38,6 +39,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
     const [imageFormData, imageFormDataSet] = useState<FormData | null>(null)
 
     const [chosenUser, chosenUserSet] = useState<userType | undefined>(undefined)
+    const [chosenPreAlert, chosenPreAlertSet] = useState<preAlertType | undefined>(undefined)
 
     //handle changes from above
     useEffect(() => {
@@ -63,7 +65,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
             }
         }
         search()
-    }, [])
+    }, [formObj.userId])
 
     async function handleSubmit() {
         try {
@@ -74,16 +76,31 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                 //validate - replace with initial defaults if no access to "c"
                 const filteredPackage = filterTableObjectByColumnAccess(tableColumnAccess, formObj, initialNewPackageObj)
 
-                //files
+                //files - can sometimes contain files from given preAlert
                 if (filteredPackage.invoices !== undefined) {
-                    filteredPackage.invoices = await handleWithFiles(filteredPackage.invoices, invoiceFormData, "invoice")
+                    filteredPackage.invoices = await handleWithFiles(filteredPackage.invoices, invoiceFormData, "invoice", {
+                        delete: async (dbWithFilesObjs) => {
+                            if (chosenPreAlert !== undefined) {
+                                await deleteInvoiceOnPreAlert(chosenPreAlert.id, dbWithFilesObjs, { crud: "d" })
+                            }
+                        }
+                    })
                 }
                 //images
                 if (filteredPackage.images !== undefined) {
-                    filteredPackage.images = await handleWithFiles(filteredPackage.images, imageFormData, "image")
+                    filteredPackage.images = await handleWithFiles(filteredPackage.images, imageFormData, "image", {
+                        delete: async (dbWithFilesObjs) => {
+                            if (chosenPreAlert !== undefined) {
+                                await deleteImageeOnPreAlert(chosenPreAlert.id, dbWithFilesObjs, { crud: "d" })
+                            }
+                        }
+                    })
                 }
 
                 const validatedNewPackage = newPackageSchema.parse(filteredPackage)
+
+                //update chosen preAlert
+                await runSameForPreAlert()
 
                 //send up to server
                 await addPackage(validatedNewPackage)
@@ -125,15 +142,44 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                     })
                 }
 
+                //update chosen preAlert
+                await runSameForPreAlert()
+
                 //update
-                await updatePackage(sentPackage.id, filteredPackage, wantedCrudObj)
+                const updatedPackage = await updatePackage(sentPackage.id, filteredPackage, wantedCrudObj)
 
                 toast.success("package updated")
+
+                //set to updated
+                formObjSet(updatedPackage)
             }
 
             if (submissionAction !== undefined) {
                 submissionAction()
             }
+
+            async function runSameForPreAlert() {
+                //update chosen preAlert
+                if (chosenPreAlert !== undefined) {
+                    await handleUpdatePreAlert(chosenPreAlert, { acknowledged: true })
+                }
+            }
+
+        } catch (error) {
+            consoleAndToastError(error)
+        }
+    }
+
+    async function handleUpdatePreAlert(preAlert: preAlertType, newPreAlertObj: Partial<preAlertType>) {
+        try {
+            //update preAlert on server then re-search
+            await updatePreAlert(preAlert.id, newPreAlertObj, { crud: "u" })
+
+            preAlertsSearchObjSet(prevPreAlertsSearchObj => {
+                const newPreAlertsSearchObj = { ...prevPreAlertsSearchObj }
+                newPreAlertsSearchObj.refreshAll = true
+                return newPreAlertsSearchObj
+            })
 
         } catch (error) {
             consoleAndToastError(error)
@@ -167,51 +213,45 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                         />
 
                         {preAlertsSearchObj.searchItems.length > 0 && (
-                            <ViewPreAlerts preAlerts={preAlertsSearchObj.searchItems}
+                            <ViewItems
+                                itemObjs={preAlertsSearchObj.searchItems.map(eachSeaarchItem => {
+                                    return {
+                                        item: eachSeaarchItem,
+                                        Element: <ViewPreAlert preAlert={eachSeaarchItem} />
+                                    }
+                                })}
+                                selectedId={chosenPreAlert !== undefined ? chosenPreAlert.id : undefined}
                                 selectionAction={async (eachPreAlert) => {
                                     try {
-                                        if (eachPreAlert.acknowledged) {
-                                            //deselect
-                                            handleUpdatePreAlert(false)
+                                        //add onto form obj everything wanted
+                                        formObjSet(prevFormObj => {
+                                            const newFormObj = { ...prevFormObj }
+
+                                            //assign proper user to package owner and rest of values
+                                            newFormObj.userId = eachPreAlert.userId
+                                            newFormObj.trackingNumber = eachPreAlert.trackingNumber
+                                            newFormObj.store = eachPreAlert.store
+                                            newFormObj.consignee = eachPreAlert.consignee
+                                            newFormObj.description = eachPreAlert.description
+                                            newFormObj.price = eachPreAlert.price
+                                            newFormObj.invoices = eachPreAlert.invoices
+
+                                            return newFormObj
+                                        })
+
+                                        //set used
+                                        chosenPreAlertSet(eachPreAlert)
+
+                                        //deselect
+                                        if (chosenPreAlert !== undefined && chosenPreAlert.id === eachPreAlert.id) {
+                                            chosenPreAlertSet(undefined)
 
                                         } else {
-                                            //select and use
-
-                                            //add onto form obj everything wanted
-                                            formObjSet(prevFormObj => {
-                                                const newFormObj = { ...prevFormObj }
-
-                                                //assign proper user to package owner and rest of values
-                                                newFormObj.userId = eachPreAlert.userId
-                                                newFormObj.trackingNumber = eachPreAlert.trackingNumber
-                                                newFormObj.store = eachPreAlert.store
-                                                newFormObj.consignee = eachPreAlert.consignee
-                                                newFormObj.description = eachPreAlert.description
-                                                newFormObj.price = eachPreAlert.price
-                                                newFormObj.invoices = eachPreAlert.invoices
-
-                                                return newFormObj
-                                            })
-
-                                            //asknowledge pre alert
-                                            handleUpdatePreAlert(true)
-
                                             toast.success(`preAlert selected`)
                                         }
 
                                     } catch (error) {
                                         consoleAndToastError(error)
-                                    }
-
-                                    async function handleUpdatePreAlert(acknowledged: boolean) {
-                                        //update preAlert on server then re-search
-                                        await updatePreAlert(eachPreAlert.id, { acknowledged: acknowledged }, { crud: "u" })
-
-                                        preAlertsSearchObjSet(prevPreAlertsSearchObj => {
-                                            const newPreAlertsSearchObj = { ...prevPreAlertsSearchObj }
-                                            newPreAlertsSearchObj.refreshAll = true
-                                            return newPreAlertsSearchObj
-                                        })
                                     }
                                 }}
                             />
@@ -268,7 +308,14 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                                 />
 
                                 {usersSearchObj.searchItems.length > 0 && (
-                                    <ViewUsers users={usersSearchObj.searchItems}
+                                    <ViewItems
+                                        itemObjs={usersSearchObj.searchItems.map(eachSeaarchItem => {
+                                            return {
+                                                item: eachSeaarchItem,
+                                                Element: <ViewUser user={eachSeaarchItem} />
+                                            }
+                                        })}
+                                        selectedId={chosenUser !== undefined ? chosenUser.id : undefined}
                                         selectionAction={async (eachUser) => {
                                             formObjSet(prevFormObj => {
                                                 const newFormObj = { ...prevFormObj }
@@ -279,11 +326,9 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                                                 return newFormObj
                                             })
 
-                                            //set chosen user for display
-                                            chosenUserSet(eachUser)
-
                                             toast.success(`${eachUser.name} selected`)
-                                        }} />
+                                        }}
+                                    />
                                 )}
                             </>
                         )}
@@ -565,7 +610,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                         name={"weight"}
                         value={formObj.weight}
                         type={"text"}
-                        label={`weight ${formatWithCommas(formObj.weight)} lb${parseInt(formObj.weight) > 1 ? "s" : ""}`}
+                        label={`weight ${formatWeight(formObj.weight)}`}
                         placeHolder={"enter weight"}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                             formObjSet(prevFormObj => {

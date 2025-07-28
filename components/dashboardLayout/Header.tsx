@@ -16,7 +16,7 @@ export default function Header({ navMenu }: { navMenu: dashboardMenu[] }) {
     })
 
     return (
-        <div className={`${styles.headerCont} textResetMargin`}>
+        <div className={`${styles.headerCont} resetTextMargin`}>
             {foundNavItem !== undefined ? (
                 <>
                     <h1>{foundNavItem.title}</h1>

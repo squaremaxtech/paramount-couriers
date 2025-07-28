@@ -77,7 +77,7 @@ export default function UploadFiles<T extends dbWithFileType>({ id, multiple = t
                         if (eachDbWithFileObj.file.status === "to-delete") return null
 
                         return (
-                            <li key={eachDbWithFileObj.file.src} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--spacingS)" }} className='textResetMargin'>
+                            <li key={eachDbWithFileObj.file.src} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--spacingS)" }} className='resetTextMargin'>
                                 <p>{eachDbWithFileObj.file.fileName}</p>
 
                                 <button

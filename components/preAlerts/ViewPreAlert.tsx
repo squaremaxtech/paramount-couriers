@@ -2,14 +2,15 @@ import { preAlertType } from '@/types'
 import { formatLocalDateTime } from '@/utility/utility'
 import React from 'react'
 import { ViewUser } from '../users/ViewUser'
+import styles from "./style.module.css"
 
-export default function ViewPreAlerts({ preAlerts, selectionAction }: { preAlerts: preAlertType[], selectionAction?: (eachPreAlert: preAlertType) => void }) {
+export default function ViewPreAlerts({ preAlerts, selectionAction, selectedId }: { preAlerts: preAlertType[], selectionAction?: (eachPreAlert: preAlertType) => void, selectedId?: preAlertType["id"] }) {
     return (
         <div className='container'>
             <div className='gridColumn snap'>
                 {preAlerts.map(eachPreAlert => {
                     return (
-                        <ViewPreAlert key={eachPreAlert.id} preAlert={eachPreAlert}
+                        <ViewPreAlert key={eachPreAlert.id} preAlert={eachPreAlert} selectedId={selectedId}
                             selectionAction={selectionAction}
                         />
                     )
@@ -19,9 +20,9 @@ export default function ViewPreAlerts({ preAlerts, selectionAction }: { preAlert
     )
 }
 
-export function ViewPreAlert({ preAlert, selectionAction }: { preAlert: preAlertType, selectionAction?: (eachPreAlert: preAlertType) => void }) {
+export function ViewPreAlert({ preAlert, selectionAction, selectedId }: { preAlert: preAlertType, selectionAction?: (eachPreAlert: preAlertType) => void, selectedId?: preAlertType["id"] }) {
     return (
-        <div className="card">
+        <div className={`${styles.preAlert} card ${selectedId === preAlert.id ? styles.selected : ""}`}>
             {preAlert.fromUser !== undefined && (
                 <ViewUser user={preAlert.fromUser} />
             )}

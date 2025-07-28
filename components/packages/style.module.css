@@ -5,3 +5,26 @@
     padding: 1rem;
     overflow: auto;
 }
+
+.heading {
+    display: grid;
+    align-content: flex-start;
+    grid-template-rows: auto auto;
+
+}
+
+.moreCont {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    background-color: var(--bg2);
+    padding: var(--spacingR);
+    z-index: 1;
+    width: auto;
+}
+
+.table input {
+    padding: var(--spacingS);
+    /* width: 100%; */
+    font-size: var(--fontSizeS);
+}

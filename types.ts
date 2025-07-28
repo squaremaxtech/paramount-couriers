@@ -9,9 +9,6 @@ export const dateSchma = z.preprocess((val) => {
 export const decimalStringSchema = z.string()
     .regex(/^(0|[1-9]\d*)(\.\d{1,2})?$/, "Must be a valid number (max 2 decimal places)")
 
-
-
-
 export type schemaType = typeof schema
 
 export type crudType = "c" | "r" | "u" | "d" | "co" | "ro" | "uo" | "do";
