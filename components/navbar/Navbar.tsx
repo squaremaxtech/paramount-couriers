@@ -45,7 +45,7 @@ export default async function MainNav({ menuInfoArr }: { menuInfoArr: menuItem[]
                             />
                         </label>
 
-                        <input id='userOptionsCheckbox' className="visibilityCheckbox" type="checkbox" style={{ display: "none" }} />
+                        <input id='userOptionsCheckbox' className="visibilityCheckbox" type="checkbox" />
 
                         <ul className={styles.moreItemsMenu}>
                             <li style={{ padding: ".5rem" }}>{session.user.name}</li>
@@ -93,7 +93,7 @@ function MobileNav({ menuItems }: { menuItems: menuItem[] }) {
             </label>
 
             {/* use checkbox styling to hide the menu */}
-            <input id='mobileMenuCheckbox' className="visibilityCheckbox" type="checkbox" style={{ display: "none" }} />
+            <input id='mobileMenuCheckbox' className="visibilityCheckbox" type="checkbox" />
             <Menu menu={menuItems} />
         </div>
     )
@@ -118,7 +118,7 @@ function Menu({ menu, ...elProps }: { menu: menuItem[] } & HTMLAttributes<HTMLUL
 
                     {eachMenuItem.subMenu !== undefined && eachMenuItem.subMenu.length > 0 && (
                         <>
-                            <input id='menuItemCheckbox' className="visibilityCheckbox" type="checkbox" style={{ display: "none" }} />
+                            <input id='menuItemCheckbox' className="visibilityCheckbox" type="checkbox" />
                             <SubMenu subMenu={eachMenuItem.subMenu} />
                         </>
                     )}
@@ -147,7 +147,7 @@ function SubMenu({ subMenu }: { subMenu: subMenuItem[] }) {
 
                     {eachSubMenuItem.subSubMenu !== undefined && eachSubMenuItem.subSubMenu.length > 0 && (
                         <>
-                            <input id='subMenuItemCheckbox' className="visibilityCheckbox" type="checkbox" style={{ display: "none" }} />
+                            <input id='subMenuItemCheckbox' className="visibilityCheckbox" type="checkbox" />
                             <SubSubMenu subSubMenu={eachSubMenuItem.subSubMenu} />
                         </>
                     )}

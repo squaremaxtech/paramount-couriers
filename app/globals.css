@@ -269,6 +269,10 @@ option {
   margin: 0;
 }
 
+.visibilityCheckbox {
+  display: none !important;
+}
+
 .visibilityCheckbox:not(:checked)+* {
   display: none;
 }

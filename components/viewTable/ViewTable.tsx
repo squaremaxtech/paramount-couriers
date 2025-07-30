@@ -8,15 +8,15 @@ import { consoleAndToastError } from '@/useful/consoleErrorWithToast'
 import CheckBox from '@/components/inputs/checkBox/CheckBox'
 
 export default function ViewTable<T extends withId>(
-    { wantedItems, hideColumns, allPackageFiltersExtra, sizeClass, searchFunc, renameTableHeadings, headingOrder, tableProvider }:
-        { wantedItems: T[], hideColumns?: (keyof T)[], allPackageFiltersExtra?: allFilters<T>, sizeClass?: { large: (keyof T)[], small: (keyof T)[] }, searchFunc: (tableFilters: tableFilterTypes<T>, wantedItemsSearchObj: searchObjType<T>) => Promise<T[]>, renameTableHeadings?: { [key in keyof T]?: string }, headingOrder?: (keyof T)[], tableProvider: { filters: allFilters<T>, columns: (keyof T)[] } }
+    { wantedItems, hideColumns, sizeClass, searchFunc, renameTableHeadings, headingOrder, tableProvider, searchDebounceTime = 500 }:
+        { wantedItems: T[], hideColumns?: (keyof T)[], sizeClass?: { large: (keyof T)[], small: (keyof T)[] }, searchFunc: (tableFilters: tableFilterTypes<T>, wantedItemsSearchObj: searchObjType<T>) => Promise<T[]>, renameTableHeadings?: { [key in keyof T]?: string }, headingOrder?: (keyof T)[], tableProvider: { filters: allFilters<T>, columns: (keyof T)[] }, searchDebounceTime?: number }
 ) {
     const [wantedItemsSearchObj, wantedItemsSearchObjSet] = useState<searchObjType<T>>({
         searchItems: wantedItems,
     })
     const [itemsSelected, itemsSelectedSet] = useState<T["id"][]>([])
 
-    const allPackageFilters = useRef<allFilters<T>>({ ...tableProvider.filters, ...allPackageFiltersExtra })
+    const allPackageFilters = useRef<allFilters<T>>({ ...tableProvider.filters })
 
     const [tableHeadings] = useState(() => {
         return [
@@ -105,8 +105,6 @@ export default function ViewTable<T extends withId>(
                 }).filter(eachEntryArr => eachEntryArr !== null)
             )
 
-            console.log(`$activeFilters`, activeFilters);
-
             const items = await searchFunc(activeFilters as tableFilterTypes<T>, wantedItemsSearchObj)
 
             wantedItemsSearchObjSet(prevwantedSearchObj => {
@@ -126,7 +124,7 @@ export default function ViewTable<T extends withId>(
         if (searchTriggerDebounce.current) clearTimeout(searchTriggerDebounce.current)
         searchTriggerDebounce.current = setTimeout(() => {
             handleSearch()
-        }, 1000);
+        }, searchDebounceTime);
     }
 
     function refresh() {
@@ -161,17 +159,16 @@ export default function ViewTable<T extends withId>(
                         </th>
 
                         {tableHeadings.map(eachTableHeading => {
-                            const seenHeading = renameTableHeadings !== undefined && renameTableHeadings[eachTableHeading] !== undefined ? renameTableHeadings[eachTableHeading] : eachTableHeading as string
+                            const eachTableHeadingAsString = renameTableHeadings !== undefined && renameTableHeadings[eachTableHeading] !== undefined ? renameTableHeadings[eachTableHeading] : eachTableHeading as string
 
                             const filterSearchType: filterSearchType | undefined = allPackageFilters.current[eachTableHeading]
-                            console.log(`$filterSearchType`, filterSearchType);
 
                             return (
-                                <th key={seenHeading} className={`${styles.heading} ${returnSizeClass(eachTableHeading)} ${eachTableHeading === "id" ? "noBorder" : ""} resetTextMargin`}>
-                                    <p>{spaceCamelCase(seenHeading)}</p>
+                                <th key={eachTableHeadingAsString} className={`${styles.heading} ${returnSizeClass(eachTableHeading)} ${eachTableHeading === "id" ? "noBorder" : ""} resetTextMargin`}>
+                                    <p>{spaceCamelCase(eachTableHeadingAsString)}</p>
 
                                     {filterSearchType !== undefined && (
-                                        <span style={{ display: "grid", position: "relative", gap: "var(--spacingS)", alignItems: "center", gridTemplateColumns: "1fr auto" }} className='resetTextMargin'>
+                                        <span style={{ width: "100%", display: "flex", position: "relative", gap: "var(--spacingS)", alignItems: "center", justifyContent: "space-between" }} className='resetTextMargin'>
                                             {filterSearchType.type === "string" && (
                                                 <input type='text' value={filterSearchType.value !== undefined ? filterSearchType.value : ""}
                                                     onChange={(e) => {
@@ -330,21 +327,21 @@ export default function ViewTable<T extends withId>(
 
                                                         runSameOnAll()
                                                     }}
-                                                >{filterSearchType.value !== undefined ? "has items" : "no preference"}</button>
+                                                >{filterSearchType.value !== undefined ? `has ${eachTableHeadingAsString}` : "no preference"}</button>
                                             )}
 
-                                            <label htmlFor={`${seenHeading}checkbox`} style={{ margin: "0 auto", cursor: "pointer" }}>
+                                            <label htmlFor={`${eachTableHeadingAsString}checkbox`} style={{ marginLeft: "auto", cursor: "pointer" }}>
                                                 <span className="material-symbols-outlined">
                                                     dehaze
                                                 </span>
                                             </label>
 
-                                            <input id={`${seenHeading}checkbox`} className="visibilityCheckbox" type="checkbox" style={{ display: "none" }} />
+                                            <input id={`${eachTableHeadingAsString}checkbox`} className="visibilityCheckbox" type="checkbox" />
                                             <span className={`${styles.moreCont} container`}
                                             >
                                                 {filterSearchType.type === "options" && (//additional options
                                                     <>
-                                                        <label>select {seenHeading}</label>
+                                                        <label>select {eachTableHeadingAsString}</label>
 
                                                         <select value={filterSearchType.value}
                                                             onChange={async (event: React.ChangeEvent<HTMLSelectElement>) => {

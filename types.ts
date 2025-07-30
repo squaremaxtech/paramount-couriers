@@ -114,7 +114,7 @@ export type searchObjType<T> = {
     refreshAll?: boolean
 }
 
-export type provideFilterAndColumnForTableReturnType<T extends PgTableWithColumns<any>> = { filters: allFilters<T["_"]["columns"]>, columns: (keyof T["_"]["columns"])[] }
+export type provideFilterAndColumnForTableReturnType<T extends PgTableWithColumns<any>> = { filters: allFilters<T>, columns: (keyof T["_"]["columns"])[] }
 
 export const uploadFileApiResponseSchema = z.object({
     names: z.string().array(),

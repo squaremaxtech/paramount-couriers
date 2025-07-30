@@ -17,7 +17,7 @@ export default function UploadFiles<T extends dbWithFileType>({ id, multiple = t
                 </label>
             </button>
 
-            <input id={id} type="file" placeholder='Upload invoices' multiple={multiple} accept={accept} style={{ display: "none" }}
+            <input id={id} type="file" placeholder='Upload invoices' multiple={multiple} accept={accept}
                 onChange={(e) => {
                     if (!e.target.files) return
 

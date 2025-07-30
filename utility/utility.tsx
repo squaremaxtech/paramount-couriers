@@ -2,7 +2,7 @@ import z from "zod"
 import { allFilters, ensureCanAccessTableReturnType, provideFilterAndColumnForTableReturnType } from "@/types";
 import { errorZodErrorAsString } from "@/useful/consoleErrorWithToast";
 import { eq, gte, sql, SQLWrapper } from "drizzle-orm";
-import { PgNumeric, PgInteger, PgTableWithColumns, PgEnumColumn, PgText, PgVarchar, PgBoolean, PgDate, PgJsonb, PgTimestamp } from 'drizzle-orm/pg-core'
+import { PgNumeric, PgInteger, PgTableWithColumns, PgEnumColumn, PgText, PgVarchar, PgBoolean, PgDate, PgJsonb, PgTimestamp, PgSerial, PgJson } from 'drizzle-orm/pg-core'
 
 export function deepClone<T>(object: T): T {
     return JSON.parse(JSON.stringify(object))
@@ -168,52 +168,55 @@ export function makeWhereClauses<T extends Object>(schema: z.Schema, filter: T, 
     return whereClauses
 }
 
-export function provideFilterAndColumnForTable<T extends PgTableWithColumns<any>>(table: T, enums: Partial<Record<keyof T["_"]["columns"], string[]>> = {}): provideFilterAndColumnForTableReturnType<T> {
+export function provideFilterAndColumnForTable<T extends PgTableWithColumns<any>>(table: T): provideFilterAndColumnForTableReturnType<T> {
     const filters: Partial<allFilters<T["_"]["columns"]>> = {};
-
-    for (const [key, column] of Object.entries(table)) {
+    console.log(`$hi`);
+    for (const [keyPre, column] of Object.entries(table)) {
         if (!("columnType" in column)) continue;
 
-        if (column instanceof PgInteger) {
-            filters[key as keyof T["_"]["columns"]] = {
+        //assign type
+        const key = keyPre as keyof T["_"]["columns"]
+
+        if (column instanceof PgInteger || column instanceof PgSerial) {
+            filters[key] = {
                 type: "number",
                 base: {},
             };
 
         } else if (column instanceof PgText || column instanceof PgVarchar) {
-            filters[key as keyof T["_"]["columns"]] = {
+            filters[key] = {
                 type: "string",
                 base: {},
             };
 
-        } else if (column instanceof PgNumeric) {
-            filters[key as keyof T["_"]["columns"]] = {
+        } else if (column instanceof PgNumeric) {//speacialized numbers: accurate decimals...etc
+            filters[key] = {
                 type: "stringNumber",
                 base: {},
             };
 
         } else if (column instanceof PgBoolean) {
-            filters[key as keyof T["_"]["columns"]] = {
+            filters[key] = {
                 type: "boolean",
                 base: {},
             };
 
         } else if (column instanceof PgDate || column instanceof PgTimestamp) {
-            filters[key as keyof T["_"]["columns"]] = {
+            filters[key] = {
                 type: "date",
                 base: {},
             };
 
-        } else if (column instanceof PgJsonb) {
-            filters[key as keyof T["_"]["columns"]] = {
+        } else if (column instanceof PgJson || column instanceof PgJsonb) {
+            filters[key] = {
                 type: "array",
                 base: {},
             };
 
         } else if (column instanceof PgEnumColumn) {
-            filters[key as keyof T["_"]["columns"]] = {
+            filters[key] = {
                 type: "options",
-                options: enums[key as keyof typeof enums] ?? [],
+                options: column["enumValues"],
                 base: {},
             };
         }
