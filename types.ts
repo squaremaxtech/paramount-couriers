@@ -46,7 +46,8 @@ export type tableColumns = {
 
 export type wantedCrudObjType = {
     crud: crudType,
-    resourceId?: string
+    resourceId?: string,
+    skipResourceIdCheck?: true
 }
 
 export type tableColumnAccessType = {
@@ -112,6 +113,8 @@ export type searchObjType<T> = {
     incrementOffsetBy?: number, //how much to increase by
     refreshAll?: boolean
 }
+
+export type provideFilterAndColumnForTableReturnType<T extends PgTableWithColumns<any>> = { filters: allFilters<T["_"]["columns"]>, columns: (keyof T["_"]["columns"])[] }
 
 export const uploadFileApiResponseSchema = z.object({
     names: z.string().array(),

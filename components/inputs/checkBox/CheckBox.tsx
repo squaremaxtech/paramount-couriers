@@ -1,4 +1,4 @@
-export default function CheckInput({ name, checked, onChange, label, id, errors, onBlur, placeHolder, ...elProps }: { name: string, checked: boolean, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, onBlur?: (e: React.FocusEvent<HTMLInputElement, Element>) => void, label?: string, id?: string, errors?: string, placeHolder?: string } & React.HTMLAttributes<HTMLSpanElement>) {
+export default function CheckBox({ name, checked, onChange, label, id, errors, onBlur, placeHolder, ...elProps }: { name: string, checked: boolean, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, onBlur?: (e: React.FocusEvent<HTMLInputElement, Element>) => void, label?: string, id?: string, errors?: string, placeHolder?: string } & React.HTMLAttributes<HTMLSpanElement>) {
     return (
         <span {...elProps} style={{ display: "grid", alignContent: "flex-start", gap: "1rem", ...elProps?.style }}>
             {label !== undefined && <label htmlFor={id !== undefined ? id : name}>{label}</label>}

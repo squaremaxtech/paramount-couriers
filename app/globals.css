@@ -205,6 +205,45 @@ input[type="checkbox"] {
   cursor: pointer;
 }
 
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-color: var(--bg1);
+  border: 1px solid var(--bg1);
+  padding: var(--spacingS) var(--spacingR);
+  border-radius: var(--borderRadiusS);
+  cursor: pointer;
+  transition: border var(--transitionTimeS);
+}
+
+select:hover {
+  border-color: var(--bg1);
+}
+
+option {
+  background-color: var(--bg1);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* custom classes */
 .material-symbols-outlined {
   font-family: var(--materialSymbolsOutlined);

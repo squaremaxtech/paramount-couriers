@@ -5,7 +5,7 @@ import styles from "./style.module.css"
 import { formatAsMoney, formatWeight, generateTrackingNumber, makeDateTimeLocalInput, spaceCamelCase } from '@/utility/utility'
 import Link from 'next/link'
 import { consoleAndToastError } from '@/useful/consoleErrorWithToast'
-import CheckInput from '@/components/checkInput/CheckInput'
+import CheckBox from '@/components/inputs/checkBox/CheckBox'
 
 export default function ViewTable<T extends withId>(
     { wantedItems, hideColumns, allPackageFiltersExtra, sizeClass, searchFunc, renameTableHeadings, headingOrder, tableProvider }:
@@ -18,36 +18,35 @@ export default function ViewTable<T extends withId>(
 
     const allPackageFilters = useRef<allFilters<T>>({ ...tableProvider.filters, ...allPackageFiltersExtra })
 
-    // const tableHeadings = [...tableHeadingsStarter]
-    // .filter(eachHeading => hideColumns === undefined ? eachHeading : !hideColumns.includes(eachHeading as keyof T)) as (keyof T)[]
+    const [tableHeadings] = useState(() => {
+        return [
+            ...tableProvider.columns
+                // filter hidden columns
+                .filter(eachHeading => hideColumns === undefined ? true : !hideColumns.includes(eachHeading as keyof T))
+                // sort by headingOrder if provided
+                .sort((a, b) => {
+                    if (headingOrder === undefined) return 0
 
-    const tableHeadings = [
-        ...tableProvider.columns
-            // filter hidden columns
-            .filter(eachHeading => hideColumns === undefined ? true : !hideColumns.includes(eachHeading as keyof T))
-            // sort by headingOrder if provided
-            .sort((a, b) => {
-                if (headingOrder === undefined) return 0
+                    const aIndex = headingOrder.indexOf(a as string);
+                    const bIndex = headingOrder.indexOf(b as string);
 
-                const aIndex = headingOrder.indexOf(a as string);
-                const bIndex = headingOrder.indexOf(b as string);
+                    const aFound = aIndex !== -1;
+                    const bFound = bIndex !== -1;
 
-                const aFound = aIndex !== -1;
-                const bFound = bIndex !== -1;
+                    // if both are in the order array, use the array's order
+                    if (aFound && bFound) return aIndex - bIndex;
 
-                // if both are in the order array, use the array's order
-                if (aFound && bFound) return aIndex - bIndex;
+                    // if only a is in the order array, it comes first
+                    if (aFound) return -1;
 
-                // if only a is in the order array, it comes first
-                if (aFound) return -1;
+                    // if only b is in the order array, it comes first
+                    if (bFound) return 1;
 
-                // if only b is in the order array, it comes first
-                if (bFound) return 1;
-
-                // neither found, keep original order
-                return 0;
-            })
-    ] as (keyof T)[];
+                    // neither found, keep original order
+                    return 0;
+                })
+        ]
+    })
 
     const searchTriggerDebounce = useRef<NodeJS.Timeout | undefined>(undefined)
     const [, refresherSet] = useState(false)
@@ -146,7 +145,7 @@ export default function ViewTable<T extends withId>(
                 <thead>
                     <tr className={styles.row} style={{ alignItems: "flex-start" }}>
                         <th className='smaller center noBorder' style={{ alignSelf: "center" }}>
-                            <CheckInput
+                            <CheckBox
                                 checked={itemsSelected.length >= wantedItemsSearchObj.searchItems.length}
                                 name='checkedAll'
                                 onChange={() => {
@@ -432,7 +431,7 @@ export default function ViewTable<T extends withId>(
                         return (
                             <tr key={eachPackage.id} className={`${styles.row} ${checked ? "selected" : ""}`}>
                                 <td className='smaller center'>
-                                    <CheckInput
+                                    <CheckBox
                                         checked={itemsSelected.includes(eachPackage.id)}
                                         name='checked'
                                         onChange={() => {

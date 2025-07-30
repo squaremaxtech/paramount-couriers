@@ -1,8 +1,8 @@
 import z from "zod"
-import { allFilters, ensureCanAccessTableReturnType } from "@/types";
+import { allFilters, ensureCanAccessTableReturnType, provideFilterAndColumnForTableReturnType } from "@/types";
 import { errorZodErrorAsString } from "@/useful/consoleErrorWithToast";
 import { eq, gte, sql, SQLWrapper } from "drizzle-orm";
-import { PgNumeric, PgInteger, PgTableWithColumns, PgEnumColumn, PgText, PgVarchar, PgBoolean, PgDate, PgJsonb } from 'drizzle-orm/pg-core'
+import { PgNumeric, PgInteger, PgTableWithColumns, PgEnumColumn, PgText, PgVarchar, PgBoolean, PgDate, PgJsonb, PgTimestamp } from 'drizzle-orm/pg-core'
 
 export function deepClone<T>(object: T): T {
     return JSON.parse(JSON.stringify(object))
@@ -168,10 +168,7 @@ export function makeWhereClauses<T extends Object>(schema: z.Schema, filter: T, 
     return whereClauses
 }
 
-export function generateTableProvider<T extends PgTableWithColumns>(
-    table: T,
-    enums: Partial<Record<keyof T["_"]["columns"], string[]>> = {}
-): { filters: allFilters<T["_"]["columns"]>, columns: (keyof T["_"]["columns"])[] } {
+export function provideFilterAndColumnForTable<T extends PgTableWithColumns<any>>(table: T, enums: Partial<Record<keyof T["_"]["columns"], string[]>> = {}): provideFilterAndColumnForTableReturnType<T> {
     const filters: Partial<allFilters<T["_"]["columns"]>> = {};
 
     for (const [key, column] of Object.entries(table)) {
@@ -201,7 +198,7 @@ export function generateTableProvider<T extends PgTableWithColumns>(
                 base: {},
             };
 
-        } else if (column instanceof PgDate) {
+        } else if (column instanceof PgDate || column instanceof PgTimestamp) {
             filters[key as keyof T["_"]["columns"]] = {
                 type: "date",
                 base: {},
@@ -222,5 +219,5 @@ export function generateTableProvider<T extends PgTableWithColumns>(
         }
     }
 
-    return { filters: filters as allFilters<T["_"]["columns"]>, columns: Object.keys(table) as (keyof T["_"]["columns"])[] };
+    return { filters: filters, columns: Object.keys(table) };
 }

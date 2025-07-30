@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import styles from "./style.module.css"
 import { deepClone, formatAsMoney } from '@/utility/utility'
 import toast from 'react-hot-toast'
-import TextInput from '../textInput/TextInput'
+import TextInput from '../inputs/textInput/TextInput'
 import { dbInvoiceType, newPreAlertSchema, preAlertSchema, preAlertType, wantedCrudObjType } from '@/types'
 import { addPreAlert, deleteInvoiceOnPreAlert, updatePreAlert } from '@/serverFunctions/handlePreAlerts'
 import { consoleAndToastError } from '@/useful/consoleErrorWithToast'
@@ -278,40 +278,44 @@ export default function AddEditPreAlert({ sentPreAlert, wantedCrudObj, submissio
             )}
 
             {formObj.invoices !== undefined && tableColumnAccess["invoices"] && (
-                <UploadFiles
-                    id='uploadInvoices'
-                    accept='.pdf,.doc,.docx,.txt'
-                    allowedFileTypes={allowedInvoiceFileTypes}
-                    formDataSet={invoiceFormDataSet}
-                    newDbRecordSetter={(dbFile) => {
-                        //make new dbInvoice
-                        const newDbInvoice: dbInvoiceType = {
-                            dbFileType: "invoice",
-                            type: "shipping",
-                            file: dbFile
-                        }
+                <>
+                    <label>invoices</label>
 
-                        formObjSet(prevFormObj => {
-                            const newFormObj = { ...prevFormObj }
-                            if (newFormObj.invoices === undefined) return prevFormObj
+                    <UploadFiles
+                        id='uploadInvoices'
+                        accept='.pdf,.doc,.docx,.txt'
+                        allowedFileTypes={allowedInvoiceFileTypes}
+                        formDataSet={invoiceFormDataSet}
+                        newDbRecordSetter={(dbFile) => {
+                            //make new dbInvoice
+                            const newDbInvoice: dbInvoiceType = {
+                                dbFileType: "invoice",
+                                type: "shipping",
+                                file: dbFile
+                            }
 
-                            newFormObj.invoices = [...newFormObj.invoices, newDbInvoice]
+                            formObjSet(prevFormObj => {
+                                const newFormObj = { ...prevFormObj }
+                                if (newFormObj.invoices === undefined) return prevFormObj
 
-                            return newFormObj
-                        })
-                    }}
-                    dbWithFileObjs={formObj.invoices}
-                    dbWithFileObjsSetter={dbWithFileObjs => {
-                        formObjSet(prevFormObj => {
-                            const newFormObj = { ...prevFormObj }
-                            if (newFormObj.invoices === undefined) return prevFormObj
+                                newFormObj.invoices = [...newFormObj.invoices, newDbInvoice]
 
-                            newFormObj.invoices = [...dbWithFileObjs]
+                                return newFormObj
+                            })
+                        }}
+                        dbWithFileObjs={formObj.invoices}
+                        dbWithFileObjsSetter={dbWithFileObjs => {
+                            formObjSet(prevFormObj => {
+                                const newFormObj = { ...prevFormObj }
+                                if (newFormObj.invoices === undefined) return prevFormObj
 
-                            return newFormObj
-                        })
-                    }}
-                />
+                                newFormObj.invoices = [...dbWithFileObjs]
+
+                                return newFormObj
+                            })
+                        }}
+                    />
+                </>
             )}
 
             <button className='button1' style={{ justifySelf: "center" }}

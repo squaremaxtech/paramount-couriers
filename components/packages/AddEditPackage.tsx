@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import styles from "./style.module.css"
 import { deepClone, formatAsMoney, formatWeight } from '@/utility/utility'
 import toast from 'react-hot-toast'
-import TextInput from '../textInput/TextInput'
+import TextInput from '../inputs/textInput/TextInput'
 import { dbInvoiceType, newPackageSchema, packageType, wantedCrudObjType, packageSchema, searchObjType, preAlertType, userType, locationType, locationOptions, statusType, statusOptions, dbImageType } from '@/types'
 import { addPackage, deleteImageeOnPackage, deleteInvoiceOnPackage, updatePackage } from '@/serverFunctions/handlePackages'
 import { consoleAndToastError } from '@/useful/consoleErrorWithToast'
@@ -22,6 +22,7 @@ import { ViewPreAlert } from '../preAlerts/ViewPreAlert'
 import { ViewUser } from '../users/ViewUser'
 import ViewItems from '../items/ViewItem'
 import FormToggleButton from '../formToggleButton/FormToggleButton'
+import Select from '../inputs/select/Select'
 
 export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionAction }: { sentPackage?: packageType, wantedCrudObj: wantedCrudObjType, submissionAction?: () => void }) {
     const [formObj, formObjSet] = useState<Partial<packageType>>(deepClone(sentPackage === undefined ? initialNewPackageObj : packageSchema.partial().parse(sentPackage)))
@@ -191,6 +192,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
         <form className={styles.form} action={() => { }}>
             <ShowMore
                 label='pre alerts'
+                startShowing={true}
                 content={(
                     <div className='container'>
                         <Search
@@ -346,61 +348,43 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
             )}
 
             {formObj.location !== undefined && tableColumnAccess["location"] && (
-                <>
-                    <label>select package location</label>
+                <Select
+                    label='select package location'
+                    name='location'
+                    value={formObj.location}
+                    valueOptions={[...locationOptions]}
+                    onChange={value => {
+                        formObjSet(prevFormObj => {
+                            const newFormObj = { ...prevFormObj }
+                            if (newFormObj.location === undefined) return prevFormObj
 
-                    <select value={formObj.location}
-                        onChange={async (event: React.ChangeEvent<HTMLSelectElement>) => {
-                            const eachLocation = event.target.value as locationType
+                            newFormObj.location = value
 
-                            formObjSet(prevFormObj => {
-                                const newFormObj = { ...prevFormObj }
-                                if (newFormObj.location === undefined) return prevFormObj
-
-                                newFormObj.location = eachLocation
-
-                                return newFormObj
-                            })
-                        }}
-                    >
-                        {locationOptions.map(eachLocation => {
-
-                            return (
-                                <option key={eachLocation} value={eachLocation}
-                                >{eachLocation}</option>
-                            )
-                        })}
-                    </select>
-                </>
+                            return newFormObj
+                        })
+                    }}
+                    errors={formErrors["location"]}
+                />
             )}
 
             {formObj.status !== undefined && tableColumnAccess["status"] && (
-                <>
-                    <label>select package status</label>
+                <Select
+                    label='select package status'
+                    name='status'
+                    value={formObj.status}
+                    valueOptions={[...statusOptions]}
+                    onChange={value => {
+                        formObjSet(prevFormObj => {
+                            const newFormObj = { ...prevFormObj }
+                            if (newFormObj.status === undefined) return prevFormObj
 
-                    <select value={formObj.status}
-                        onChange={async (event: React.ChangeEvent<HTMLSelectElement>) => {
-                            const eachStatus = event.target.value as statusType
+                            newFormObj.status = value
 
-                            formObjSet(prevFormObj => {
-                                const newFormObj = { ...prevFormObj }
-                                if (newFormObj.status === undefined) return prevFormObj
-
-                                newFormObj.status = eachStatus
-
-                                return newFormObj
-                            })
-                        }}
-                    >
-                        {statusOptions.map(eachStatusOption => {
-
-                            return (
-                                <option key={eachStatusOption} value={eachStatusOption}
-                                >{eachStatusOption}</option>
-                            )
-                        })}
-                    </select>
-                </>
+                            return newFormObj
+                        })
+                    }}
+                    errors={formErrors["status"]}
+                />
             )}
 
             {formObj.trackingNumber !== undefined && tableColumnAccess["trackingNumber"] && (

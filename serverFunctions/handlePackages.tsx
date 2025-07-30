@@ -4,7 +4,7 @@ import { packages } from "@/db/schema"
 import { dbImageType, dbInvoiceType, newPackageSchema, newPackageType, packageSchema, packageType, tableColumns, tableFilterTypes, wantedCrudObjType } from "@/types"
 import { and, desc, eq, SQLWrapper } from "drizzle-orm"
 import { deleteImages, deleteInvoices } from "./handleDocuments"
-import { ensureCanAccessTable } from "./handleAuth"
+import { ensureCanAccessTable, sessionCheck } from "./handleAuth"
 import { handleEnsureCanAccessTableResults, makeWhereClauses } from "@/utility/utility"
 import { filterTableObjectByColumnAccess } from "@/useful/usefulFunctions"
 import { initialNewPackageObj } from "@/lib/initialFormData"
@@ -97,6 +97,13 @@ export async function getPackages(filter: tableFilterTypes<packageType>, wantedC
     // Auth check
     const accessTableResults = await ensureCanAccessTable("packages", wantedCrudObj);
     handleEnsureCanAccessTableResults(accessTableResults, "both");
+
+    //madatory restriction for users that dont have r permissions
+    if (wantedCrudObj.crud === "ro") {
+        const session = await sessionCheck()
+
+        filter["userId"] = session.user.id
+    }
 
     //compile filters into proper where clauses
     const whereClauses: SQLWrapper[] = makeWhereClauses(packageSchema.partial(), filter, packages)

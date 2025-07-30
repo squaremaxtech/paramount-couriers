@@ -100,7 +100,7 @@ const tableAccess: tableAccessType = {
             employee_warehouse: fullAccess,
             employee_elevated: fullAccess,
             employee_supervisor: fullAccess,
-            customer: read,
+            customer: readOwn,
         },
         columnDefaultCrud: {
             admin: fullAccess,
@@ -261,7 +261,7 @@ export async function ensureCanAccessTable<T extends tableNames>(tableName: T, w
                 //can access crud type
 
                 //own check
-                const checkForOwn = wantedCrudObj.crud.includes("o")
+                const checkForOwn = wantedCrudObj.crud.includes("o") && wantedCrudObj.skipResourceIdCheck !== true
                 if (checkForOwn) {
                     //prevent repeat column name checks 
                     doesOwn = columnName === undefined ? await checkOwnership() : doesOwn === undefined ? await checkOwnership() : doesOwn
