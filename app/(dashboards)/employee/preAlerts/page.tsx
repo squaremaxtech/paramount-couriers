@@ -1,65 +1,32 @@
-"use client"
 import ViewTable from '@/components/viewTable/ViewTable'
 import { preAlerts } from '@/db/schema'
 import { getPreAlerts } from '@/serverFunctions/handlePreAlerts'
 import { preAlertType, tableFilterTypes } from '@/types'
-import { consoleAndToastError } from '@/useful/consoleErrorWithToast'
 import { provideFilterAndColumnForTable } from '@/utility/utility'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
 export default async function Page() {
-    const [seenPreAlerts, seenPreAlertsSet] = useState<preAlertType[] | undefined>(undefined)
-
-    //search packages
-    useEffect(() => {
-        try {
-            const search = async () => {
-                seenPreAlertsSet(await getPreAlerts({}, { crud: "r" }, { fromUser: true }))
-            }
-            search()
-
-        } catch (error) {
-            consoleAndToastError(error)
-        }
-    }, [])
+    const seenPreAlerts = await getPreAlerts({}, { crud: "r" }, { fromUser: true })
 
     return (
         <main className='container'>
-            {seenPreAlerts !== undefined && (
-                <>
-                    {seenPreAlerts.length > 0 ? (
-                        <ViewTable
-                            wantedItems={seenPreAlerts}
-                            tableProvider={provideFilterAndColumnForTable(preAlerts)}
-                            sizeClass={{
-                                large: [],
-                                small: []
-                            }}
-                            headingOrder={["id", "dateCreated", "fromUser"]}
-                            searchFunc={async (activeFilters, wantedItemsSearchObj) => {
-                                return await getPreAlerts(activeFilters as tableFilterTypes<preAlertType>, { crud: "r" }, { fromUser: true }, wantedItemsSearchObj.limit, wantedItemsSearchObj.offset)
-                            }}
-                            replaceData={{
-                                id: (wantedItem) => {
-                                    return (
-                                        <Link href={`/employee/preAlerts/edit/${wantedItem.id}`}>
-                                            <button className='button3'>
-                                                edit
-
-                                                <span className="material-symbols-outlined">
-                                                    link
-                                                </span>
-                                            </button>
-                                        </Link>
-                                    )
-                                }
-                            }}
-                        />
-                    ) : (
-                        <p>customer pre alerts will show here</p>
-                    )}
-                </>
+            {seenPreAlerts.length > 0 ? (
+                <ViewTable
+                    wantedItems={seenPreAlerts}
+                    tableProvider={provideFilterAndColumnForTable(preAlerts)}
+                    sizeClass={{
+                        large: [],
+                        small: []
+                    }}
+                    headingOrder={["id", "dateCreated", "fromUser"]}
+                    searchFunc={async (activeFilters, wantedItemsSearchObj) => {
+                        "use server"
+                        return await getPreAlerts(activeFilters as tableFilterTypes<preAlertType>, { crud: "r" }, { fromUser: true }, wantedItemsSearchObj.limit, wantedItemsSearchObj.offset)
+                    }}
+                />
+            ) : (
+                <p>customer pre alerts will show here</p>
             )}
         </main>
     )

@@ -2,14 +2,25 @@
 import { allFilters, dateSchma, dbImageSchema, dbImageType, dbInvoiceSchema, dbInvoiceType, decimalStringSchema, filterSearchType, searchObjType, tableFilterTypes, userSchema, userType, withId } from '@/types'
 import React, { useRef, useState } from 'react'
 import styles from "./style.module.css"
-import { formatAsMoney, formatWeight, makeDateTimeLocalInput, spaceCamelCase } from '@/utility/utility'
+import { formatAsMoney, formatWeight, generateTrackingNumber, makeDateTimeLocalInput, spaceCamelCase } from '@/utility/utility'
 import { consoleAndToastError } from '@/useful/consoleErrorWithToast'
 import CheckBox from '@/components/inputs/checkBox/CheckBox'
 import Select from '../inputs/select/Select'
+import Link from 'next/link'
+
+type replaceDataType<T> = {
+    [key in keyof T]?: {
+        link?: string,
+        transformLink?: boolean,
+        text?: string,
+        materialIconClass?: string,
+        hideTableData?: true
+    }
+}
 
 export default function ViewTable<T extends withId>(
     { wantedItems, hideColumns, sizeClass, searchFunc, renameTableHeadings, headingOrder, tableProvider, searchDebounceTime = 500, replaceData }:
-        { wantedItems: T[], hideColumns?: (keyof T)[], sizeClass?: { large: (keyof T)[], small: (keyof T)[] }, searchFunc: (tableFilters: tableFilterTypes<T>, wantedItemsSearchObj: searchObjType<T>) => Promise<T[]>, renameTableHeadings?: { [key in keyof T]?: string }, headingOrder?: (keyof T)[], tableProvider: { filters: allFilters<T>, columns: (keyof T)[] }, searchDebounceTime?: number, replaceData?: { [key in keyof T]?: (wantedItem: T) => React.JSX.Element } }
+        { wantedItems: T[], hideColumns?: (keyof T)[], sizeClass?: { large: (keyof T)[], small: (keyof T)[] }, searchFunc: (tableFilters: tableFilterTypes<T>, wantedItemsSearchObj: searchObjType<T>) => Promise<T[]>, renameTableHeadings?: { [key in keyof T]?: string }, headingOrder?: (keyof T)[], tableProvider: { filters: allFilters<T>, columns: (keyof T)[] }, searchDebounceTime?: number, replaceData?: replaceDataType<T> }
 ) {
     const [wantedItemsSearchObj, wantedItemsSearchObjSet] = useState<searchObjType<T>>({
         searchItems: wantedItems,
@@ -457,77 +468,79 @@ export default function ViewTable<T extends withId>(
 
                                 {tableHeadings.map(eachTableHeading => {
                                     const seenHeading = eachTableHeading as string
-                                    const packgeData = eachWantedItem[eachTableHeading]
+                                    const tableData = eachWantedItem[eachTableHeading]
 
                                     let invoiceArr: dbInvoiceType[] | undefined = undefined
                                     let imageArr: dbImageType[] | undefined = undefined
                                     let seenDateCreated: Date | undefined = undefined
                                     let seenUser: userType | undefined = undefined
 
-                                    if (typeof packgeData === "object") {
-                                        if (Array.isArray(packgeData)) {
+                                    if (typeof tableData === "object") {
+                                        if (Array.isArray(tableData)) {
                                             //invoice array check
-                                            const dbInvoiceTest = dbInvoiceSchema.array().safeParse(packgeData)
+                                            const dbInvoiceTest = dbInvoiceSchema.array().safeParse(tableData)
                                             if (dbInvoiceTest.data !== undefined && dbInvoiceTest.data.length > 0) {
                                                 invoiceArr = dbInvoiceTest.data
                                             }
 
                                             //image array check
-                                            const dbImageTest = dbImageSchema.array().safeParse(packgeData)
+                                            const dbImageTest = dbImageSchema.array().safeParse(tableData)
                                             if (dbImageTest.data !== undefined && dbImageTest.data.length > 0) {
                                                 imageArr = dbImageTest.data
                                             }
                                         }
 
                                         //user obj check
-                                        const userTest = userSchema.safeParse(packgeData)
+                                        const userTest = userSchema.safeParse(tableData)
                                         if (userTest.data !== undefined) {
                                             seenUser = userTest.data
                                         }
 
-                                        const dateTest = dateSchma.safeParse(packgeData)
+                                        const dateTest = dateSchma.safeParse(tableData)
                                         if (dateTest.data !== undefined) {
                                             seenDateCreated = dateTest.data
                                         }
                                     }
 
-                                    let replaceDataElement: React.JSX.Element | undefined = undefined
+                                    let replaceDataObj: replaceDataType<T>["key"] | undefined = undefined
                                     if (replaceData !== undefined && replaceData[eachTableHeading] !== undefined) {
-                                        replaceDataElement = replaceData[eachTableHeading](eachWantedItem)
+                                        replaceDataObj = replaceData[eachTableHeading]
+
+
                                     }
 
                                     return (
                                         <td key={seenHeading} className={`${styles.heading} ${returnSizeClass(eachTableHeading)} resetTextMargin`}
                                         >
-                                            {replaceDataElement === undefined ? (
+                                            {replaceDataObj === undefined ? (
                                                 <>
-                                                    {typeof packgeData === "string" && (
+                                                    {typeof tableData === "string" && (
                                                         <>
                                                             {eachTableHeading === "weight" ? (
-                                                                <p>{formatWeight(packgeData)}</p>
+                                                                <p>{formatWeight(tableData)}</p>
 
                                                             ) : ((eachTableHeading === "price") || (eachTableHeading === "payment")) ? (
-                                                                <p>{formatAsMoney(packgeData)}</p>
+                                                                <p>{formatAsMoney(tableData)}</p>
 
                                                             ) : (
-                                                                <p>{packgeData}</p>
+                                                                <p>{tableData}</p>
                                                             )}
                                                         </>
                                                     )}
 
-                                                    {typeof packgeData === "number" && (
+                                                    {typeof tableData === "number" && (
                                                         <>
-                                                            <p>{packgeData}</p>
+                                                            <p>{tableData}</p>
                                                         </>
                                                     )}
 
-                                                    {typeof packgeData === "boolean" && (
+                                                    {typeof tableData === "boolean" && (
                                                         <>
-                                                            <p>{packgeData.toString()}</p>
+                                                            <p>{tableData.toString()}</p>
                                                         </>
                                                     )}
 
-                                                    {typeof packgeData === "object" && (
+                                                    {typeof tableData === "object" && (
                                                         <>
                                                             {invoiceArr !== undefined && eachTableHeading === "invoices" && (
                                                                 <p>has invoices</p>
@@ -552,7 +565,21 @@ export default function ViewTable<T extends withId>(
                                                 </>
                                             ) : (
                                                 <>
-                                                    {replaceDataElement}
+                                                    {((typeof tableData === "string") || (typeof tableData === "number")) && (
+                                                        <>
+                                                            <Link href={replaceDataObj.link === undefined ? "" : `${replaceDataObj.link}/${replaceDataObj.transformLink && typeof tableData === "number" ? generateTrackingNumber(tableData) : tableData}`}>
+                                                                <button className='button3'>
+                                                                    {replaceDataObj.text !== undefined ? replaceDataObj.text : ""}{replaceDataObj.hideTableData !== undefined ? "" : replaceDataObj.transformLink && typeof tableData === "number" ? generateTrackingNumber(tableData) : tableData}
+
+                                                                    {replaceDataObj.materialIconClass !== undefined && (
+                                                                        <span className="material-symbols-outlined">
+                                                                            {replaceDataObj.materialIconClass}
+                                                                        </span>
+                                                                    )}
+                                                                </button>
+                                                            </Link>
+                                                        </>
+                                                    )}
                                                 </>
                                             )}
                                         </td>
