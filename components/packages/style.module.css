@@ -27,3 +27,49 @@
     padding: var(--spacingS);
     font-size: var(--fontSizeS);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.main {
+    background-color: var(--bg1);
+}
+
+.customListMenu {
+    display: grid;
+    align-content: flex-start;
+    text-transform: capitalize;
+}
+
+.customListMenu>li {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--bg2);
+}
+
+.customListMenu>li.large>p:first-of-type {
+    color: var(--c4);
+}
+
+.customListMenu>li.large {
+    font-weight: bold;
+}
+
+.noBorder>li {
+    border: none;
+}

@@ -170,7 +170,6 @@ export function makeWhereClauses<T extends Object>(schema: z.Schema, filter: T, 
 
 export function provideFilterAndColumnForTable<T extends PgTableWithColumns<any>>(table: T): provideFilterAndColumnForTableReturnType<T> {
     const filters: Partial<allFilters<T["_"]["columns"]>> = {};
-    console.log(`$hi`);
     for (const [keyPre, column] of Object.entries(table)) {
         if (!("columnType" in column)) continue;
 

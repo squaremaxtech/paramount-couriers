@@ -8,7 +8,7 @@ import { dbInvoiceType, newPreAlertSchema, preAlertSchema, preAlertType, wantedC
 import { addPreAlert, deleteInvoiceOnPreAlert, updatePreAlert } from '@/serverFunctions/handlePreAlerts'
 import { consoleAndToastError } from '@/useful/consoleErrorWithToast'
 import { useSession } from 'next-auth/react'
-import FormToggleButton from '../formToggleButton/FormToggleButton'
+import FormToggleButton from '../inputs/formToggleButton/FormToggleButton'
 import { allowedInvoiceFileTypes } from '@/types/uploadTypes'
 import UploadFiles from '../uploadFiles/UploadFiles'
 import { handleWithFiles } from '@/utility/handleWithFiles'
@@ -290,7 +290,7 @@ export default function AddEditPreAlert({ sentPreAlert, wantedCrudObj, submissio
                             //make new dbInvoice
                             const newDbInvoice: dbInvoiceType = {
                                 dbFileType: "invoice",
-                                type: "shipping",
+                                type: "seller",
                                 file: dbFile
                             }
 

@@ -6,7 +6,7 @@ import { provideFilterAndColumnForTable } from '@/utility/utility'
 import React from 'react'
 
 export default async function Page() {
-    const seenPackages = await getPackages({}, { crud: "ro" })
+    const seenPackages = await getPackages({}, { crud: "ro" }, {})
 
     return (
         <main>

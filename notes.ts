@@ -1,13 +1,11 @@
 //To Do
-//add limit to packages server page
-//change shipping invoice to proper type
-//customer view packages
-//server function take filter directly
-//server function add skip check on getAll
-//employee main packages page - add button
-//main preAlerts page
-//add with check on het packages - get users
-//make view table more dynamic - read the column names - data types
+//view packages screen
+//display invoices/images
+//add cif value
+//add charges: services fee, freight, fuel, insurance, governement fee
+//track payment in db
+//allow file uploads to package for customers
+//bulk upload for warehouse users
 
 
 

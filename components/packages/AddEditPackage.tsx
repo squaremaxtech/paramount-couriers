@@ -4,7 +4,7 @@ import styles from "./style.module.css"
 import { deepClone, formatAsMoney, formatWeight } from '@/utility/utility'
 import toast from 'react-hot-toast'
 import TextInput from '../inputs/textInput/TextInput'
-import { dbInvoiceType, newPackageSchema, packageType, wantedCrudObjType, packageSchema, searchObjType, preAlertType, userType, locationType, locationOptions, statusType, statusOptions, dbImageType } from '@/types'
+import { dbInvoiceType, newPackageSchema, packageType, wantedCrudObjType, packageSchema, searchObjType, preAlertType, userType, locationOptions, statusOptions, dbImageType } from '@/types'
 import { addPackage, deleteImageeOnPackage, deleteInvoiceOnPackage, updatePackage } from '@/serverFunctions/handlePackages'
 import { consoleAndToastError } from '@/useful/consoleErrorWithToast'
 import { allowedImageFileTypes, allowedInvoiceFileTypes, imageFileInputAccept, invoiceFileInputAccept } from '@/types/uploadTypes'
@@ -21,8 +21,11 @@ import { getSpecificUser, getUsers } from '@/serverFunctions/handleUsers'
 import { ViewPreAlert } from '../preAlerts/ViewPreAlert'
 import { ViewUser } from '../users/ViewUser'
 import ViewItems from '../items/ViewItem'
-import FormToggleButton from '../formToggleButton/FormToggleButton'
+import FormToggleButton from '../inputs/formToggleButton/FormToggleButton'
 import Select from '../inputs/select/Select'
+
+const seenStatusOptions = [...statusOptions]
+const seenLocationOptions = [...locationOptions]
 
 export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionAction }: { sentPackage?: packageType, wantedCrudObj: wantedCrudObjType, submissionAction?: () => void }) {
     const [formObj, formObjSet] = useState<Partial<packageType>>(deepClone(sentPackage === undefined ? initialNewPackageObj : packageSchema.partial().parse(sentPackage)))
@@ -42,6 +45,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
 
     const [chosenUser, chosenUserSet] = useState<userType | undefined>(undefined)
     const [chosenPreAlert, chosenPreAlertSet] = useState<preAlertType | undefined>(undefined)
+    const [invoiceType, invoiceTypeSet] = useState<dbInvoiceType["type"]>("delivery")
 
     //handle changes from above
     useEffect(() => {
@@ -192,14 +196,14 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
         <form className={styles.form} action={() => { }}>
             <ShowMore
                 label='pre alerts'
-                startShowing={true}
+                startShowing={sentPackage === undefined}
                 content={(
                     <div className='container'>
                         <Search
                             searchObj={preAlertsSearchObj}
                             searchObjSet={preAlertsSearchObjSet}
                             searchFunc={async (seenFilters) => {
-                                return await getPreAlerts({ ...seenFilters }, { crud: "r" }, preAlertsSearchObj.limit, preAlertsSearchObj.offset)
+                                return await getPreAlerts({ ...seenFilters }, { crud: "r" }, {}, preAlertsSearchObj.limit, preAlertsSearchObj.offset)
                             }}
                             showPage={true}
                             searchFilters={{
@@ -230,7 +234,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                                         formObjSet(prevFormObj => {
                                             const newFormObj = { ...prevFormObj }
 
-                                            //assign proper user to package owner and rest of values
+                                            //assign proper preAlert values to package
                                             newFormObj.userId = eachPreAlert.userId
                                             newFormObj.trackingNumber = eachPreAlert.trackingNumber
                                             newFormObj.store = eachPreAlert.store
@@ -352,7 +356,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                     label='select package location'
                     name='location'
                     value={formObj.location}
-                    valueOptions={[...locationOptions]}
+                    valueOptions={seenLocationOptions}
                     onChange={value => {
                         formObjSet(prevFormObj => {
                             const newFormObj = { ...prevFormObj }
@@ -372,7 +376,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                     label='select package status'
                     name='status'
                     value={formObj.status}
-                    valueOptions={[...statusOptions]}
+                    valueOptions={seenStatusOptions}
                     onChange={value => {
                         formObjSet(prevFormObj => {
                             const newFormObj = { ...prevFormObj }
@@ -509,7 +513,18 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
 
             {formObj.invoices !== undefined && tableColumnAccess["invoices"] && (
                 <>
-                    <label>upload invoices</label>
+                    <label>
+                        upload {invoiceType} invoices
+
+                        <button className='button2' style={{ marginLeft: "var(--spacingR)" }}
+                            onClick={() => {
+                                invoiceTypeSet(prevInvoiceType => {
+                                    const newInvoiceType = prevInvoiceType === "delivery" ? "seller" : "delivery"
+                                    return newInvoiceType
+                                })
+                            }}
+                        >swap type</button>
+                    </label>
 
                     <UploadFiles
                         id='uploadInvoices'
@@ -520,7 +535,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                             //make new dbInvoice
                             const newDbInvoice: dbInvoiceType = {
                                 dbFileType: "invoice",
-                                type: "shipping",
+                                type: invoiceType,
                                 file: dbFile
                             }
 

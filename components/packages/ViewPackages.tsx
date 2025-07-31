@@ -1,85 +1,197 @@
-import { packageType } from "@/types";
+import { locationOptions, locationType, packageType } from "@/types";
+import styles from "./style.module.css"
+import { formatAsMoney, formatWeight, generateTrackingNumber } from "@/utility/utility";
+import Image from "next/image";
+
+type locationIconMatchType = {
+    [key in locationType]: string
+}
+const locationIconMatch: locationIconMatchType = {
+    "on way to warehouse": "airplane_ticket",
+    "warehouse delivered": "deployed_code_update",
+    "in transit to jamaica": "travel",
+    "jamaica arrived": "distance",
+    "ready for pickup": "celebration"
+}
 
 export function ViewPackage({ seenPackage }: { seenPackage: packageType }) {
     return (
-        <div>
-            <div>
-                <div>
-                    <div>
-                        <h2>Package from {seenPackage.store}</h2>
-                        <p>{seenPackage.description}</p>
-                        <p>Consignee: {seenPackage.consignee}</p>
-                        <p>Tracking #: {seenPackage.trackingNumber}</p>
-                        <p >Created: {new Date(seenPackage.dateCreated).toLocaleDateString()}</p>
-                    </div>
+        <main className={`${styles.main} container`}>
+            <p className="tag">{generateTrackingNumber(seenPackage.id)}</p>
 
-                    <p>{seenPackage.needAttention ? "Needs Attention" : "Normal"}</p>
-                </div>
+            <div className="titleBox">
+                <p className="ignoreTitleBoxStyle">Current Status</p>
 
-                <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <p className="font-medium">Location</p>
-                        <p className="text-muted-foreground">{seenPackage.location}</p>
-                    </div>
-                    <div>
-                        <p className="font-medium">Status</p>
-                        <p className="text-muted-foreground">{seenPackage.status}</p>
-                    </div>
-                    <div>
-                        <p className="font-medium">Weight</p>
-                        <p className="text-muted-foreground">{seenPackage.weight} lbs</p>
-                    </div>
-                    <div>
-                        <p className="font-medium">Price</p>
-                        <p className="text-muted-foreground">${seenPackage.price}</p>
-                    </div>
-                    <div>
-                        <p className="font-medium">Payment</p>
-                        <p className="text-muted-foreground">${seenPackage.payment}</p>
-                    </div>
-                </div>
+                <p className="popoutText">{seenPackage.status}</p>
+            </div>
 
-                {seenPackage.comments && (
-                    <>
-                        <div>
-                            <p className="font-medium">Comments</p>
-                            <p className="text-muted-foreground whitespace-pre-line">{seenPackage.comments}</p>
-                        </div>
-                    </>
-                )}
+            <div style={{ display: "grid", gridTemplateColumns: `repeat(${locationOptions.length}, 1fr)`, overflow: "auto" }}>
+                {locationOptions.map((eachLocationOption, eachLocationOptionIndex) => {
+                    const reachedIndexSeen = locationOptions.findIndex(eachLocationOptionFindIndex => eachLocationOptionFindIndex === seenPackage.location)
+                    const reachedIndex = eachLocationOptionIndex <= reachedIndexSeen
+                    const nextReachedIndex = eachLocationOptionIndex + 1 <= reachedIndexSeen
 
-                {seenPackage.images?.length > 0 && (
-                    <>
-                        <div>
-                            <p className="font-medium mb-2">Images</p>
-                            <div className="flex gap-3 flex-wrap">
-                                {/* {seenPackage.images.map((img, i) => (
-                                    <img
-                                        key={i}
-                                        src={img.file.src}
-                                        alt={img.alt}
-                                    />
-                                ))} */}
+                    const stretchBackward = reachedIndex && eachLocationOptionIndex !== 0
+                    const stretchForward = reachedIndex && eachLocationOptionIndex !== locationOptions.length - 1 && nextReachedIndex
+
+                    return (
+                        <div key={eachLocationOption} style={{ display: "grid", justifyItems: "center", textAlign: "center", minWidth: "100px", gap: "var(--spacingS)", textTransform: "capitalize", fontWeight: "bold" }}>
+                            <div style={{ position: "relative", width: "100%", display: "grid", justifyItems: "center", zIndex: 0 }}>
+                                <div style={{ position: "absolute", height: ".5rem", top: "50%", width: "100%", translate: "0 -50%", zIndex: -1 }}>
+                                    {stretchBackward && <div style={{ height: "100%", position: "absolute", left: 0, width: "50%", backgroundColor: "var(--c1)" }}> </div>}
+
+                                    {stretchForward && <div style={{ height: "100%", position: "absolute", right: 0, width: "50%", backgroundColor: "var(--c1)" }}></div>}
+                                </div>
+
+                                <div style={{ aspectRatio: "1/1", borderRadius: "var(--borderRadiusEL)", backgroundColor: reachedIndex ? "var(--c1)" : "var(--bg3)", width: "min-content" }}>
+                                    <span className="material-symbols-outlined largeIcon" style={{ color: "var(--textC2)" }}>
+                                        {locationIconMatch[eachLocationOption]}
+                                    </span>
+                                </div>
                             </div>
-                        </div>
-                    </>
-                )}
 
-                {seenPackage.invoices?.length > 0 && (
-                    <>
-                        <div>
-                            <p>Invoices</p>
-                            <ul>
-                                {seenPackage.invoices.map((invoice, i) => (
-                                    <li key={i}>
-                                        {invoice.file.fileName}
-                                    </li>
-                                ))}
-                            </ul>
+                            <p>{eachLocationOption}</p>
                         </div>
-                    </>
+                    )
+                })}
+            </div>
+
+            <div className="titleBox">
+                <p>package information</p>
+
+                <ul className={styles.customListMenu}>
+                    <li>
+                        <p>consignee</p>
+
+                        <p>{seenPackage.consignee}</p>
+                    </li>
+
+                    <li>
+                        <p>store</p>
+
+                        <p>{seenPackage.store}</p>
+                    </li>
+
+                    <li>
+                        <p>tracking no.</p>
+
+                        <p>{seenPackage.trackingNumber}</p>
+                    </li>
+
+                    <li>
+                        <p>description</p>
+
+                        <p>{seenPackage.description}</p>
+                    </li>
+
+                    <li>
+                        <p>declared value</p>
+
+                        <p>{formatAsMoney(seenPackage.price)}</p>
+                    </li>
+
+                    <li>
+                        <p>cif value</p>
+
+                        <p>{formatAsMoney(seenPackage.price)}</p>
+                    </li>
+
+
+                    <li>
+                        <p>weight</p>
+
+                        <p>{formatWeight(seenPackage.weight)}</p>
+                    </li>
+                </ul>
+            </div>
+
+            <div className="titleBox">
+                <p>charges</p>
+
+                <ul className={`${styles.customListMenu} ${styles.noBorder}`}>
+                    <li className={styles.large}>
+                        <p>services fee</p>
+
+                        <p>{formatAsMoney(`11.35`)}</p>
+                    </li>
+
+                    <li>
+                        <p>freight</p>
+
+                        <p>{formatAsMoney(`8.39`)}</p>
+                    </li>
+
+                    <li>
+                        <p>fuel</p>
+
+                        <p>{formatAsMoney(`1.48`)}</p>
+                    </li>
+
+                    <li>
+                        <p>insurance</p>
+
+                        <p>{formatAsMoney(`1.48`)}</p>
+                    </li>
+
+                    <li className={styles.large}>
+                        <p>government fee</p>
+
+                        <p>{formatAsMoney(`0.00`)}</p>
+                    </li>
+                </ul>
+
+                <div>
+                    <h2 style={{ textAlign: "center" }}>Total: {formatAsMoney(`11.35`)}</h2>
+
+                    <h1 style={{ textAlign: "end", color: "var(--c1)" }}>Total Paid: {formatAsMoney(`11.35`)}</h1>
+                </div>
+
+                {parseInt("1" + seenPackage.payment) !== 0 && (
+                    <div style={{ backgroundColor: "var(--c1)", color: "var(--textC2)", fontWeight: "bold", display: "grid", justifyItems: "center", padding: "var(--spacingR)" }} className="resetTextMargin">
+                        <h2 style={{ color: "var(--textC2)" }}>Thanks for your payment!</h2>
+
+                        <p>Payment made successfully</p>
+                    </div>
                 )}
             </div>
-        </div>
-    );
+
+            <div className="titleBox" style={{ fontSize: "var(--fontSizeS)" }}>
+                <p>documents</p>
+
+                <p>You can upload your files, whether invoices or other documents. The limit is a maximum of 10 files, each under 3 MB in size.</p>
+
+                <p>Allowed formats: pdf, jpg, bmp, gif, png, doc, docx y html.</p>
+
+                {seenPackage.invoices.length > 0 && (
+                    <div style={{ display: "grid", }}>
+                        {seenPackage.invoices.map(eachDbInvoice => {
+                            return (
+                                <div key={eachDbInvoice.file.src}>
+                                    <p>{eachDbInvoice.type} invoice</p>
+
+                                    <p>{eachDbInvoice.file.fileName}</p>
+                                </div>
+                            )
+                        })}
+                    </div>
+                )}
+            </div>
+
+            <div className="titleBox">
+                <p>photos</p>
+
+                {seenPackage.images.length > 0 && (
+                    <div style={{ display: "grid", }}>
+                        {seenPackage.images.map(eachDbImage => {
+                            return (
+                                <div key={eachDbImage.file.src}>
+                                    <Image alt={eachDbImage.alt} width={300} height={300} src={`/api/files/images/view?src=${eachDbImage.file.src}`} style={{ objectFit: "contain" }} />
+                                </div>
+                            )
+                        })}
+                    </div>
+                )}
+            </div>
+        </main>
+    )
 }

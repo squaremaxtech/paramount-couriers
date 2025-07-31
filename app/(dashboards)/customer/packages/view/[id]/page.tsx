@@ -13,8 +13,6 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     if (seenPackage === undefined) return (<p>not seeing specific package</p>)
 
     return (
-        <main>
-            <ViewPackage seenPackage={seenPackage} />
-        </main>
+        <ViewPackage seenPackage={seenPackage} />
     )
 }

@@ -34,7 +34,7 @@
   --fontSizeEL: 2.5rem;
   --fontSizeL: 2rem;
   --fontSizeM: 1.3rem;
-  --fontSizeR: 1rem;
+  --fontSizeR: 1em;
   --fontSizeS: .7rem;
 
   --spacingEL: 5rem;
@@ -260,6 +260,15 @@ option {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
+.tag {
+  border: 1px solid var(--c1);
+  border-radius: var(--borderRadiusS);
+  padding: var(--spacingS) var(--spacingR);
+  background-color: var(--bg2);
+  font-weight: bold;
+  justify-self: flex-start;
+}
+
 .resetTextMargin>p,
 .resetTextMargin>h1,
 .resetTextMargin>h2,
@@ -375,4 +384,25 @@ option {
 .recordTable th.smaller,
 .recordTable td.smaller {
   flex: 0 0 50px;
+}
+
+.titleBox {
+  border: 1px solid var(--bg2);
+  display: grid;
+  align-content: flex-start;
+  box-shadow: 2px -2px 2px 1px var(--bg2);
+  padding: var(--spacingR);
+  border-radius: var(--borderRadiusR);
+}
+
+.titleBox>*:first-child:not(.ignoreTitleBoxStyle) {
+  color: var(--c1);
+  text-transform: capitalize;
+  font-weight: bold;
+}
+
+.popoutText {
+  font-weight: bold;
+  color: var(--c1);
+  text-transform: capitalize;
 }

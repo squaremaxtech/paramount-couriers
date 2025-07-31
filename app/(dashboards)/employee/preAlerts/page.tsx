@@ -3,7 +3,6 @@ import { preAlerts } from '@/db/schema'
 import { getPreAlerts } from '@/serverFunctions/handlePreAlerts'
 import { preAlertType, tableFilterTypes } from '@/types'
 import { provideFilterAndColumnForTable } from '@/utility/utility'
-import Link from 'next/link'
 import React from 'react'
 
 export default async function Page() {
@@ -16,7 +15,7 @@ export default async function Page() {
                     wantedItems={seenPreAlerts}
                     tableProvider={provideFilterAndColumnForTable(preAlerts)}
                     sizeClass={{
-                        large: [],
+                        large: ["dateCreated"],
                         small: []
                     }}
                     headingOrder={["id", "dateCreated", "fromUser"]}

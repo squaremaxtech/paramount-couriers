@@ -85,7 +85,7 @@ export type dbImageType = z.infer<typeof dbImageSchema>
 export const dbInvoiceSchema = z.object({
     dbFileType: z.literal(dbFileTypeSchema.Values.invoice),
     file: dbFileSchema,
-    type: z.enum(["shipping", "internal"]),
+    type: z.enum(["seller", "delivery"]),
 })
 export type dbInvoiceType = z.infer<typeof dbInvoiceSchema>
 

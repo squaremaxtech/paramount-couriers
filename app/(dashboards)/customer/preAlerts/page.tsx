@@ -20,7 +20,7 @@ export default async function Page() {
                     wantedItems={seenPreAlerts}
                     tableProvider={provideFilterAndColumnForTable(preAlerts)}
                     sizeClass={{
-                        large: [],
+                        large: ["dateCreated"],
                         small: []
                     }}
                     headingOrder={["dateCreated", "fromUser"]}
