@@ -1,4 +1,4 @@
-import { ViewPackage } from '@/components/packages/ViewPackages'
+import { ViewPackage } from '@/components/packages/ViewPackage'
 import { getSpecificPackage } from '@/serverFunctions/handlePackages'
 import { extractIdFromTrackingNumber } from '@/utility/utility'
 import React from 'react'

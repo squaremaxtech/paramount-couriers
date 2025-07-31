@@ -90,6 +90,7 @@ export const dbInvoiceSchema = z.object({
 export type dbInvoiceType = z.infer<typeof dbInvoiceSchema>
 
 export type dbWithFileType = {
+    dbFileType: dbFileTypeType,
     file: dbFileType;
 } & Record<string, unknown>;
 

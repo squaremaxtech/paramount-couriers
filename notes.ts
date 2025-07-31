@@ -1,11 +1,10 @@
 //To Do
-//view packages screen
-//display invoices/images
 //add cif value
 //add charges: services fee, freight, fuel, insurance, governement fee
 //track payment in db
 //allow file uploads to package for customers
 //bulk upload for warehouse users
+//add auth to view image/download
 
 
 

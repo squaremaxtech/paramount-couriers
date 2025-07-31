@@ -2,6 +2,7 @@ import { locationOptions, locationType, packageType } from "@/types";
 import styles from "./style.module.css"
 import { formatAsMoney, formatWeight, generateTrackingNumber } from "@/utility/utility";
 import Image from "next/image";
+import Link from "next/link";
 
 type locationIconMatchType = {
     [key in locationType]: string
@@ -146,7 +147,7 @@ export function ViewPackage({ seenPackage }: { seenPackage: packageType }) {
                     <h1 style={{ textAlign: "end", color: "var(--c1)" }}>Total Paid: {formatAsMoney(`11.35`)}</h1>
                 </div>
 
-                {parseInt("1" + seenPackage.payment) !== 0 && (
+                {parseInt(seenPackage.payment) !== 0 && (
                     <div style={{ backgroundColor: "var(--c1)", color: "var(--textC2)", fontWeight: "bold", display: "grid", justifyItems: "center", padding: "var(--spacingR)" }} className="resetTextMargin">
                         <h2 style={{ color: "var(--textC2)" }}>Thanks for your payment!</h2>
 
@@ -155,22 +156,22 @@ export function ViewPackage({ seenPackage }: { seenPackage: packageType }) {
                 )}
             </div>
 
-            <div className="titleBox" style={{ fontSize: "var(--fontSizeS)" }}>
+            <div className="titleBox">
                 <p>documents</p>
 
-                <p>You can upload your files, whether invoices or other documents. The limit is a maximum of 10 files, each under 3 MB in size.</p>
+                <p style={{ fontSize: "var(--fontSizeS)" }}>You can upload your files, whether invoices or other documents. The limit is a maximum of 10 files, each under 3 MB in size.</p>
 
-                <p>Allowed formats: pdf, jpg, bmp, gif, png, doc, docx y html.</p>
+                <p style={{ fontSize: "var(--fontSizeS)" }}>Allowed formats: pdf, jpg, bmp, gif, png, doc, docx y html.</p>
 
                 {seenPackage.invoices.length > 0 && (
-                    <div style={{ display: "grid", }}>
+                    <div style={{ display: "flex", gap: "var(--spacingR)", overflow: "auto", alignItems: "flex-start" }}>
                         {seenPackage.invoices.map(eachDbInvoice => {
                             return (
-                                <div key={eachDbInvoice.file.src}>
-                                    <p>{eachDbInvoice.type} invoice</p>
+                                <Link key={eachDbInvoice.file.src} href={`/api/files/download?src=${eachDbInvoice.file.src}`} target="blank_" style={{ flex: "0 0 auto", fontSize: "var(--fontSizeS)", backgroundColor: "var(--bg2)", padding: "var(--spacingS)", borderRadius: "var(--borderRadiusS)", maxWidth: "300px" }} className="resetTextMargin">
+                                    <p style={{ color: "var(--c4)" }}>{eachDbInvoice.type} invoice</p>
 
                                     <p>{eachDbInvoice.file.fileName}</p>
-                                </div>
+                                </Link>
                             )
                         })}
                     </div>
@@ -181,10 +182,10 @@ export function ViewPackage({ seenPackage }: { seenPackage: packageType }) {
                 <p>photos</p>
 
                 {seenPackage.images.length > 0 && (
-                    <div style={{ display: "grid", }}>
+                    <div style={{ display: "flex", gap: "var(--spacingR)", overflow: "auto", justifyContent: 'flex-start' }}>
                         {seenPackage.images.map(eachDbImage => {
                             return (
-                                <div key={eachDbImage.file.src}>
+                                <div key={eachDbImage.file.src} style={{ flex: "0 0 auto" }}>
                                     <Image alt={eachDbImage.alt} width={300} height={300} src={`/api/files/images/view?src=${eachDbImage.file.src}`} style={{ objectFit: "contain" }} />
                                 </div>
                             )
