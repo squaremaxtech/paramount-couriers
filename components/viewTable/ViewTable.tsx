@@ -1,11 +1,12 @@
 "use client"
-import { allFilters, dateSchma, dbImageSchema, dbImageType, dbInvoiceSchema, dbInvoiceType, decimalStringSchema, filterSearchType, searchObjType, tableFilterTypes, withId } from '@/types'
-import React, { useRef, useState } from 'react'
+import { allFilters, dateSchma, dbImageSchema, dbImageType, dbInvoiceSchema, dbInvoiceType, decimalStringSchema, filterSearchType, searchObjType, tableFilterTypes, userSchema, userType, withId } from '@/types'
+import React, { useEffect, useRef, useState } from 'react'
 import styles from "./style.module.css"
 import { formatAsMoney, formatWeight, generateTrackingNumber, makeDateTimeLocalInput, spaceCamelCase } from '@/utility/utility'
 import Link from 'next/link'
 import { consoleAndToastError } from '@/useful/consoleErrorWithToast'
 import CheckBox from '@/components/inputs/checkBox/CheckBox'
+import Select from '../inputs/select/Select'
 
 export default function ViewTable<T extends withId>(
     { wantedItems, hideColumns, sizeClass, searchFunc, renameTableHeadings, headingOrder, tableProvider, searchDebounceTime = 500 }:
@@ -19,10 +20,28 @@ export default function ViewTable<T extends withId>(
     const allPackageFilters = useRef<allFilters<T>>({ ...tableProvider.filters })
 
     const [tableHeadings] = useState(() => {
+        const wantedColumns = tableProvider.columns
+
+        //if packages record there, ensure all heading available
+        if (wantedItemsSearchObj.searchItems[0] !== undefined) {
+            const packageItemHeadings = Object.keys(wantedItemsSearchObj.searchItems[0])
+            const headingsThatAreNotThere: (keyof T)[] = []
+
+            packageItemHeadings.map(eachPackageHeading => {
+                if (!wantedColumns.includes(eachPackageHeading)) {
+                    headingsThatAreNotThere.push(eachPackageHeading)
+                }
+            })
+
+            headingsThatAreNotThere.forEach(eachHeading => {
+                wantedColumns.push(eachHeading)
+            })
+        }
+
         return [
-            ...tableProvider.columns
-                // filter hidden columns
-                .filter(eachHeading => hideColumns === undefined ? true : !hideColumns.includes(eachHeading as keyof T))
+            ...wantedColumns
+                // filter hidden columns - always hide enableRLS column
+                .filter(eachHeading => ![...(hideColumns !== undefined ? hideColumns : []), "enableRLS"].includes(eachHeading as keyof T))
                 // sort by headingOrder if provided
                 .sort((a, b) => {
                     if (headingOrder === undefined) return 0
@@ -340,36 +359,26 @@ export default function ViewTable<T extends withId>(
                                             <span className={`${styles.moreCont} container`}
                                             >
                                                 {filterSearchType.type === "options" && (//additional options
-                                                    <>
-                                                        <label>select {eachTableHeadingAsString}</label>
+                                                    <Select
+                                                        label={`select ${eachTableHeadingAsString}`}
+                                                        name={`${eachTableHeadingAsString}select`}
+                                                        value={filterSearchType.value !== undefined ? filterSearchType.value : ""}
+                                                        valueOptions={[...filterSearchType.options]}
+                                                        onChange={value => {
+                                                            if (allPackageFilters.current[eachTableHeading] === undefined) return
 
-                                                        <select value={filterSearchType.value}
-                                                            onChange={async (event: React.ChangeEvent<HTMLSelectElement>) => {
-                                                                const eachOption = event.target.value
+                                                            //react refresh
+                                                            allPackageFilters.current[eachTableHeading] = { ...allPackageFilters.current[eachTableHeading] }
 
-                                                                if (allPackageFilters.current[eachTableHeading] === undefined) return
+                                                            if (allPackageFilters.current[eachTableHeading].type === "options") {
+                                                                allPackageFilters.current[eachTableHeading].value = value
 
-                                                                //react refresh
-                                                                allPackageFilters.current[eachTableHeading] = { ...allPackageFilters.current[eachTableHeading] }
+                                                                allPackageFilters.current[eachTableHeading].base.using = true
+                                                            }
 
-                                                                if (allPackageFilters.current[eachTableHeading].type === "options") {
-                                                                    allPackageFilters.current[eachTableHeading].value = eachOption
-
-                                                                    allPackageFilters.current[eachTableHeading].base.using = true
-                                                                }
-
-                                                                runSameOnAll()
-                                                            }}
-                                                        >
-                                                            {filterSearchType.options.map(eachOption => {
-
-                                                                return (
-                                                                    <option key={eachOption} value={eachOption}
-                                                                    >{eachOption}</option>
-                                                                )
-                                                            })}
-                                                        </select>
-                                                    </>
+                                                            runSameOnAll()
+                                                        }}
+                                                    />
                                                 )}
 
                                                 <label className='resetTextMargin' style={{ color: filterSearchType.base.using ? "var(--c4)" : "var(--textC3)", }}
@@ -454,6 +463,7 @@ export default function ViewTable<T extends withId>(
                                     let invoiceArr: dbInvoiceType[] | undefined = undefined
                                     let imageArr: dbImageType[] | undefined = undefined
                                     let seenDateCreated: Date | undefined = undefined
+                                    let seenUser: userType | undefined = undefined
 
                                     if (typeof packgeData === "object") {
                                         if (Array.isArray(packgeData)) {
@@ -468,6 +478,12 @@ export default function ViewTable<T extends withId>(
                                             if (dbImageTest.data !== undefined && dbImageTest.data.length > 0) {
                                                 imageArr = dbImageTest.data
                                             }
+                                        }
+
+                                        //user obj check
+                                        const userTest = userSchema.safeParse(packgeData)
+                                        if (userTest.data !== undefined) {
+                                            seenUser = userTest.data
                                         }
 
                                         const dateTest = dateSchma.safeParse(packgeData)
@@ -529,6 +545,13 @@ export default function ViewTable<T extends withId>(
 
                                                     {seenDateCreated !== undefined && (
                                                         <p>{seenDateCreated.toLocaleDateString()}</p>
+                                                    )}
+
+                                                    {seenUser !== undefined && (
+                                                        <div className='resetTextMargin' style={{ fontSize: "var(--fontSizeS)" }}>
+                                                            <li>{seenUser.name}</li>
+                                                            <li>{seenUser.email}</li>
+                                                        </div>
                                                     )}
                                                 </>
                                             )}

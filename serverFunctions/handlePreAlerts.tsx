@@ -4,8 +4,8 @@ import { preAlerts } from "@/db/schema"
 import { dbImageType, dbInvoiceType, newPreAlertSchema, newPreAlertType, preAlertSchema, preAlertType, tableColumns, tableFilterTypes, wantedCrudObjType } from "@/types"
 import { and, desc, eq, SQLWrapper } from "drizzle-orm"
 import { deleteImages, deleteInvoices } from "./handleDocuments"
-import { ensureCanAccessTable } from "./handleAuth"
-import { handleEnsureCanAccessTableResults } from "@/utility/utility"
+import { ensureCanAccessTable, sessionCheck } from "./handleAuth"
+import { handleEnsureCanAccessTableResults, makeWhereClauses } from "@/utility/utility"
 import { filterTableObjectByColumnAccess } from "@/useful/usefulFunctions"
 import { initialNewPreAlertObj } from "@/lib/initialFormData"
 
@@ -94,35 +94,31 @@ export async function getSpecificPreAlert(preAlertId: preAlertType["id"], wanted
     return result
 }
 
-export async function getPreAlerts(filter: tableFilterTypes<preAlertType>, wantedCrudObj: wantedCrudObjType, limit = 50, offset = 0): Promise<preAlertType[]> {
-    //auth check
-    const accessTableResults = await ensureCanAccessTable("preAlerts", wantedCrudObj)
-    handleEnsureCanAccessTableResults(accessTableResults, "both")
+export async function getPreAlerts(filter: tableFilterTypes<preAlertType>, wantedCrudObj: wantedCrudObjType, getWith?: { [key in keyof preAlertType]?: true }, limit = 50, offset = 0,): Promise<preAlertType[]> {
+    // Auth check
+    //madatory restriction for users that dont have r permissions for multipleSearch
+    if (wantedCrudObj.crud === "ro") {
+        wantedCrudObj.skipResourceIdCheck = true
 
-    // Collect conditions dynamically
-    const whereClauses: SQLWrapper[] = []
-
-    if (filter.id !== undefined) {
-        whereClauses.push(eq(preAlerts.id, filter.id))
+        const session = await sessionCheck()
+        filter.userId = session.user.id
     }
 
-    if (filter.userId !== undefined) {
-        whereClauses.push(eq(preAlerts.userId, filter.userId))
-    }
+    const accessTableResults = await ensureCanAccessTable("preAlerts", wantedCrudObj);
+    handleEnsureCanAccessTableResults(accessTableResults, "both");
 
-    if (filter.acknowledged !== undefined) {
-        whereClauses.push(eq(preAlerts.acknowledged, filter.acknowledged))
-    }
+    //compile filters into proper where clauses
+    const whereClauses: SQLWrapper[] = makeWhereClauses(preAlertSchema.partial(), filter, preAlerts)
 
     const results = await db.query.preAlerts.findMany({
         where: and(...whereClauses),
-        limit: limit,
-        offset: offset,
+        limit,
+        offset,
         orderBy: [desc(preAlerts.dateCreated)],
-        with: {
-            fromUser: true
+        with: getWith === undefined ? undefined : {
+            fromUser: getWith.fromUser,
         }
     });
 
-    return results
+    return results;
 }

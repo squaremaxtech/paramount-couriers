@@ -33,17 +33,17 @@ export default async function EmployeeLayout({
               package_2
             </span>
           ),
-          link: `/employee/packages/add`,
+          link: `/employee/packages`,
           title: "packages"
         },
         {
           icon: (
             <span className="material-symbols-outlined largeIcon">
-              help_center
+              quick_reorder
             </span>
           ),
-          link: ``,
-          title: "faq"
+          link: `/employee/preAlerts`,
+          title: "preAlerts"
         },
         {
           icon: (

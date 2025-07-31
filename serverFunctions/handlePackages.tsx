@@ -77,6 +77,7 @@ export async function deleteImageeOnPackage(packageId: packageType["id"], dbImag
     await deleteImages(dbImageType.map(eachDbImage => eachDbImage.file.src))
 }
 
+
 export async function getSpecificPackage(packageId: packageType["id"], wantedCrudObj: wantedCrudObjType, runAuth = true): Promise<packageType | undefined> {
     if (runAuth) {
         //auth check
@@ -93,17 +94,18 @@ export async function getSpecificPackage(packageId: packageType["id"], wantedCru
     return result
 }
 
-export async function getPackages(filter: tableFilterTypes<packageType>, wantedCrudObj: wantedCrudObjType, limit = 50, offset = 0): Promise<packageType[]> {
+export async function getPackages(filter: tableFilterTypes<packageType>, wantedCrudObj: wantedCrudObjType, getWith?: { [key in keyof packageType]?: true }, limit = 50, offset = 0,): Promise<packageType[]> {
     // Auth check
+    //madatory restriction for users that dont have r permissions for multipleSearch
+    if (wantedCrudObj.crud === "ro") {
+        wantedCrudObj.skipResourceIdCheck = true
+
+        const session = await sessionCheck()
+        filter.userId = session.user.id
+    }
+
     const accessTableResults = await ensureCanAccessTable("packages", wantedCrudObj);
     handleEnsureCanAccessTableResults(accessTableResults, "both");
-
-    //madatory restriction for users that dont have r permissions
-    if (wantedCrudObj.crud === "ro") {
-        const session = await sessionCheck()
-
-        filter["userId"] = session.user.id
-    }
 
     //compile filters into proper where clauses
     const whereClauses: SQLWrapper[] = makeWhereClauses(packageSchema.partial(), filter, packages)
@@ -113,6 +115,9 @@ export async function getPackages(filter: tableFilterTypes<packageType>, wantedC
         limit,
         offset,
         orderBy: [desc(packages.dateCreated)],
+        with: getWith === undefined ? undefined : {
+            fromUser: getWith.fromUser,
+        }
     });
 
     return results;

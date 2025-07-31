@@ -7,7 +7,6 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     const { id } = await params
 
     const usableId = extractIdFromTrackingNumber(id)
-    console.log(`$usableId`, usableId);
 
     //validate
     const seenPackage = await getSpecificPackage(usableId, { crud: "ro", resourceId: `${usableId}` })

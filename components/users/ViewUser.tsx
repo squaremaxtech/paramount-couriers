@@ -17,9 +17,9 @@ export default function ViewUsers({ users, selectionAction }: { users: userType[
     )
 }
 
-export function ViewUser({ user, selectionAction, fullView = true }: { user: userType, selectionAction?: (eachUser: userType) => void, fullView?: boolean }) {
+export function ViewUser({ user, selectionAction, fullView = true, ...elProps }: { user: userType, selectionAction?: (eachUser: userType) => void, fullView?: boolean } & React.HTMLAttributes<HTMLDivElement>) {
     return (
-        <div className="card">
+        <div {...elProps} className={`card ${elProps.className ?? ""}`}>
             <p>name: {user.name}</p>
 
             <p>email: {user.email}</p>
