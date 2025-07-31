@@ -1,16 +1,15 @@
 "use client"
 import { allFilters, dateSchma, dbImageSchema, dbImageType, dbInvoiceSchema, dbInvoiceType, decimalStringSchema, filterSearchType, searchObjType, tableFilterTypes, userSchema, userType, withId } from '@/types'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import styles from "./style.module.css"
-import { formatAsMoney, formatWeight, generateTrackingNumber, makeDateTimeLocalInput, spaceCamelCase } from '@/utility/utility'
-import Link from 'next/link'
+import { formatAsMoney, formatWeight, makeDateTimeLocalInput, spaceCamelCase } from '@/utility/utility'
 import { consoleAndToastError } from '@/useful/consoleErrorWithToast'
 import CheckBox from '@/components/inputs/checkBox/CheckBox'
 import Select from '../inputs/select/Select'
 
 export default function ViewTable<T extends withId>(
-    { wantedItems, hideColumns, sizeClass, searchFunc, renameTableHeadings, headingOrder, tableProvider, searchDebounceTime = 500 }:
-        { wantedItems: T[], hideColumns?: (keyof T)[], sizeClass?: { large: (keyof T)[], small: (keyof T)[] }, searchFunc: (tableFilters: tableFilterTypes<T>, wantedItemsSearchObj: searchObjType<T>) => Promise<T[]>, renameTableHeadings?: { [key in keyof T]?: string }, headingOrder?: (keyof T)[], tableProvider: { filters: allFilters<T>, columns: (keyof T)[] }, searchDebounceTime?: number }
+    { wantedItems, hideColumns, sizeClass, searchFunc, renameTableHeadings, headingOrder, tableProvider, searchDebounceTime = 500, replaceData }:
+        { wantedItems: T[], hideColumns?: (keyof T)[], sizeClass?: { large: (keyof T)[], small: (keyof T)[] }, searchFunc: (tableFilters: tableFilterTypes<T>, wantedItemsSearchObj: searchObjType<T>) => Promise<T[]>, renameTableHeadings?: { [key in keyof T]?: string }, headingOrder?: (keyof T)[], tableProvider: { filters: allFilters<T>, columns: (keyof T)[] }, searchDebounceTime?: number, replaceData?: { [key in keyof T]?: (wantedItem: T) => React.JSX.Element } }
 ) {
     const [wantedItemsSearchObj, wantedItemsSearchObjSet] = useState<searchObjType<T>>({
         searchItems: wantedItems,
@@ -22,12 +21,12 @@ export default function ViewTable<T extends withId>(
     const [tableHeadings] = useState(() => {
         const wantedColumns = tableProvider.columns
 
-        //if packages record there, ensure all heading available
+        //if record there, ensure all heading available
         if (wantedItemsSearchObj.searchItems[0] !== undefined) {
-            const packageItemHeadings = Object.keys(wantedItemsSearchObj.searchItems[0])
+            const itemHeadings = Object.keys(wantedItemsSearchObj.searchItems[0])
             const headingsThatAreNotThere: (keyof T)[] = []
 
-            packageItemHeadings.map(eachPackageHeading => {
+            itemHeadings.map(eachPackageHeading => {
                 if (!wantedColumns.includes(eachPackageHeading)) {
                     headingsThatAreNotThere.push(eachPackageHeading)
                 }
@@ -431,24 +430,24 @@ export default function ViewTable<T extends withId>(
                 </thead>
 
                 <tbody>
-                    {wantedItemsSearchObj.searchItems.map(eachPackage => {
-                        const checked = itemsSelected.includes(eachPackage.id)
+                    {wantedItemsSearchObj.searchItems.map(eachWantedItem => {
+                        const checked = itemsSelected.includes(eachWantedItem.id)
 
                         return (
-                            <tr key={eachPackage.id} className={`${styles.row} ${checked ? "selected" : ""}`}>
+                            <tr key={eachWantedItem.id} className={`${styles.row} ${checked ? "selected" : ""}`}>
                                 <td className='smaller center'>
                                     <CheckBox
-                                        checked={itemsSelected.includes(eachPackage.id)}
+                                        checked={itemsSelected.includes(eachWantedItem.id)}
                                         name='checked'
                                         onChange={() => {
                                             itemsSelectedSet(prevPackagesSelected => {
                                                 let newPackagesSelected = [...prevPackagesSelected]
 
                                                 if (checked) {
-                                                    newPackagesSelected = newPackagesSelected.filter(eachPackageFilter => eachPackageFilter !== eachPackage.id)
+                                                    newPackagesSelected = newPackagesSelected.filter(eachPackageFilter => eachPackageFilter !== eachWantedItem.id)
 
                                                 } else {
-                                                    newPackagesSelected = [...newPackagesSelected, eachPackage.id]
+                                                    newPackagesSelected = [...newPackagesSelected, eachWantedItem.id]
                                                 }
                                                 return newPackagesSelected
                                             })
@@ -458,7 +457,7 @@ export default function ViewTable<T extends withId>(
 
                                 {tableHeadings.map(eachTableHeading => {
                                     const seenHeading = eachTableHeading as string
-                                    const packgeData = eachPackage[eachTableHeading]
+                                    const packgeData = eachWantedItem[eachTableHeading]
 
                                     let invoiceArr: dbInvoiceType[] | undefined = undefined
                                     let imageArr: dbImageType[] | undefined = undefined
@@ -492,67 +491,68 @@ export default function ViewTable<T extends withId>(
                                         }
                                     }
 
+                                    let replaceDataElement: React.JSX.Element | undefined = undefined
+                                    if (replaceData !== undefined && replaceData[eachTableHeading] !== undefined) {
+                                        replaceDataElement = replaceData[eachTableHeading](eachWantedItem)
+                                    }
+
                                     return (
-                                        <td key={seenHeading} className={`${styles.heading} ${returnSizeClass(eachTableHeading)} resetTextMargin`}>
-                                            {typeof packgeData === "string" && (
+                                        <td key={seenHeading} className={`${styles.heading} ${returnSizeClass(eachTableHeading)} resetTextMargin`}
+                                        >
+                                            {replaceDataElement === undefined ? (
                                                 <>
-                                                    {eachTableHeading === "weight" ? (
-                                                        <p>{formatWeight(packgeData)}</p>
+                                                    {typeof packgeData === "string" && (
+                                                        <>
+                                                            {eachTableHeading === "weight" ? (
+                                                                <p>{formatWeight(packgeData)}</p>
 
-                                                    ) : ((eachTableHeading === "price") || (eachTableHeading === "payment")) ? (
-                                                        <p>{formatAsMoney(packgeData)}</p>
+                                                            ) : ((eachTableHeading === "price") || (eachTableHeading === "payment")) ? (
+                                                                <p>{formatAsMoney(packgeData)}</p>
 
-                                                    ) : (
-                                                        <p>{packgeData}</p>
+                                                            ) : (
+                                                                <p>{packgeData}</p>
+                                                            )}
+                                                        </>
+                                                    )}
+
+                                                    {typeof packgeData === "number" && (
+                                                        <>
+                                                            <p>{packgeData}</p>
+                                                        </>
+                                                    )}
+
+                                                    {typeof packgeData === "boolean" && (
+                                                        <>
+                                                            <p>{packgeData.toString()}</p>
+                                                        </>
+                                                    )}
+
+                                                    {typeof packgeData === "object" && (
+                                                        <>
+                                                            {invoiceArr !== undefined && eachTableHeading === "invoices" && (
+                                                                <p>has invoices</p>
+                                                            )}
+
+                                                            {imageArr !== undefined && eachTableHeading === "images" && (
+                                                                <p>has images</p>
+                                                            )}
+
+                                                            {seenDateCreated !== undefined && (
+                                                                <p>{seenDateCreated.toLocaleDateString()}</p>
+                                                            )}
+
+                                                            {seenUser !== undefined && (
+                                                                <div className='resetTextMargin' style={{ fontSize: "var(--fontSizeS)" }}>
+                                                                    <li>{seenUser.name}</li>
+                                                                    <li>{seenUser.email}</li>
+                                                                </div>
+                                                            )}
+                                                        </>
                                                     )}
                                                 </>
-                                            )}
-
-                                            {typeof packgeData === "number" && (
+                                            ) : (
                                                 <>
-                                                    {eachTableHeading === "id" ? (
-                                                        <Link href={`/customer/packages/view/${generateTrackingNumber(packgeData)}`}>
-                                                            <button className='button3'>
-                                                                {generateTrackingNumber(packgeData)}
-
-                                                                <span className="material-symbols-outlined">
-                                                                    link
-                                                                </span>
-                                                            </button>
-                                                        </Link>
-
-                                                    ) : (
-                                                        <p>{packgeData}</p>
-                                                    )}
-                                                </>
-                                            )}
-
-                                            {typeof packgeData === "boolean" && (
-                                                <>
-                                                    <p>{packgeData.toString()}</p>
-                                                </>
-                                            )}
-
-                                            {typeof packgeData === "object" && (
-                                                <>
-                                                    {invoiceArr !== undefined && eachTableHeading === "invoices" && (
-                                                        <p>has invoices</p>
-                                                    )}
-
-                                                    {imageArr !== undefined && eachTableHeading === "images" && (
-                                                        <p>has images</p>
-                                                    )}
-
-                                                    {seenDateCreated !== undefined && (
-                                                        <p>{seenDateCreated.toLocaleDateString()}</p>
-                                                    )}
-
-                                                    {seenUser !== undefined && (
-                                                        <div className='resetTextMargin' style={{ fontSize: "var(--fontSizeS)" }}>
-                                                            <li>{seenUser.name}</li>
-                                                            <li>{seenUser.email}</li>
-                                                        </div>
-                                                    )}
+                                                    {replaceDataElement}
                                                 </>
                                             )}
                                         </td>
