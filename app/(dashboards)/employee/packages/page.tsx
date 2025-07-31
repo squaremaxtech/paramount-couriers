@@ -50,7 +50,7 @@ export default function Page() {
                             replaceData={{
                                 id: (wantedItem) => {
                                     return (
-                                        <Link href={`/customer/packages/edit/${wantedItem.id}`}>
+                                        <Link href={`/employee/packages/edit/${wantedItem.id}`}>
                                             <button className='button3'>
                                                 {generateTrackingNumber(wantedItem.id)}
 
