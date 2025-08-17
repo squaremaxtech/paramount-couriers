@@ -1,6 +1,6 @@
 import { locationOptions, locationType, packageType } from "@/types";
 import styles from "./style.module.css"
-import { formatAsMoney, formatWeight, generateTrackingNumber } from "@/utility/utility";
+import { formatAsMoney, formatWeight, generateTrackingNumber, makeDownloadFileUrl } from "@/utility/utility";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -161,13 +161,13 @@ export function ViewPackage({ seenPackage }: { seenPackage: packageType }) {
 
                 <p style={{ fontSize: "var(--fontSizeS)" }}>You can upload your files, whether invoices or other documents. The limit is a maximum of 10 files, each under 3 MB in size.</p>
 
-                <p style={{ fontSize: "var(--fontSizeS)" }}>Allowed formats: pdf, jpg, bmp, gif, png, doc, docx y html.</p>
+                <p style={{ fontSize: "var(--fontSizeS)" }}>Allowed formats: pdf, jpg, bmp, gif, png, doc and docx</p>
 
                 {seenPackage.invoices.length > 0 && (
                     <div style={{ display: "flex", gap: "var(--spacingR)", overflow: "auto", alignItems: "flex-start" }}>
                         {seenPackage.invoices.map(eachDbInvoice => {
                             return (
-                                <Link key={eachDbInvoice.file.src} href={`/api/files/download?src=${eachDbInvoice.file.src}`} target="blank_" style={{ flex: "0 0 auto", fontSize: "var(--fontSizeS)", backgroundColor: "var(--bg2)", padding: "var(--spacingS)", borderRadius: "var(--borderRadiusS)", maxWidth: "300px" }} className="resetTextMargin">
+                                <Link key={eachDbInvoice.file.src} href={makeDownloadFileUrl(eachDbInvoice)} target="blank_" style={{ flex: "0 0 auto", fontSize: "var(--fontSizeS)", backgroundColor: "var(--bg2)", padding: "var(--spacingS)", borderRadius: "var(--borderRadiusS)", maxWidth: "300px" }} className="resetTextMargin">
                                     <p style={{ color: "var(--c4)" }}>{eachDbInvoice.type} invoice</p>
 
                                     <p>{eachDbInvoice.file.fileName}</p>
@@ -186,7 +186,7 @@ export function ViewPackage({ seenPackage }: { seenPackage: packageType }) {
                         {seenPackage.images.map(eachDbImage => {
                             return (
                                 <div key={eachDbImage.file.src} style={{ flex: "0 0 auto" }}>
-                                    <Image alt={eachDbImage.alt} width={300} height={300} src={`/api/files/images/view?src=${eachDbImage.file.src}`} style={{ objectFit: "contain" }} />
+                                    <Image alt={eachDbImage.alt} width={300} height={300} src={makeDownloadFileUrl(eachDbImage)} style={{ objectFit: "contain" }} />
                                 </div>
                             )
                         })}

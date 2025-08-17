@@ -1,5 +1,5 @@
 import z from "zod"
-import { allFilters, ensureCanAccessTableReturnType, provideFilterAndColumnForTableReturnType } from "@/types";
+import { allFilters, dbWithFileType, ensureCanAccessTableReturnType, provideFilterAndColumnForTableReturnType } from "@/types";
 import { errorZodErrorAsString } from "@/useful/consoleErrorWithToast";
 import { eq, gte, sql, SQLWrapper } from "drizzle-orm";
 import { PgNumeric, PgInteger, PgTableWithColumns, PgEnumColumn, PgText, PgVarchar, PgBoolean, PgDate, PgJsonb, PgTimestamp, PgSerial, PgJson } from 'drizzle-orm/pg-core'
@@ -222,4 +222,8 @@ export function provideFilterAndColumnForTable<T extends PgTableWithColumns<any>
     }
 
     return { filters: filters, columns: Object.keys(table) };
+}
+
+export function makeDownloadFileUrl(dbWithFile: dbWithFileType) {
+    return `/api/files/download?src=${dbWithFile.file.src}&dbFileType=${dbWithFile.dbFileType}`
 }

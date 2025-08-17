@@ -6,7 +6,7 @@ import React from 'react'
 import toast from 'react-hot-toast'
 import { dbFileType, dbWithFileType } from '@/types'
 import { v4 as uuidV4 } from "uuid"
-import { makeValidFilename } from '@/utility/utility'
+import { makeDownloadFileUrl, makeValidFilename } from '@/utility/utility'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -77,19 +77,17 @@ export default function UploadFiles<T extends dbWithFileType>({ id, multiple = t
                 {dbWithFileObjs.map((eachDbWithFileObj, eachDbWithFileObjIndex) => {
                     if (eachDbWithFileObj.file.status === "to-delete") return null
 
+                    const viewSrc = makeDownloadFileUrl(eachDbWithFileObj)
+
                     return (
                         <li key={eachDbWithFileObj.file.src} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--spacingS)" }} className='resetTextMargin'>
                             {eachDbWithFileObj.file.uploadedAlready ? (
                                 <>
-                                    {eachDbWithFileObj.dbFileType === "image" ? (
-                                        <div>
-                                            <Image alt={`${eachDbWithFileObj.file.fileName} image`} width={100} height={100} src={`/api/files/images/view?src=${eachDbWithFileObj.file.src}`} style={{ objectFit: "contain" }} />
-
-                                            <p>{eachDbWithFileObj.file.fileName}</p>
-                                        </div>
-                                    ) : (
-                                        <Link href={`/api/files/download?src=${eachDbWithFileObj.file.src}`} target="blank_">{eachDbWithFileObj.file.fileName}</Link>
+                                    {eachDbWithFileObj.dbFileType === "image" && (
+                                        <Image alt={`${eachDbWithFileObj.file.fileName} image`} width={100} height={100} src={viewSrc} />
                                     )}
+
+                                    <Link href={viewSrc} target="blank_">{eachDbWithFileObj.file.fileName}</Link>
                                 </>
                             ) : (
                                 <p>{eachDbWithFileObj.file.fileName}</p>
