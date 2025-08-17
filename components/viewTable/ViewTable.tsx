@@ -505,8 +505,6 @@ export default function ViewTable<T extends withId>(
                                     let replaceDataObj: replaceDataType<T>["key"] | undefined = undefined
                                     if (replaceData !== undefined && replaceData[eachTableHeading] !== undefined) {
                                         replaceDataObj = replaceData[eachTableHeading]
-
-
                                     }
 
                                     return (

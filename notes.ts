@@ -1,4 +1,11 @@
-//To Do
+//To Do:
+//whenever person picks up item - package collected
+
+//Recent Notes:
+//name change
+//FAQ - common questions of the business
+
+
 //add cif value
 //add charges: services fee, freight, fuel, insurance, governement fee
 //track payment in db
