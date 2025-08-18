@@ -118,7 +118,7 @@ export type searchObjType<T> = {
 export type provideFilterAndColumnForTableReturnType<T extends PgTableWithColumns<any>> = { filters: allFilters<T>, columns: (keyof T["_"]["columns"])[] }
 
 export const uploadFileApiResponseSchema = z.object({
-    names: z.string().array(),
+    names: z.string().min(1).array(),
 })
 export type uploadFileApiResponseType = z.infer<typeof uploadFileApiResponseSchema>
 

@@ -1,4 +1,9 @@
 //To Do:
+//enusre files have fileType in them
+//rework upload api - for just one route
+//put upload function in handleWithFiles function
+//make dashboard - switch on user type - show appropriate options
+
 //whenever person picks up item - package collected
 
 //Recent Notes:
