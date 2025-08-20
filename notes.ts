@@ -1,4 +1,6 @@
 //To Do:
+//copy design
+//copy content - gpt/reggae rush
 //enusre files have fileType in them
 //rework upload api - for just one route
 //put upload function in handleWithFiles function
