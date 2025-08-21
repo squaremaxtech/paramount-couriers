@@ -1,28 +1,18 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Raleway, Manrope, Roboto, Rubik } from "next/font/google"
+import { Alegreya, Rubik } from "next/font/google"
 import { Toaster } from "react-hot-toast";
 import localFont from "next/font/local";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth/auth";
 
-const roboto = Roboto({
-  variable: "--roboto",
-  subsets: ["latin"],
-});
-
-const raleway = Raleway({
-  variable: "--raleway",
-  subsets: ["latin"],
-});
-
-const manrope = Manrope({
-  variable: "--manrope",
-  subsets: ["latin"],
-});
-
 const rubik = Rubik({
   variable: "--rubik",
+  subsets: ["latin"],
+});
+
+const alegreya = Alegreya({
+  variable: "--alegreya",
   subsets: ["latin"],
 });
 
@@ -53,10 +43,10 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className={`${raleway.variable} ${manrope.variable} ${roboto.variable} ${rubik.variable} ${materialSymbolsOutlined.variable} ${materialSymbolsRounded.variable} ${materialSymbolsSharp.variable} antialiased`}>
+      <body className={`${alegreya.variable} ${rubik.variable} ${materialSymbolsOutlined.variable} ${materialSymbolsRounded.variable} ${materialSymbolsSharp.variable} antialiased`}>
         <SessionProvider session={session}>
 
-          <Toaster position="top-center" reverseOrder={false} />
+          {/* <Toaster position="top-center" reverseOrder={false} /> */}
           {children}
         </SessionProvider>
       </body>

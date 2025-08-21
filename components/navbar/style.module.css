@@ -1,14 +1,19 @@
 .mainNav {
     background-color: var(--bg1);
-    color: var(--textC1);
+    color: var(--textC4);
     padding: 0rem var(--spacingR);
     position: relative;
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     justify-content: space-between;
     align-items: center;
-    text-transform: capitalize;
+    text-transform: uppercase;
     z-index: 999;
+    font-weight: 500;
+}
+
+.mainNav svg {
+    fill: var(--shade1)
 }
 
 .mainMenu {
@@ -24,12 +29,15 @@
     cursor: pointer;
 }
 
-
+.mainMenuItem:hover a,
+.mainMenuItem:hover svg {
+    transition: fill var(--transitionTimeR), color var(--transitionTimeR);
+}
 
 .mainMenuItem:hover>div>a,
 .mainMenuItem:hover>div>svg {
-    color: var(--color1);
-    fill: var(--color1);
+    color: var(--c1);
+    fill: var(--c1);
 }
 
 .subMenu {
@@ -40,15 +48,20 @@
     background-color: var(--bg1);
 }
 
+.subMenu>.subMenuItem:last-child {
+    border-bottom: 3px solid var(--c1);
+}
+
 .subMenuItem {
     padding: var(--spacingR);
     cursor: pointer;
+    border-bottom: 1px solid var(--shade2);
 }
 
 .subMenuItem:hover>div>a,
 .subMenuItem:hover>div>svg {
-    color: var(--color1);
-    fill: var(--color1);
+    color: var(--c1);
+    fill: var(--c1);
 }
 
 .subSubMenu {
@@ -68,8 +81,8 @@
 
 .subSubMenuItem:hover>a,
 .subSubMenuItem:hover>svg {
-    color: var(--color1);
-    fill: var(--color1);
+    color: var(--c1);
+    fill: var(--c1);
 }
 
 .mobileMenu {
@@ -83,7 +96,7 @@
 }
 
 .moreItemsMenu {
-    padding: .5rem;
+    padding: var(--spacingS);
     display: grid;
     position: absolute;
     top: 100%;
@@ -110,6 +123,10 @@
 
     .subMenuItem:hover>.subSubMenu {
         display: grid;
+    }
+
+    .onlyOnMobile {
+        display: none;
     }
 }
 
@@ -140,13 +157,12 @@
         left: 50%;
         translate: -50% 0%;
         width: 100%;
-        border: 1px solid var(--textC1);
     }
 
     .mainMenuItem {
         position: relative;
         padding: var(--spacingR);
-        border-bottom: 1px solid var(--textC1);
+        border-bottom: 1px solid var(--shade2);
     }
 
     .mainMenuItem>div:first-of-type {

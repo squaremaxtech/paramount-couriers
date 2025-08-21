@@ -1,5 +1,8 @@
 //To Do:
-//copy design
+//copy design -
+////put content down - then style
+////note ahead of time what element types youll need - h1, title...etc
+
 //copy content - gpt/reggae rush
 //enusre files have fileType in them
 //rework upload api - for just one route
@@ -7,7 +10,7 @@
 //make dashboard - switch on user type - show appropriate options
 
 //whenever person picks up item - package collected
-
+//reactivate toaster and "dev": "next dev --turbopack",
 //Recent Notes:
 //name change
 //FAQ - common questions of the business

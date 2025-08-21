@@ -13,50 +13,28 @@ export default function BaseWebsiteLayout({
           {
             title: "home",
             link: "/",
+          },
+          {
+            title: "services",
+            link: "/services",
             subMenu: [
               {
-                title: "homeSub",
-                link: "/",
-              },
-              {
-                title: "homeSub2",
-                link: "/",
-                subSubMenu: [
-                  {
-                    title: "homeSubSub1",
-                    link: "/",
-                  },
-                  {
-                    title: "homeSubSub2",
-                    link: "/",
-                  },
-                ]
-              },
-              {
-                title: "homeSub3",
-                link: "/",
+                title: "service details",
+                link: "/services",
               },
             ]
           },
           {
-            title: "how it works",
-            link: "/howItWorks",
-          },
-          {
-            title: "pricing & rates",
-            link: "/rates",
-          },
-          {
-            title: "support",
-            link: "/support",
-          },
-          {
             title: "about us",
-            link: "/aboutUs",
+            link: "/about",
           },
           {
-            title: "contact",
+            title: "contact us",
             link: "/contact",
+          },
+          {
+            title: "rates",
+            link: "/rates",
           },
         ]}
       />

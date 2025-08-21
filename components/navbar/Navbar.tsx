@@ -29,9 +29,9 @@ export default async function MainNav({ menuInfoArr }: { menuInfoArr: menuItem[]
 
     return (
         <nav id='mainNav' className={styles.mainNav}>
-            <MobileNav menuItems={menuInfoArr} />
-
             <Logo />
+
+            <MobileNav menuItems={menuInfoArr} />
 
             <DesktopNav menuItems={menuInfoArr} />
 
@@ -46,10 +46,7 @@ export default async function MainNav({ menuInfoArr }: { menuInfoArr: menuItem[]
                         </label>
 
                         <input id='userOptionsCheckbox' className="visibilityCheckbox" type="checkbox" />
-
                         <ul className={styles.moreItemsMenu}>
-                            <li style={{ padding: ".5rem" }}>{session.user.name}</li>
-
                             <li className={styles.moreIntemsItem}
                             >
                                 <Link href={session.user.role === "customer" ? "/customer" : "/employee"}>dashboard</Link>
@@ -61,10 +58,6 @@ export default async function MainNav({ menuInfoArr }: { menuInfoArr: menuItem[]
                                     <Link href={"/admin"}>admin dashboard</Link>
                                 </li>
                             )}
-
-                            <li className={styles.moreIntemsItem}>account</li>
-
-                            <li className={styles.moreIntemsItem}>settings</li>
 
                             <li className={styles.moreIntemsItem}>
                                 <LogButton option='logout' />
@@ -89,7 +82,7 @@ function MobileNav({ menuItems }: { menuItems: menuItem[] }) {
     return (
         <div className={styles.mobileMenu}>
             <label htmlFor='mobileMenuCheckbox' style={{ margin: "0 auto", cursor: "pointer" }}>
-                <svg style={{ width: "var(--sizeEL)" }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z" /></svg>
+                <svg style={{ width: "var(--sizeL)", height: "var(--sizeL)" }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z" /></svg>
             </label>
 
             {/* use checkbox styling to hide the menu */}
@@ -110,7 +103,7 @@ function Menu({ menu, ...elProps }: { menu: menuItem[] } & HTMLAttributes<HTMLUL
                         <Link style={{ color: pathname === eachMenuItem.link ? "var(--color1)" : "" }} href={eachMenuItem.link}>{eachMenuItem.title}</Link>
 
                         {eachMenuItem.subMenu !== undefined && (
-                            <label htmlFor='menuItemCheckbox'>
+                            <label htmlFor={`${eachMenuItemIndex}MenuItemCheckbox`} className={styles.onlyOnMobile}>
                                 <svg style={{ width: "var(--sizeS)", fill: pathname === eachMenuItem.link ? "var(--color1)" : "" }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z" /></svg>
                             </label>
                         )}
@@ -118,7 +111,7 @@ function Menu({ menu, ...elProps }: { menu: menuItem[] } & HTMLAttributes<HTMLUL
 
                     {eachMenuItem.subMenu !== undefined && eachMenuItem.subMenu.length > 0 && (
                         <>
-                            <input id='menuItemCheckbox' className="visibilityCheckbox" type="checkbox" />
+                            <input id={`${eachMenuItemIndex}MenuItemCheckbox`} className="visibilityCheckbox" type="checkbox" />
                             <SubMenu subMenu={eachMenuItem.subMenu} />
                         </>
                     )}
@@ -139,7 +132,7 @@ function SubMenu({ subMenu }: { subMenu: subMenuItem[] }) {
                         <Link style={{ color: pathname === eachSubMenuItem.link ? "var(--color1)" : "" }} href={eachSubMenuItem.link}>{eachSubMenuItem.title}</Link>
 
                         {eachSubMenuItem.subSubMenu !== undefined && (
-                            <label htmlFor='subMenuItemCheckbox'>
+                            <label htmlFor={`${eachSubMenuItemIndex}SubMenuItemCheckbox`} className={styles.onlyOnMobile}>
                                 <svg style={{ width: "var(--sizeS)", color: pathname === eachSubMenuItem.link ? "var(--color1)" : "" }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z" /></svg>
                             </label>
                         )}
@@ -147,7 +140,7 @@ function SubMenu({ subMenu }: { subMenu: subMenuItem[] }) {
 
                     {eachSubMenuItem.subSubMenu !== undefined && eachSubMenuItem.subSubMenu.length > 0 && (
                         <>
-                            <input id='subMenuItemCheckbox' className="visibilityCheckbox" type="checkbox" />
+                            <input id={`${eachSubMenuItemIndex}SubMenuItemCheckbox`} className="visibilityCheckbox" type="checkbox" />
                             <SubSubMenu subSubMenu={eachSubMenuItem.subSubMenu} />
                         </>
                     )}

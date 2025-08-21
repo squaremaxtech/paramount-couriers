@@ -391,7 +391,7 @@ export default function ViewTable<T extends withId>(
                                                     />
                                                 )}
 
-                                                <label className='resetTextMargin' style={{ color: filterSearchType.base.using ? "var(--c4)" : "var(--textC3)", }}
+                                                <label className='resetTextMargin' style={{ color: filterSearchType.base.using ? "var(--c4)" : "var(--textC4)", }}
                                                     onClick={() => {
                                                         if (allPackageFilters.current[eachTableHeading] === undefined) return
 

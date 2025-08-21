@@ -1,0 +1,44 @@
+.welcomeItem {
+    transition: scale var(--transitionTimeR);
+}
+
+.welcomeItem:hover {
+    scale: 1.05;
+}
+
+.welcomeItemButton {
+    position: relative;
+    opacity: 0;
+    transition: opacity var(--transitionTimeR);
+}
+
+.welcomeItem:hover .welcomeItemButton {
+    opacity: 1;
+}
+
+
+
+
+.eachService {
+    transition: background-color var(--transitionTimeR), color var(--transitionTimeR);
+    padding: var(--spacingL);
+    border: 1px solid var(--shade2);
+}
+
+.eachService:hover h3 {
+    color: inherit;
+}
+
+.eachService:hover {
+    background-color: var(--c1);
+    color: var(--textC2);
+}
+
+.swapColor {
+    color: var(--c1);
+    transition: color var(--transitionTimeR);
+}
+
+.eachService:hover .swapColor {
+    color: var(--bg1);
+}
