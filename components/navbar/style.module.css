@@ -1,5 +1,5 @@
 .mainNav {
-    background-color: var(--bg1);
+    background-color: var(--bg2);
     color: var(--textC4);
     padding: 0rem var(--spacingR);
     position: relative;
@@ -21,7 +21,7 @@
     justify-content: center;
     grid-auto-flow: column;
     white-space: nowrap;
-    background-color: var(--bg1);
+    background-color: var(--bg2);
 }
 
 .mainMenuItem {
@@ -45,7 +45,7 @@
     align-content: flex-start;
     position: absolute;
     left: 0;
-    background-color: var(--bg1);
+    background-color: var(--bg2);
 }
 
 .subMenu>.subMenuItem:last-child {
@@ -71,7 +71,7 @@
     top: 0;
     right: 0;
     translate: 100% 0;
-    background-color: var(--bg1);
+    background-color: var(--bg2);
 }
 
 .subSubMenuItem {
@@ -102,7 +102,7 @@
     top: 100%;
     right: 0;
     width: min(300px, 100vw);
-    background-color: var(--bg1);
+    background-color: var(--bg2);
 }
 
 .moreIntemsItem {
@@ -112,7 +112,7 @@
 }
 
 .moreIntemsItem:hover {
-    background-color: hsl(from var(--bg1) h s calc(l - 5))
+    background-color: hsl(from var(--bg2) h s calc(l - 5))
 }
 
 /* desktop  */

@@ -224,7 +224,7 @@ export default function Home() {
                 },
               ].map((eachMissionGoal, eachMissionGoalIndex) => {
                 return (
-                  <li key={eachMissionGoalIndex} className="container" style={{ gridTemplateColumns: "auto 1fr", borderTop: eachMissionGoalIndex !== 0 ? "1px solid var(--bg1)" : "" }}>
+                  <li key={eachMissionGoalIndex} className="container" style={{ gridTemplateColumns: "auto 1fr", borderTop: eachMissionGoalIndex !== 0 ? "1px solid var(--bg2)" : "" }}>
                     <span className="material-symbols-outlined largeIcon">
                       {eachMissionGoal.iconName}
                     </span>

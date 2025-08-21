@@ -1,0 +1,70 @@
+.footer {
+    display: grid;
+    align-content: flex-start;
+    gap: var(--spacingR);
+}
+
+.cardCont {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacingL);
+    justify-content: center;
+    padding: var(--spacingL);
+    background-color: var(--bg3);
+}
+
+.card {
+    display: grid;
+    align-content: flex-start;
+    gap: var(--spacingR);
+    padding: var(--spacingL);
+    border: 1px solid var(--shade2);
+    border-radius: var(--borderRadiusL);
+    transition: background-color var(--transitionTimeR), color var(--transitionTimeR);
+}
+
+.card * {
+    transition: background-color var(--transitionTimeR), color var(--transitionTimeR);
+
+}
+
+.card:hover * {
+    color: inherit;
+}
+
+.card:hover {
+    background-color: var(--bg1);
+    color: var(--textC2);
+}
+
+.card:hover .circle {
+    background-color: var(--c1);
+}
+
+.cardTop {
+    display: grid;
+    align-content: flex-start;
+    grid-template-columns: auto 1fr;
+    gap: var(--spacingR);
+}
+
+.cardBody {
+    display: grid;
+    align-content: flex-start;
+    grid-template-columns: 1fr auto;
+    gap: var(--spacingR);
+}
+
+.circle {
+    --cStart: var(--textC2);
+    --bgStart: var(--bg1);
+
+    border-radius: var(--borderRadiusEL);
+    aspect-ratio: 1/1;
+    width: var(--sizeL);
+    position: relative;
+    padding: var(--spacingM);
+    color: var(--cStart);
+    background-color: var(--bgStart);
+}

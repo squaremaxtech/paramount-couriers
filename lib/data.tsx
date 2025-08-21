@@ -2,6 +2,12 @@ import aaronProfile from "@/public/testimonials/aaronProfile.jpg"
 import jessicaProfile from "@/public/testimonials/jessicaProfile.jpg"
 import { StaticImageData } from "next/image";
 
+export const siteInfo = {
+    emailAddresses: ["example@example.com", "info@example.com"],
+    addresses: ["12/A Daddy Yankee Tower", "12/A Daddy Yankee Tower"],
+    phoneNumbers: ["+123 456 789 29", "123 478 373 38"],
+}
+
 export const servicesData: {
     iconName: string,
     title: string,

@@ -40,5 +40,5 @@
 }
 
 .eachService:hover .swapColor {
-    color: var(--bg1);
+    color: var(--bg2);
 }

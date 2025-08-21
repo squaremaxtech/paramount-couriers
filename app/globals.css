@@ -4,7 +4,7 @@
 *::before,
 *::after {
   box-sizing: border-box;
-  border: 1px solid red !important;
+  /* border: 1px solid red !important; */
 }
 
 :root {
@@ -22,12 +22,21 @@
   --textC4: #323232;
 
   /* used for backgrounds */
-  --bg1: #ffffff;
-  --bg2: #323232;
+  /* 
+  bg1 has a light
+  bg2 has dark
+
+  want bg1 to be dark
+  want bg2 to be light
+  */
+  --bg1: #323232;
+  --bg2: #ffffff;
+  --bg3: #f7f7f7;
 
   --sizeEEL: 6rem;
   --sizeEL: 4rem;
   --sizeL: 2rem;
+  --sizeM: 1.5rem;
   --sizeR: 1rem;
   --sizeS: .7rem;
 
@@ -67,7 +76,7 @@ body {
   display: grid;
   align-content: flex-start;
   font-family: var(--alegreya);
-  background-color: var(--bg1);
+  background-color: var(--bg2);
   font-size: var(--fontSizeR);
   color: var(--textC1);
 }
@@ -159,9 +168,9 @@ section {
   top: 50%;
   left: 50%;
   translate: -50% -50%;
-  width: 95%;
+  width: 90%;
   height: 80%;
-  background-color: color-mix(in hsl, var(--bg2), transparent 70%);
+  background-color: color-mix(in hsl, var(--bg1), transparent 70%);
   z-index: -1;
   opacity: 0;
   transform: rotateY(90deg);
@@ -198,7 +207,7 @@ svg {
   aspect-ratio: 1/1;
   width: var(--sizeR);
   height: var(--sizeR);
-  fill: var(--bg1);
+  fill: var(--bg2);
 }
 
 label {
@@ -209,7 +218,7 @@ label {
 input,
 textarea {
   padding: var(--spacingR);
-  background-color: var(--bg1);
+  background-color: var(--bg2);
   border-radius: var(--borderRadiusS);
   border: 1px solid var(--bg3);
 }
@@ -234,7 +243,7 @@ select {
   -webkit-appearance: none;
   -moz-appearance: none;
 
-  background-color: var(--bg1);
+  background-color: var(--bg2);
   border: 1px solid var(--bg1);
   padding: var(--spacingS) var(--spacingR);
   border-radius: var(--borderRadiusS);
@@ -243,11 +252,11 @@ select {
 }
 
 select:hover {
-  border-color: var(--bg1);
+  border-color: var(--bg2);
 }
 
 option {
-  background-color: var(--bg1);
+  background-color: var(--bg2);
 }
 
 @media only screen and (max-width: 900px) {}
@@ -298,7 +307,7 @@ option {
   border: 1px solid var(--c1);
   border-radius: var(--borderRadiusS);
   padding: var(--spacingS) var(--spacingR);
-  background-color: var(--bg2);
+  background-color: var(--bg1);
   font-weight: bold;
   justify-self: flex-start;
 }
@@ -360,6 +369,10 @@ option {
 
 .largeIcon {
   font-size: var(--sizeEL);
+}
+
+.mediumIcon {
+  font-size: var(--sizeM);
 }
 
 .errorText {
@@ -451,10 +464,10 @@ option {
 }
 
 .titleBox {
-  border: 1px solid var(--bg2);
+  border: 1px solid var(--bg1);
   display: grid;
   align-content: flex-start;
-  box-shadow: 2px -2px 2px 1px var(--bg2);
+  box-shadow: 2px -2px 2px 1px var(--bg1);
   padding: var(--spacingR);
   border-radius: var(--borderRadiusR);
 }

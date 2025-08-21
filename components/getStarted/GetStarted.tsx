@@ -3,7 +3,7 @@ import React from 'react'
 
 export default function GetStarted() {
     return (
-        <div className='flexContainer' style={{ justifyContent: "space-between", backgroundColor: "var(--bg2)", padding: "var(--spacingS) var(--spacingR)" }}>
+        <div className='flexContainer' style={{ justifyContent: "space-between", backgroundColor: "var(--bg1)", padding: "var(--spacingS) var(--spacingR)" }}>
             <ul className='flexContainer'>
                 {[
                     {
