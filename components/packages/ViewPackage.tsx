@@ -45,7 +45,7 @@ export function ViewPackage({ seenPackage }: { seenPackage: packageType }) {
                                 </div>
 
                                 <div style={{ aspectRatio: "1/1", borderRadius: "var(--borderRadiusEL)", backgroundColor: reachedIndex ? "var(--c1)" : "var(--bg3)", width: "min-content" }}>
-                                    <span className="material-symbols-outlined largeIcon" style={{ color: "var(--textC2)" }}>
+                                    <span className="material-symbols-outlined largerIcon" style={{ color: "var(--textC2)" }}>
                                         {locationIconMatch[eachLocationOption]}
                                     </span>
                                 </div>

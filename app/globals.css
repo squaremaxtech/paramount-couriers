@@ -4,7 +4,7 @@
 *::before,
 *::after {
   box-sizing: border-box;
-  /* border: 1px solid red !important; */
+  border: 1px solid red !important;
 }
 
 :root {
@@ -32,9 +32,11 @@
   --bg1: #323232;
   --bg2: #ffffff;
   --bg3: #f7f7f7;
+  --bg4: #000000;
 
   --sizeEEL: 6rem;
   --sizeEL: 4rem;
+  --sizeLEL: 2.5rem;
   --sizeL: 2rem;
   --sizeM: 1.5rem;
   --sizeR: 1rem;
@@ -90,7 +92,6 @@ h1 {
   color: var(--textC4);
   font-weight: 700;
   font-size: var(--fontSizeL);
-  text-align: center;
 }
 
 h2 {
@@ -98,6 +99,7 @@ h2 {
   color: var(--c1);
   font-size: var(--fontSizeR);
   font-weight: 500;
+  text-transform: capitalize;
 }
 
 h3 {
@@ -367,8 +369,12 @@ option {
   display: none !important;
 }
 
-.largeIcon {
+.largerIcon {
   font-size: var(--sizeEL);
+}
+
+.largeIcon {
+  font-size: var(--sizeLEL);
 }
 
 .mediumIcon {
@@ -482,4 +488,10 @@ option {
   font-weight: bold;
   color: var(--c1);
   text-transform: capitalize;
+}
+
+.separator {
+  width: 80%;
+  margin: var(--spacingR) auto;
+  border-top: 1px solid var(--shade2);
 }

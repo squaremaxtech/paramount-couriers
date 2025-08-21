@@ -27,11 +27,11 @@ export default function BaseWebsiteLayout({
           },
           {
             title: "about us",
-            link: "/about",
+            link: "/aboutUs",
           },
           {
             title: "contact us",
-            link: "/contact",
+            link: "/contactUs",
           },
           {
             title: "rates",

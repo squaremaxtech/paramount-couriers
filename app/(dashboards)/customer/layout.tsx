@@ -19,7 +19,7 @@ export default async function CustomerLayout({
         },
         {
           icon: (
-            <span className="material-symbols-outlined largeIcon">
+            <span className="material-symbols-outlined largerIcon">
               home
             </span>
           ),
@@ -29,7 +29,7 @@ export default async function CustomerLayout({
         },
         {
           icon: (
-            <span className="material-symbols-outlined largeIcon">
+            <span className="material-symbols-outlined largerIcon">
               package_2
             </span>
           ),
@@ -38,7 +38,7 @@ export default async function CustomerLayout({
         },
         {
           icon: (
-            <span className="material-symbols-outlined largeIcon">
+            <span className="material-symbols-outlined largerIcon">
               quick_reorder
             </span>
           ),
@@ -47,7 +47,7 @@ export default async function CustomerLayout({
         },
         {
           icon: (
-            <span className="material-symbols-outlined largeIcon">
+            <span className="material-symbols-outlined largerIcon">
               add_card
             </span>
           ),
@@ -56,7 +56,7 @@ export default async function CustomerLayout({
         },
         {
           icon: (
-            <span className="material-symbols-outlined largeIcon">
+            <span className="material-symbols-outlined largerIcon">
               add_location_alt
             </span>
           ),

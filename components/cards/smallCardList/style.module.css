@@ -1,0 +1,30 @@
+.cont {
+    box-shadow: 0px 0px 7px 2px color-mix(in hsl, var(--bg1), transparent 90%);
+    padding-block: var(--spacingL);
+}
+
+.menu {
+    color: var(--textC1);
+    background-color: var(--bg2);
+}
+
+.menu * {
+    color: inherit;
+}
+
+.menuItem {
+    transition: color var(--transitionTimeR);
+}
+
+.menuItem:hover {
+    color: var(--c1);
+}
+
+.title {
+    transition: translate var(--transitionTimeR);
+    position: relative;
+}
+
+.menuItem:hover .title {
+    translate: 5%;
+}

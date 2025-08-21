@@ -10,7 +10,7 @@
 //make dashboard - switch on user type - show appropriate options
 
 //whenever person picks up item - package collected
-//reactivate toaster and "dev": "next dev --turbopack",
+//reactivate toaster
 //Recent Notes:
 //name change
 //FAQ - common questions of the business

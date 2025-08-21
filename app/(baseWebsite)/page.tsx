@@ -72,16 +72,16 @@ export default function Home() {
       <section>
         <div className="twoColumnFlex">
           <div style={{ position: "relative" }}>
-            <Image alt="aboutUsIntroImg1" src={aboutUsIntroImg1} width={1000} height={1000} style={{ objectFit: "contain", width: "80%" }} />
+            <Image alt="aboutUsIntroImg1" src={aboutUsIntroImg1} width={2000} height={2000} style={{ objectFit: "contain", width: "80%" }} />
 
-            <Image alt="aboutUsIntroImg2" src={aboutUsIntroImg2} width={1000} height={1000} style={{ objectFit: "contain", position: "absolute", width: "70%", bottom: 0, right: 0 }} />
+            <Image alt="aboutUsIntroImg2" src={aboutUsIntroImg2} width={2000} height={2000} style={{ objectFit: "contain", position: "absolute", width: "70%", bottom: 0, right: 0 }} />
 
             <div style={{ position: "absolute", top: 0, right: 0, rotate: "-90deg", transformOrigin: "top right", translate: "-50% 0%" }}>
               <h4 style={{ maxWidth: "150px" }}><span className="highlightText">25</span> Years Of Experience</h4>
             </div>
 
             <div style={{ borderRadius: "var(--borderRadiusEL)", backgroundColor: "var(--c1)", aspectRatio: "1/1", width: "var(--sizeEEL)", padding: "var(--spacingS)", position: "relative", margin: "var(--spacingR)" }}>
-              <span className="material-symbols-outlined largeIcon" style={{ position: "absolute", top: "50%", left: "50%", translate: "-50% -50%" }}>
+              <span className="material-symbols-outlined largerIcon" style={{ position: "absolute", top: "50%", left: "50%", translate: "-50% -50%" }}>
                 play_arrow
               </span>
             </div>
@@ -90,7 +90,7 @@ export default function Home() {
           <div>
             <h2>About us</h2>
 
-            <h1 style={{ textAlign: "start" }}>Top Courier <span className="highlightText">& Mover Service</span></h1>
+            <h1>Top Courier <span className="highlightText">& Mover Service</span></h1>
 
             <h4>Build a Unique Creative Website with Courier Delivery & Storage Services</h4>
 
@@ -137,14 +137,14 @@ export default function Home() {
       </section>
 
       <section>
-        <h1>our services</h1>
+        <h1 style={{ textAlign: "center" }}>our services</h1>
 
         <ul className="container" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))", gap: "var(--spacingL)", overflow: "auto" }}>
           {servicesData.map((eachService, eachServiceIndex) => {
             return (
               <li key={eachServiceIndex}>
                 <Link href={eachService.link} className={`${styles.eachService} container`}>
-                  <span className={`${styles.swapColor} material-symbols-outlined largeIcon`}>
+                  <span className={`${styles.swapColor} material-symbols-outlined largerIcon`}>
                     {eachService.iconName}
                   </span>
 
@@ -173,7 +173,7 @@ export default function Home() {
       <section>
         <div className="twoColumnFlex">
           <div>
-            <h1 style={{ textAlign: "start" }}>Mission & <span className="highlightText">Vision</span></h1>
+            <h1>Mission & <span className="highlightText">Vision</span></h1>
 
             <p>Couriers are distinguished from ordinary mail services by features such as speed, security, tracking, signature, specialization and individualization of express services.</p>
 
@@ -225,7 +225,7 @@ export default function Home() {
               ].map((eachMissionGoal, eachMissionGoalIndex) => {
                 return (
                   <li key={eachMissionGoalIndex} className="container" style={{ gridTemplateColumns: "auto 1fr", borderTop: eachMissionGoalIndex !== 0 ? "1px solid var(--bg2)" : "" }}>
-                    <span className="material-symbols-outlined largeIcon">
+                    <span className="material-symbols-outlined largerIcon">
                       {eachMissionGoal.iconName}
                     </span>
 
@@ -253,11 +253,11 @@ export default function Home() {
       <section>
         <div className="twoColumnFlex">
           <div>
-            <Image alt="expressHomeDeliveryImg" src={expressHomeDeliveryImg} width={1000} height={1000} style={{ objectFit: "contain", width: "100%" }} />
+            <Image alt="expressHomeDeliveryImg" src={expressHomeDeliveryImg} width={2000} height={2000} style={{ objectFit: "contain", width: "100%" }} />
           </div>
 
           <div>
-            <h1 style={{ textAlign: "start" }}>Express <span className="highlightText">Home</span> Delivery</h1>
+            <h1>Express <span className="highlightText">Home</span> Delivery</h1>
 
             <p>Couriers are distinguished from ordinary mail services by features such as speed, security, tracking, signature, specialization and individualization of express services.</p>
           </div>
@@ -265,7 +265,7 @@ export default function Home() {
       </section>
 
       <section>
-        <h1>Our Testimonial</h1>
+        <h1 style={{ textAlign: "center" }}>Our Testimonial</h1>
 
         <ul className="container snap" style={{ gridAutoColumns: "min(550px, 100%)", overflow: "auto", gridAutoFlow: "column", }}>
           {testimonialsData.map((eachTestimonial, eachTestimonialIndex) => {
@@ -280,8 +280,8 @@ export default function Home() {
                 <div className="container" style={{ gridTemplateColumns: "auto 1fr" }}>
                   <Image alt={`${eachTestimonial.name} profile`} src={eachTestimonial.image} width={100} height={100} style={{ objectFit: "contain", width: "var(--sizeEL)", aspectRatio: "1/1", borderRadius: "var(--borderRadiusEL)", }} />
 
-                  <div className="resetTextMargin">
-                    <span className="flexContainer" style={{ textTransform: "capitalize" }}><h4>{eachTestimonial.name}</h4><p>/ {eachTestimonial.position}</p></span>
+                  <div>
+                    <span className="flexContainer resetTextMargin" style={{ textTransform: "capitalize" }}><h4>{eachTestimonial.name}</h4><p>/ {eachTestimonial.position}</p></span>
 
                     <DisplayStars starRating={eachTestimonial.rating} />
                   </div>
