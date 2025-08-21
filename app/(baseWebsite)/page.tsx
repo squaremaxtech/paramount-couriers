@@ -10,6 +10,7 @@ import aboutUsIntroImg2 from "@/public/aboutUs/aboutUsIntro2.jpg"
 import Link from "next/link";
 import styles from "./page.module.css"
 import { servicesData } from "@/lib/data";
+import AnimateRateChange from "@/components/animate/AnimateRateChange";
 
 export default function Home() {
   return (
@@ -165,6 +166,86 @@ export default function Home() {
             )
           })}
         </ul>
+      </section>
+
+      <section>
+        <div className="twoColumnFlex">
+          <div>
+            <h1 style={{ textAlign: "start" }}>Mission & <span className="highlightText">Vision</span></h1>
+
+            <p>Couriers are distinguished from ordinary mail services by features such as speed, security, tracking, signature, specialization and individualization of express services.</p>
+
+            <ul className="container" style={{ paddingBlock: "var(--spacingR)" }}>
+              {[
+                {
+                  title: "standard courier",
+                },
+                {
+                  title: "express courier",
+                },
+                {
+                  title: "pallet courier",
+                },
+              ].map((eachMissionCheck, eachMissionCheckIndex) => {
+                return (
+                  <li key={eachMissionCheckIndex} className="flexContainer resetTextMargin" style={{ gap: 'var(--spacingM)' }}>
+                    <span className="material-symbols-outlined highlightText" style={{ fontSize: "var(--fontSizeM)" }}>
+                      check
+                    </span>
+
+                    <h5>{eachMissionCheck.title}</h5>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+
+          <div style={{ backgroundColor: "var(--c1)", padding: "var(--spacingL)", color: "var(--textC2)" }}>
+            <ul className="container">
+              {[
+                {
+                  iconName: "person_apron",
+                  amount: 500,
+                  title: "expert & professional staff",
+                  plus: true
+                },
+                {
+                  iconName: "package",
+                  amount: 250,
+                  title: "goods delivered",
+                },
+                {
+                  iconName: "rewarded_ads",
+                  amount: 520,
+                  title: "awards achieved",
+                  plus: true
+                },
+              ].map((eachMissionGoal, eachMissionGoalIndex) => {
+                return (
+                  <li key={eachMissionGoalIndex} className="container" style={{ gridTemplateColumns: "auto 1fr", borderTop: eachMissionGoalIndex !== 0 ? "1px solid var(--bg1)" : "" }}>
+                    <span className="material-symbols-outlined largeIcon">
+                      {eachMissionGoal.iconName}
+                    </span>
+
+                    <div>
+                      <div className="flexContainer">
+                        <p style={{ fontSize: "var(--fontSizeML)", fontWeight: 600 }}>
+                          <AnimateRateChange
+                            amount={eachMissionGoal.amount}
+                          />
+                        </p>
+
+                        {eachMissionGoal.plus && <span className="">+</span>}
+                      </div>
+
+                      <h5 style={{ color: "inherit" }}>{eachMissionGoal.title}</h5>
+                    </div>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        </div>
       </section>
     </main >
   );

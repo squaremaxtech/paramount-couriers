@@ -33,6 +33,7 @@
 
   --fontSizeTitle: clamp(1rem, 9vw, 7rem);
   --fontSizeL: clamp(1rem, 5vw, 4rem);
+  --fontSizeML: 2.5rem;
   --fontSizeM: 1.5rem;
   --fontSizeR: 1rem;
   --fontSizeS: .7rem;
