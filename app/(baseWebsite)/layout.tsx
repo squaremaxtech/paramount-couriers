@@ -1,3 +1,4 @@
+import Footer from "@/components/footer/Footer";
 import Navbar from "@/components/navbar/Navbar";
 
 export default function BaseWebsiteLayout({
@@ -40,6 +41,8 @@ export default function BaseWebsiteLayout({
       />
 
       {children}
+
+      <Footer />
     </>
   );
 }

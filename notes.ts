@@ -14,6 +14,7 @@
 //Recent Notes:
 //name change
 //FAQ - common questions of the business
+//how will warehouse employees update a package
 
 
 //add cif value
@@ -25,6 +26,7 @@
 
 //write to reusable project
 ////auth role checker
+//write starts to share project
 
 
 
@@ -40,6 +42,7 @@
 
 
 //notes
+//sync env
 //add checks all fields given, ensures whos asking only can create what they'd expect
 //update ensures only validated keys are given to the update object
 

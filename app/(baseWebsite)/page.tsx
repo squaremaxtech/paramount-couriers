@@ -7,10 +7,12 @@ import welcomeDoorToDoorImage from "@/public/welcome/doorToDoor.jpg"
 import welcomeWareHousingImage from "@/public/welcome/wareHousing.jpg"
 import aboutUsIntroImg1 from "@/public/aboutUs/aboutUsIntro1.jpg"
 import aboutUsIntroImg2 from "@/public/aboutUs/aboutUsIntro2.jpg"
+import expressHomeDeliveryImg from "@/public/expressHomeDelivery.jpg"
 import Link from "next/link";
 import styles from "./page.module.css"
-import { servicesData } from "@/lib/data";
+import { servicesData, testimonialsData } from "@/lib/data";
 import AnimateRateChange from "@/components/animate/AnimateRateChange";
+import DisplayStars from "@/components/displayStars/DisplayStars";
 
 export default function Home() {
   return (
@@ -246,6 +248,48 @@ export default function Home() {
             </ul>
           </div>
         </div>
+      </section>
+
+      <section>
+        <div className="twoColumnFlex">
+          <div>
+            <Image alt="expressHomeDeliveryImg" src={expressHomeDeliveryImg} width={1000} height={1000} style={{ objectFit: "contain", width: "100%" }} />
+          </div>
+
+          <div>
+            <h1 style={{ textAlign: "start" }}>Express <span className="highlightText">Home</span> Delivery</h1>
+
+            <p>Couriers are distinguished from ordinary mail services by features such as speed, security, tracking, signature, specialization and individualization of express services.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h1>Our Testimonial</h1>
+
+        <ul className="container snap" style={{ gridAutoColumns: "min(550px, 100%)", overflow: "auto", gridAutoFlow: "column", }}>
+          {testimonialsData.map((eachTestimonial, eachTestimonialIndex) => {
+            return (
+              <li key={eachTestimonialIndex} className="container" style={{ position: "relative", zIndex: 0 }}>
+                <div style={{ position: "absolute", zIndex: -1, top: "50%", right: 0, translate: "0 -40%" }}>
+                  <svg style={{ width: "var(--sizeEEL)", height: "var(--sizeEEL)", fill: "var(--shade2)" }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M544 360C544 426.3 490.3 480 424 480L416 480C398.3 480 384 465.7 384 448C384 430.3 398.3 416 416 416L424 416C454.9 416 480 390.9 480 360L480 352L416 352C380.7 352 352 323.3 352 288L352 224C352 188.7 380.7 160 416 160L480 160C515.3 160 544 188.7 544 224L544 360zM288 360C288 426.3 234.3 480 168 480L160 480C142.3 480 128 465.7 128 448C128 430.3 142.3 416 160 416L168 416C198.9 416 224 390.9 224 360L224 352L160 352C124.7 352 96 323.3 96 288L96 224C96 188.7 124.7 160 160 160L224 160C259.3 160 288 188.7 288 224L288 360z" /></svg>
+                </div>
+
+                <p>{eachTestimonial.text}</p>
+
+                <div className="container" style={{ gridTemplateColumns: "auto 1fr" }}>
+                  <Image alt={`${eachTestimonial.name} profile`} src={eachTestimonial.image} width={100} height={100} style={{ objectFit: "contain", width: "var(--sizeEL)", aspectRatio: "1/1", borderRadius: "var(--borderRadiusEL)", }} />
+
+                  <div className="resetTextMargin">
+                    <span className="flexContainer" style={{ textTransform: "capitalize" }}><h4>{eachTestimonial.name}</h4><p>/ {eachTestimonial.position}</p></span>
+
+                    <DisplayStars starRating={eachTestimonial.rating} />
+                  </div>
+                </div>
+              </li>
+            )
+          })}
+        </ul>
       </section>
     </main >
   );

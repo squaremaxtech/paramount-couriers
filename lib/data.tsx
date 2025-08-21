@@ -1,3 +1,7 @@
+import aaronProfile from "@/public/testimonials/aaronProfile.jpg"
+import jessicaProfile from "@/public/testimonials/jessicaProfile.jpg"
+import { StaticImageData } from "next/image";
+
 export const servicesData: {
     iconName: string,
     title: string,
@@ -72,3 +76,26 @@ export const servicesData: {
             ],
         }
     ];
+
+export const testimonialsData: {
+    text: string,
+    image: StaticImageData,
+    name: string,
+    position: string,
+    rating: number,
+}[] = [
+        {
+            text: "Couriers are distinguished from ordinary mail services by features such as speed, security, tracking, signature, specialization and individualization of express services, and swift delivery times.",
+            image: aaronProfile,
+            name: "Aron",
+            position: "Manager",
+            rating: 4,
+        },
+        {
+            text: "Couriers are distinguished from ordinary mail services by features such as speed, security, tracking, signature, specialization and individualization of express services, and swift delivery times.",
+            image: jessicaProfile,
+            name: "Jessica John",
+            position: "Executive",
+            rating: 4,
+        },
+    ]
