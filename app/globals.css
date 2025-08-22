@@ -168,11 +168,11 @@ section {
 .button1::before {
   content: "";
   position: absolute;
-  top: 50%;
-  left: 50%;
-  translate: -50% -50%;
-  width: 90%;
-  height: 80%;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  margin: var(--spacingES);
   background-color: color-mix(in hsl, var(--bg1), transparent 70%);
   z-index: -1;
   opacity: 0;
