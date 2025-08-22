@@ -51,7 +51,7 @@ export default async function EmployeeLayout({
               add_card
             </span>
           ),
-          link: ``,
+          link: `/rates`,
           title: "rates"
         },
         {

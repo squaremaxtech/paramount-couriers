@@ -45,7 +45,7 @@ export function ViewPackage({ seenPackage }: { seenPackage: packageType }) {
                                 </div>
 
                                 <div style={{ aspectRatio: "1/1", borderRadius: "var(--borderRadiusEL)", backgroundColor: reachedIndex ? "var(--c1)" : "var(--bg3)", width: "min-content" }}>
-                                    <span className="material-symbols-outlined largerIcon" style={{ color: "var(--textC2)" }}>
+                                    <span className="material-symbols-outlined largeIcon" style={{ color: "var(--textC2)" }}>
                                         {locationIconMatch[eachLocationOption]}
                                     </span>
                                 </div>
@@ -60,7 +60,7 @@ export function ViewPackage({ seenPackage }: { seenPackage: packageType }) {
             <div className="titleBox">
                 <p>package information</p>
 
-                <ul className={styles.customListMenu}>
+                <ul className="titleBoxMenu">
                     <li>
                         <p>consignee</p>
 
@@ -109,7 +109,7 @@ export function ViewPackage({ seenPackage }: { seenPackage: packageType }) {
             <div className="titleBox">
                 <p>charges</p>
 
-                <ul className={`${styles.customListMenu} ${styles.noBorder}`}>
+                <ul className={`titleBoxMenu ${styles.noBorder}`}>
                     <li className={styles.large}>
                         <p>services fee</p>
 

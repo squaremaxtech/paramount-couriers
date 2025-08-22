@@ -51,17 +51,17 @@ export default async function CustomerLayout({
               add_card
             </span>
           ),
-          link: ``,
+          link: `/rates`,
           title: "rates"
         },
         {
           icon: (
             <span className="material-symbols-outlined mediumIcon">
-              add_location_alt
+              account_circle
             </span>
           ),
-          link: ``,
-          title: "addresses"
+          link: `/customer/account`,
+          title: "account"
         },
       ]}
     >

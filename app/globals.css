@@ -4,7 +4,7 @@
 *::before,
 *::after {
   box-sizing: border-box;
-  /* border: 1px solid red !important; */
+  border: 1px solid red !important;
 }
 
 :root {
@@ -200,9 +200,23 @@ section {
   background-color: var(--c1);
 }
 
-.button3 {}
+.button3 {
+  display: flex;
+  gap: var(--spacingS);
+  flex-wrap: wrap;
+  padding: var(--spacingS) var(--spacingR);
+  border: 1px solid var(--bg3);
+  background-color: var(--bg3);
+  border-radius: var(--borderRadiusL);
+  font-size: var(--fontSizeS);
+  color: var(--textC1);
+}
 
-.button3:hover {}
+.button3:hover {
+  border: 1px solid var(--bg1);
+  /* background-color: var(--c2); */
+  /* color: var(--textC2) */
+}
 
 svg {
   aspect-ratio: 1/1;
@@ -306,10 +320,10 @@ option {
 }
 
 .tag {
-  border: 1px solid var(--c1);
   border-radius: var(--borderRadiusS);
   padding: var(--spacingS) var(--spacingR);
-  background-color: var(--bg1);
+  background-color: var(--shade1);
+  color: var(--textC2);
   font-weight: bold;
   justify-self: flex-start;
 }
@@ -406,7 +420,7 @@ option {
 .card {
   overflow: auto;
   padding: var(--spacingR);
-  background-color: var(--c3);
+  background-color: var(--c2);
 }
 
 
@@ -471,10 +485,9 @@ option {
 }
 
 .titleBox {
-  border: 1px solid var(--bg1);
   display: grid;
   align-content: flex-start;
-  box-shadow: 2px -2px 2px 1px var(--bg1);
+  box-shadow: 0px 0px 7px 2px color-mix(in hsl, var(--bg1), transparent 90%);
   padding: var(--spacingR);
   border-radius: var(--borderRadiusR);
 }
@@ -482,6 +495,26 @@ option {
 .titleBox>*:first-child:not(.ignoreTitleBoxStyle) {
   color: var(--c1);
   text-transform: capitalize;
+  font-weight: bold;
+}
+
+.titleBoxMenu {
+  display: grid;
+  align-content: flex-start;
+  text-transform: capitalize;
+}
+
+.titleBoxMenu>li {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--bg2);
+}
+
+.titleBoxMenu>li.large>p:first-of-type {
+  color: var(--c4);
+}
+
+.titleBoxMenu>li.large {
   font-weight: bold;
 }
 
