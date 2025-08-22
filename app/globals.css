@@ -424,14 +424,16 @@ option {
 }
 
 .recordTable tr:has(th) {
-  background-color: var(--shade1);
+  background-color: var(--bg1);
+  /* background-color: var(--shade1); */
   text-transform: capitalize;
   white-space: nowrap;
+  color: var(--textC2);
 }
 
 .recordTable tr:not(:has(th)):hover,
 .recordTable tr.selected {
-  background-color: hsl(from var(--c5) h s calc(l * 1.6));
+  background-color: hsl(from var(--c1) h s calc(l * 1.6));
 }
 
 .recordTable th:not(.noBorder) {

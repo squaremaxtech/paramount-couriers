@@ -1,33 +1,22 @@
 //To Do:
 //need rates page
 //fix dashboards
-//enable contact form
-//new customer onboarding process
-
-//copy design -
-////put content down - then style
-////note ahead of time what element types youll need - h1, title...etc
-
-//copy content - gpt/reggae rush
+//fill with proper information - rush shipping
 //enusre files have fileType in them
 //rework upload api - for just one route
 //put upload function in handleWithFiles function
-//make dashboard - switch on user type - show appropriate options
-
-//whenever person picks up item - package collected
-//reactivate toaster
-//Recent Notes:
-//name change
-//FAQ - common questions of the business
-//how will warehouse employees update a package
-
-
+//separate dashboard - reusae same compoenents
+//new customer onboarding process
+//add FAQ - common questions of the business
+//ask how will warehouse employees update a package
+//proper nav - sub menus - mobile as well
 //add cif value
 //add charges: services fee, freight, fuel, insurance, governement fee
 //track payment in db
 //allow file uploads to package for customers
 //bulk upload for warehouse users
 //add auth to view image/download
+//enable contact form - need business email/domain
 
 //write to reusable project
 ////auth role checker
@@ -43,6 +32,10 @@
 //type - singular with Type added - e.g userType
 //serverFunctions - handlePlural e.g handleUsers - singular function names - e.g addUser - getAll remains plural - e.g getUsers
 
+//copy design -
+////put content down - then style
+////note ahead of time what element types youll need - h1, title...etc
+//copy content - gpt/reggae rush
 
 
 

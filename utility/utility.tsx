@@ -42,14 +42,14 @@ export function makeDateTimeLocalInput(date: Date): string {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
-export function formatAsMoney(input: string) {
+export function formatAsMoney(input: string, minimumFractionDigits = 2) {
     const num = Number(input)
     if (isNaN(num)) return ""
 
     return new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
-        minimumFractionDigits: 2,
+        minimumFractionDigits,
     }).format(num)
 }
 
