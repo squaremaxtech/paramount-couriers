@@ -1,4 +1,9 @@
 //To Do:
+//need rates page
+//fix dashboards
+//enable contact form
+//new customer onboarding process
+
 //copy design -
 ////put content down - then style
 ////note ahead of time what element types youll need - h1, title...etc

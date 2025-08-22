@@ -4,7 +4,7 @@
 *::before,
 *::after {
   box-sizing: border-box;
-  border: 1px solid red !important;
+  /* border: 1px solid red !important; */
 }
 
 :root {
@@ -33,6 +33,7 @@
   --bg2: #ffffff;
   --bg3: #f7f7f7;
   --bg4: #000000;
+  --bg5: #f4f5f8;
 
   --sizeEEL: 6rem;
   --sizeEL: 4rem;
@@ -182,10 +183,6 @@ section {
 .button1:hover::before {
   transform: rotateY(0deg);
   opacity: 1;
-}
-
-.button1:hover {
-  /* background-color: var(--c2); */
 }
 
 .button2 {

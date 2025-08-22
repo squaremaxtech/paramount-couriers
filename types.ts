@@ -182,6 +182,17 @@ export type allFilters<T> = {
     [key in keyof T]?: filterSearchType
 }
 
+export const contactFormSchema = z.object({
+    fullname: z.string().min(1),
+    email: z.string().min(1).email(),
+    phone: z.string().min(1).regex(
+        /^\(876\)\s\d{3}-\d{4}$/,
+        "Phone number must be in the format (876) xxx-xxxx"
+    ),
+    message: z.string().min(1),
+})
+export type contactFormType = z.infer<typeof contactFormSchema>
+
 
 
 

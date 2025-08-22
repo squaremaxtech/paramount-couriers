@@ -1,9 +1,8 @@
 import React from 'react'
 import styles from "./page.module.css"
 import PageTopImage from '@/components/pageTopImage/PageTopImage'
-import Image from 'next/image'
-import aboutUsStart1 from "@/public/aboutUs/aboutUsStart1.jpg"
 import AddressMap from '@/components/addressMap/AddressMap'
+import ContactForm from '@/components/contactForm/ContactForm'
 
 export default function Page() {
     return (
@@ -11,12 +10,16 @@ export default function Page() {
             <PageTopImage title='contact us' />
 
             <div className='twoColumnFlex'>
-                <AddressMap />
+                <div>
+                    <AddressMap />
+                </div>
 
-                <div className='container'>
+                <div className='container' style={{ padding: "var(--spacingL)" }}>
                     <h1>contact <span className='highlightText'>us</span></h1>
 
                     <p>We Provide Various Courier Delivery Services</p>
+
+                    <ContactForm />
                 </div>
             </div>
         </main>
