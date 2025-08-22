@@ -1,6 +1,7 @@
 //To Do:
 //need rates page...
-//fix dashboards
+//fix dashboards...
+//add accounts page
 //fill with proper information - rush shipping
 //enusre files have fileType in them
 //rework upload api - for just one route
@@ -17,6 +18,7 @@
 //bulk upload for warehouse users
 //add auth to view image/download
 //enable contact form - need business email/domain
+//finish dashboard home
 
 //write to reusable project
 ////auth role checker

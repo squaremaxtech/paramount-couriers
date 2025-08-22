@@ -38,7 +38,7 @@ export default async function EmployeeLayout({
         },
         {
           icon: (
-            <span className="material-symbols-outlined">
+            <span className="material-symbols-outlined mediumIcon">
               quick_reorder
             </span>
           ),
@@ -47,7 +47,7 @@ export default async function EmployeeLayout({
         },
         {
           icon: (
-            <span className="material-symbols-outlined">
+            <span className="material-symbols-outlined mediumIcon">
               add_card
             </span>
           ),
@@ -56,7 +56,7 @@ export default async function EmployeeLayout({
         },
         {
           icon: (
-            <span className="material-symbols-outlined">
+            <span className="material-symbols-outlined mediumIcon">
               add_location_alt
             </span>
           ),
@@ -65,7 +65,7 @@ export default async function EmployeeLayout({
         },
         //  {
         //   icon: (
-        //     <span className="material-symbols-outlined">
+        //     <span className="material-symbols-outlined mediumIcon">
 
         //     </span>
         //   ),

@@ -30,7 +30,7 @@
 
 .menuItem:hover,
 .selected {
-    background-color: hsl(from var(--c1) h s calc(l * 0.5));
+    background-color: var(--c3);
 }
 
 .menuItem p {

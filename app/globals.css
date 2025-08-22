@@ -4,11 +4,13 @@
 *::before,
 *::after {
   box-sizing: border-box;
-  border: 1px solid red !important;
+  /* border: 1px solid red !important; */
 }
 
 :root {
   --c1: #FBB12F;
+  --c2: hsl(from var(--c1) h s calc(l * 1.5));
+  --c3: hsl(from var(--c1) h s calc(l * 0.5));
 
   /* used with outlines/borders */
   --shade1: #474747;
@@ -152,7 +154,7 @@ section {
 .button1:hover,
 .button2:hover,
 .button3:hover {
-  scale: 1.05;
+  scale: 1.01;
 }
 
 .button1 {
@@ -218,6 +220,7 @@ input,
 textarea {
   padding: var(--spacingR);
   background-color: var(--bg2);
+  color: var(--textC4);
   border-radius: var(--borderRadiusS);
   border: 1px solid var(--bg3);
 }
@@ -424,11 +427,10 @@ option {
 }
 
 .recordTable tr:has(th) {
-  background-color: var(--bg1);
-  /* background-color: var(--shade1); */
+  background-color: var(--bg5);
+  color: var(--textC4);
   text-transform: capitalize;
   white-space: nowrap;
-  color: var(--textC2);
 }
 
 .recordTable tr:not(:has(th)):hover,
@@ -437,7 +439,7 @@ option {
 }
 
 .recordTable th:not(.noBorder) {
-  border-left: 1px solid var(--bg3);
+  border-left: 1px solid var(--bg1);
 }
 
 .recordTable td {
