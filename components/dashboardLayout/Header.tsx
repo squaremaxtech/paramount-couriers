@@ -19,7 +19,7 @@ export default function Header({ navMenu }: { navMenu: dashboardMenu[] }) {
         <div className={`${styles.headerCont} resetTextMargin`}>
             {foundNavItem !== undefined ? (
                 <>
-                    <h1>{foundNavItem.title}</h1>
+                    <h1 style={{ fontSize: "var(--fontSizeM)" }}>{foundNavItem.title}</h1>
 
                     {foundNavItem.dashboardHome && (
                         <DashboardProfile />
@@ -27,7 +27,7 @@ export default function Header({ navMenu }: { navMenu: dashboardMenu[] }) {
                 </>
             ) : (
                 <>
-                    <h1>Page</h1>
+                    <h1 style={{ fontSize: "var(--fontSizeM)" }}>Page</h1>
                 </>
             )}
         </div>

@@ -12,7 +12,7 @@
 .sidebar {
     display: grid;
     align-content: flex-start;
-    background-color: var(--bg3);
+    background-color: var(--c1);
     color: var(--textC2);
     text-align: center;
     text-transform: capitalize;
@@ -30,7 +30,7 @@
 
 .menuItem:hover,
 .selected {
-    background-color: hsl(from var(--bg3) h s calc(l * 0.7));
+    background-color: hsl(from var(--c1) h s calc(l * 0.5));
 }
 
 .menuItem p {
@@ -52,10 +52,6 @@
     background-color: var(--c2);
     padding: var(--spacingR) var(--spacingL);
     position: relative;
-}
-
-.headerCont>h1 {
-    color: var(--textC2);
 }
 
 @media only screen and (max-width: 800px) {

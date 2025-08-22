@@ -1,5 +1,5 @@
 //To Do:
-//need rates page
+//need rates page...
 //fix dashboards
 //fill with proper information - rush shipping
 //enusre files have fileType in them
