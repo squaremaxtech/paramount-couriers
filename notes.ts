@@ -1,4 +1,5 @@
 //To Do:
+//nav
 //add accounts page
 //fill with proper information - rush shipping
 //enusre files have fileType in them

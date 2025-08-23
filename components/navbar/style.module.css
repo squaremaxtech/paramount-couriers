@@ -1,12 +1,6 @@
 .mainNav {
     background-color: var(--bg2);
     color: var(--textC4);
-    padding: 0rem var(--spacingR);
-    position: relative;
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    justify-content: space-between;
-    align-items: center;
     text-transform: uppercase;
     z-index: 999;
     font-weight: 500;
@@ -14,6 +8,15 @@
 
 .mainNav svg {
     fill: var(--shade1)
+}
+
+.desktopMenu {
+    padding: 0rem var(--spacingR);
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .mainMenu {
@@ -27,6 +30,14 @@
 .mainMenuItem {
     position: relative;
     cursor: pointer;
+}
+
+.mainMenuItemTopCont {
+    display: flex;
+    align-items: center;
+    gap: var(--spacingES);
+    padding: var(--spacingR);
+    justify-content: center;
 }
 
 .mainMenuItem:hover a,
@@ -46,6 +57,17 @@
     position: absolute;
     left: 0;
     background-color: var(--bg2);
+    animation: moveUp 400ms both
+}
+
+@keyframes moveUp {
+    from {
+        translate: 0 10%;
+    }
+
+    to {
+        translate: 0 0;
+    }
 }
 
 .subMenu>.subMenuItem:last-child {
@@ -137,12 +159,9 @@
     }
 
     .mobileMenu {
-        display: grid;
-        justify-self: flex-start;
-    }
-
-    .mainNav {
-        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 
     .mainMenu {
@@ -165,8 +184,9 @@
         border-bottom: 1px solid var(--shade2);
     }
 
-    .mainMenuItem>div:first-of-type {
+    .mainMenuItemTopCont {
         padding: 0;
+        justify-content: space-between;
     }
 
     .subMenu {

@@ -24,63 +24,35 @@ type subSubMenuItem = {
     link: string
 }
 
-export default async function MainNav({ menuInfoArr }: { menuInfoArr: menuItem[] }) {
-    const session = await auth()
-
+export default function MainNav({ menuInfoArr }: { menuInfoArr: menuItem[] }) {
     return (
-        <nav id='mainNav' className={styles.mainNav}>
-            <Logo />
-
-            <MobileNav menuItems={menuInfoArr} />
-
+        <nav className={styles.mainNav}>
             <DesktopNav menuItems={menuInfoArr} />
 
-            <div style={{ justifySelf: "flex-end", display: "grid", alignContent: "flex-start" }}>
-                {session === null ? (
-                    <LogButton option='login' />
-                ) : (
-                    <div className={styles.contDiv}>
-                        <label htmlFor='userOptionsCheckbox' style={{ margin: "0 auto", cursor: "pointer" }}>
-                            <Image alt="userImage" src={session.user.image !== null ? session.user.image : defaultImage} width={30} height={30} style={{ objectFit: "cover" }}
-                            />
-                        </label>
-
-                        <input id='userOptionsCheckbox' className="visibilityCheckbox" type="checkbox" />
-                        <ul className={styles.moreItemsMenu}>
-                            <li className={styles.moreIntemsItem}
-                            >
-                                <Link href={session.user.role === "customer" ? "/customer" : "/employee"}>dashboard</Link>
-                            </li>
-
-                            {session.user.role === "admin" && (
-                                <li className={styles.moreIntemsItem}
-                                >
-                                    <Link href={"/admin"}>admin dashboard</Link>
-                                </li>
-                            )}
-
-                            <li className={styles.moreIntemsItem}>
-                                <LogButton option='logout' />
-                            </li>
-                        </ul>
-                    </div>
-                )}
-            </div>
+            <MobileNav menuItems={menuInfoArr} />
         </nav>
     )
 }
 
-function DesktopNav({ menuItems }: { menuItems: menuItem[] }) {
+async function DesktopNav({ menuItems }: { menuItems: menuItem[] }) {
 
     return (
-        <Menu menu={menuItems} className={styles.desktopMenu} />
+        <div className={styles.desktopMenu}>
+            <Logo />
+
+            <Menu menu={menuItems} className={styles.desktopMenu} />
+
+            <LoginMenu />
+        </div>
     )
 }
 
-function MobileNav({ menuItems }: { menuItems: menuItem[] }) {
+async function MobileNav({ menuItems }: { menuItems: menuItem[] }) {
 
     return (
         <div className={styles.mobileMenu}>
+            <Logo />
+
             <label htmlFor='mobileMenuCheckbox' style={{ margin: "0 auto", cursor: "pointer" }}>
                 <svg style={{ width: "var(--sizeL)", height: "var(--sizeL)" }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z" /></svg>
             </label>
@@ -99,7 +71,7 @@ function Menu({ menu, ...elProps }: { menu: menuItem[] } & HTMLAttributes<HTMLUL
         <ul {...elProps} className={`${styles.mainMenu} noScrollBar ${elProps.className ?? ""}`}>
             {menu.map((eachMenuItem, eachMenuItemIndex) => (
                 <li key={eachMenuItemIndex} className={styles.mainMenuItem}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "var(--spacingES)", justifyContent: "space-between", padding: "vaR(--spacingR)" }}>
+                    <div className={styles.mainMenuItemTopCont} style={{}}>
                         <Link style={{ color: pathname === eachMenuItem.link ? "var(--color1)" : "" }} href={eachMenuItem.link}>{eachMenuItem.title}</Link>
 
                         {eachMenuItem.subMenu !== undefined && (
@@ -159,5 +131,44 @@ function SubSubMenu({ subSubMenu }: { subSubMenu: subSubMenuItem[] }) {
                 <li key={seenSubSubMenuItemIndex} style={{ color: pathname === seenSubSubMenuItem.link ? "var(--color1)" : "" }} className={styles.subSubMenuItem}><Link href={seenSubSubMenuItem.link}>{seenSubSubMenuItem.title}</Link></li>
             ))}
         </ul>
+    )
+}
+
+async function LoginMenu() {
+    const session = await auth()
+
+    return (
+        <div style={{ justifySelf: "flex-end", display: "grid", alignContent: "flex-start" }}>
+            {session === null ? (
+                <LogButton option='login' />
+
+            ) : (
+                <div className={styles.contDiv}>
+                    <label htmlFor='userOptionsCheckbox' style={{ margin: "0 auto", cursor: "pointer" }}>
+                        <Image alt="userImage" src={session.user.image !== null ? session.user.image : defaultImage} width={30} height={30} style={{ objectFit: "cover" }}
+                        />
+                    </label>
+
+                    <input id='userOptionsCheckbox' className="visibilityCheckbox" type="checkbox" />
+                    <ul className={styles.moreItemsMenu}>
+                        <li className={styles.moreIntemsItem}
+                        >
+                            <Link href={session.user.role === "customer" ? "/customer" : "/employee"}>dashboard</Link>
+                        </li>
+
+                        {session.user.role === "admin" && (
+                            <li className={styles.moreIntemsItem}
+                            >
+                                <Link href={"/admin"}>admin dashboard</Link>
+                            </li>
+                        )}
+
+                        <li className={styles.moreIntemsItem}>
+                            <LogButton option='logout' />
+                        </li>
+                    </ul>
+                </div>
+            )}
+        </div>
     )
 }

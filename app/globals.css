@@ -67,6 +67,9 @@
 
   --transitionTimeR: 400ms;
   --transitionTimeS: 200ms;
+
+  --animationTimeR: 400ms;
+  --animationTimeS: 200ms;
 }
 
 html {

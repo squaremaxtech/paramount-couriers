@@ -46,7 +46,7 @@ export default async function RootLayout({
       <body className={`${alegreya.variable} ${rubik.variable} ${materialSymbolsOutlined.variable} ${materialSymbolsRounded.variable} ${materialSymbolsSharp.variable} antialiased`}>
         <SessionProvider session={session}>
 
-          <Toaster position="top-center" reverseOrder={false} />
+          {/* <Toaster position="top-center" reverseOrder={false} /> */}
           {children}
         </SessionProvider>
       </body>
