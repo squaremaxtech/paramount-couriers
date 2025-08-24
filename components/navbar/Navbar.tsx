@@ -53,22 +53,40 @@ async function MobileNav({ menuItems }: { menuItems: menuItem[] }) {
         <div className={styles.mobileMenu}>
             <Logo />
 
-            <label htmlFor='mobileMenuCheckbox' style={{ margin: "0 auto", cursor: "pointer" }}>
-                <svg style={{ width: "var(--sizeL)", height: "var(--sizeL)" }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z" /></svg>
+            <label htmlFor='mobileMenuCheckbox'>
+                <svg style={{ width: "var(--sizeL)", height: "var(--sizeL)", cursor: "pointer" }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z" /></svg>
             </label>
 
             {/* use checkbox styling to hide the menu */}
-            <input id='mobileMenuCheckbox' className="visibilityCheckbox" type="checkbox" />
-            <Menu menu={menuItems} />
+            <input id='mobileMenuCheckbox' className={`visibilityCheckbox ${styles.visibilityCheckbox}`} type="checkbox" />
+            <Menu menu={menuItems}
+                mobileAddOn={(
+                    <div className='container'>
+                        <div className='flexContainer' style={{ justifyContent: "space-between", padding: "var(--spacingR)" }}>
+                            <Logo />
+
+                            <label htmlFor='mobileMenuCheckbox' style={{ cursor: "pointer" }}>
+                                <span className="material-symbols-outlined">
+                                    close
+                                </span>
+                            </label>
+                        </div>
+
+                        <LoginMenu />
+                    </div>
+                )}
+            />
         </div>
     )
 }
 
-function Menu({ menu, ...elProps }: { menu: menuItem[] } & HTMLAttributes<HTMLUListElement>) {
+function Menu({ menu, mobileAddOn = null, ...elProps }: { menu: menuItem[], mobileAddOn?: React.JSX.Element | null } & HTMLAttributes<HTMLUListElement>) {
     const pathname = ""
 
     return (
         <ul {...elProps} className={`${styles.mainMenu} noScrollBar ${elProps.className ?? ""}`}>
+            {mobileAddOn}
+
             {menu.map((eachMenuItem, eachMenuItemIndex) => (
                 <li key={eachMenuItemIndex} className={styles.mainMenuItem}>
                     <div className={styles.mainMenuItemTopCont} style={{}}>
@@ -138,15 +156,14 @@ async function LoginMenu() {
     const session = await auth()
 
     return (
-        <div style={{ justifySelf: "flex-end", display: "grid", alignContent: "flex-start" }}>
+        <div className={styles.loginMenu}>
             {session === null ? (
                 <LogButton option='login' />
 
             ) : (
                 <div className={styles.contDiv}>
                     <label htmlFor='userOptionsCheckbox' style={{ margin: "0 auto", cursor: "pointer" }}>
-                        <Image alt="userImage" src={session.user.image !== null ? session.user.image : defaultImage} width={30} height={30} style={{ objectFit: "cover" }}
-                        />
+                        <Image alt="userImage" src={session.user.image !== null ? session.user.image : defaultImage} width={30} height={30} style={{ objectFit: "cover" }} />
                     </label>
 
                     <input id='userOptionsCheckbox' className="visibilityCheckbox" type="checkbox" />
