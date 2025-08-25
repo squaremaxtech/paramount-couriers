@@ -29,7 +29,7 @@ export function ViewItem<T extends withId>({ itemObj, selectionAction, selectedI
     return (
         <div className={`container ${styles.item} ${selected ? styles.selected : ""}`}>
             {selectionAction !== undefined && (
-                <button className='button1' style={{ backgroundColor: selected ? "var(--c2)" : "" }}
+                <button className='button1' style={{ backgroundColor: selected ? "var(--c1Light)" : "" }}
                     onClick={() => { selectionAction(itemObj.item) }}
                 >{selected ? "selected" : "select"}</button>
             )}

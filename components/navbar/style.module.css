@@ -178,6 +178,7 @@ body:has(.visibilityCheckbox:checked) {
     .mainMenu {
         display: grid;
         justify-content: stretch;
+        align-content: flex-start;
         grid-auto-flow: row;
         height: auto;
         height: 100%;
@@ -226,5 +227,13 @@ body:has(.visibilityCheckbox:checked) {
 
     .loginMenu {
         justify-self: flex-start;
+        width: 100%;
+    }
+
+    .moreItemsMenu {
+        position: relative;
+        top: 0;
+        left: 0;
+        right: 0;
     }
 }

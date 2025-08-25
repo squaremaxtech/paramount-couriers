@@ -30,7 +30,7 @@
 
 .menuItem:hover,
 .selected {
-    background-color: var(--c3);
+    background-color: var(--c1Dark);
 }
 
 .menuItem p {
@@ -49,7 +49,7 @@
     align-content: flex-start;
     grid-template-columns: 1fr auto;
     align-items: center;
-    background-color: var(--c2);
+    background-color: var(--c1Light);
     padding: var(--spacingR) var(--spacingL);
     position: relative;
 }

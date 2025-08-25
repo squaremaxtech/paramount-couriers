@@ -40,9 +40,9 @@ async function DesktopNav({ menuItems }: { menuItems: menuItem[] }) {
         <div className={styles.desktopMenu}>
             <Logo />
 
-            <Menu menu={menuItems} className={styles.desktopMenu} />
+            <Menu menu={menuItems} className={styles.desktopMenu} calledFrom='desktop' />
 
-            <LoginMenu />
+            <LoginMenu calledFrom='desktop' />
         </div>
     )
 }
@@ -59,10 +59,10 @@ async function MobileNav({ menuItems }: { menuItems: menuItem[] }) {
 
             {/* use checkbox styling to hide the menu */}
             <input id='mobileMenuCheckbox' className={`visibilityCheckbox ${styles.visibilityCheckbox}`} type="checkbox" />
-            <Menu menu={menuItems}
+            <Menu menu={menuItems} calledFrom='mobile'
                 mobileAddOn={(
                     <div className='container'>
-                        <div className='flexContainer' style={{ justifyContent: "space-between", padding: "var(--spacingR)" }}>
+                        <div className='flexContainer' style={{ justifyContent: "space-between", paddingInline: "var(--spacingR)" }}>
                             <Logo />
 
                             <label htmlFor='mobileMenuCheckbox' style={{ cursor: "pointer" }}>
@@ -72,7 +72,7 @@ async function MobileNav({ menuItems }: { menuItems: menuItem[] }) {
                             </label>
                         </div>
 
-                        <LoginMenu />
+                        <LoginMenu calledFrom="mobile" />
                     </div>
                 )}
             />
@@ -80,7 +80,7 @@ async function MobileNav({ menuItems }: { menuItems: menuItem[] }) {
     )
 }
 
-function Menu({ menu, mobileAddOn = null, ...elProps }: { menu: menuItem[], mobileAddOn?: React.JSX.Element | null } & HTMLAttributes<HTMLUListElement>) {
+function Menu({ menu, mobileAddOn = null, calledFrom, ...elProps }: { menu: menuItem[], mobileAddOn?: React.JSX.Element | null, calledFrom: "desktop" | "mobile" } & HTMLAttributes<HTMLUListElement>) {
     const pathname = ""
 
     return (
@@ -93,7 +93,7 @@ function Menu({ menu, mobileAddOn = null, ...elProps }: { menu: menuItem[], mobi
                         <Link style={{ color: pathname === eachMenuItem.link ? "var(--color1)" : "" }} href={eachMenuItem.link}>{eachMenuItem.title}</Link>
 
                         {eachMenuItem.subMenu !== undefined && (
-                            <label htmlFor={`${eachMenuItemIndex}MenuItemCheckbox`} className={styles.onlyOnMobile}>
+                            <label htmlFor={`${calledFrom}${eachMenuItemIndex}MenuItemCheckbox`} className={styles.onlyOnMobile}>
                                 <svg style={{ width: "var(--sizeS)", fill: pathname === eachMenuItem.link ? "var(--color1)" : "" }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z" /></svg>
                             </label>
                         )}
@@ -101,8 +101,8 @@ function Menu({ menu, mobileAddOn = null, ...elProps }: { menu: menuItem[], mobi
 
                     {eachMenuItem.subMenu !== undefined && eachMenuItem.subMenu.length > 0 && (
                         <>
-                            <input id={`${eachMenuItemIndex}MenuItemCheckbox`} className="visibilityCheckbox" type="checkbox" />
-                            <SubMenu subMenu={eachMenuItem.subMenu} />
+                            <input id={`${calledFrom}${eachMenuItemIndex}MenuItemCheckbox`} className="visibilityCheckbox" type="checkbox" />
+                            <SubMenu subMenu={eachMenuItem.subMenu} calledFrom={calledFrom} />
                         </>
                     )}
                 </li>
@@ -111,7 +111,7 @@ function Menu({ menu, mobileAddOn = null, ...elProps }: { menu: menuItem[], mobi
     )
 }
 
-function SubMenu({ subMenu }: { subMenu: subMenuItem[] }) {
+function SubMenu({ subMenu, calledFrom }: { subMenu: subMenuItem[], calledFrom: "desktop" | "mobile" }) {
     const pathname = ""
 
     return (
@@ -122,7 +122,7 @@ function SubMenu({ subMenu }: { subMenu: subMenuItem[] }) {
                         <Link style={{ color: pathname === eachSubMenuItem.link ? "var(--color1)" : "" }} href={eachSubMenuItem.link}>{eachSubMenuItem.title}</Link>
 
                         {eachSubMenuItem.subSubMenu !== undefined && (
-                            <label htmlFor={`${eachSubMenuItemIndex}SubMenuItemCheckbox`} className={styles.onlyOnMobile}>
+                            <label htmlFor={`${calledFrom}${eachSubMenuItemIndex}SubMenuItemCheckbox`} className={styles.onlyOnMobile}>
                                 <svg style={{ width: "var(--sizeS)", color: pathname === eachSubMenuItem.link ? "var(--color1)" : "" }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z" /></svg>
                             </label>
                         )}
@@ -130,7 +130,7 @@ function SubMenu({ subMenu }: { subMenu: subMenuItem[] }) {
 
                     {eachSubMenuItem.subSubMenu !== undefined && eachSubMenuItem.subSubMenu.length > 0 && (
                         <>
-                            <input id={`${eachSubMenuItemIndex}SubMenuItemCheckbox`} className="visibilityCheckbox" type="checkbox" />
+                            <input id={`${calledFrom}${eachSubMenuItemIndex}SubMenuItemCheckbox`} className="visibilityCheckbox" type="checkbox" />
                             <SubSubMenu subSubMenu={eachSubMenuItem.subSubMenu} />
                         </>
                     )}
@@ -152,7 +152,7 @@ function SubSubMenu({ subSubMenu }: { subSubMenu: subSubMenuItem[] }) {
     )
 }
 
-async function LoginMenu() {
+async function LoginMenu({ calledFrom }: { calledFrom: "desktop" | "mobile" }) {
     const session = await auth()
 
     return (
@@ -162,11 +162,11 @@ async function LoginMenu() {
 
             ) : (
                 <div className={styles.contDiv}>
-                    <label htmlFor='userOptionsCheckbox' style={{ margin: "0 auto", cursor: "pointer" }}>
+                    <label htmlFor={`${calledFrom}userOptionsCheckbox`} style={{ margin: "0 auto", cursor: "pointer" }}>
                         <Image alt="userImage" src={session.user.image !== null ? session.user.image : defaultImage} width={30} height={30} style={{ objectFit: "cover" }} />
                     </label>
 
-                    <input id='userOptionsCheckbox' className="visibilityCheckbox" type="checkbox" />
+                    <input id={`${calledFrom}userOptionsCheckbox`} className="visibilityCheckbox" type="checkbox" />
                     <ul className={styles.moreItemsMenu}>
                         <li className={styles.moreIntemsItem}
                         >

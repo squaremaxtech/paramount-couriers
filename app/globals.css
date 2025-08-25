@@ -9,8 +9,8 @@
 
 :root {
   --c1: #FBB12F;
-  --c2: hsl(from var(--c1) h s calc(l * 1.5));
-  --c3: hsl(from var(--c1) h s calc(l * 0.5));
+  --c1Light: hsl(from var(--c1) h s calc(l * 1.5));
+  --c1Dark: hsl(from var(--c1) h s calc(l * 0.5));
 
   /* used with outlines/borders */
   --shade1: #474747;
@@ -217,7 +217,7 @@ section {
 
 .button3:hover {
   border: 1px solid var(--bg1);
-  /* background-color: var(--c2); */
+  /* background-color: var(--c1Light); */
   /* color: var(--textC2) */
 }
 
@@ -423,7 +423,7 @@ option {
 .card {
   overflow: auto;
   padding: var(--spacingR);
-  background-color: var(--c2);
+  background-color: var(--c1Light);
 }
 
 

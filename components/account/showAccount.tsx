@@ -3,6 +3,8 @@ import { userType } from '@/types'
 import React from 'react'
 import styles from "./styles.module.css"
 
+//edit address, google account, name
+
 export default function ShowAccount({ user }: { user: userType }) {
     return (
         <div className={`container ${styles.cont}`}>

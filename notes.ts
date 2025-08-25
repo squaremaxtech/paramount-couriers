@@ -1,5 +1,5 @@
 //To Do:
-//nav
+//nav...
 //add accounts page
 //fill with proper information - rush shipping
 //enusre files have fileType in them
@@ -20,6 +20,7 @@
 //add auth to view image/download
 //enable contact form - need business email/domain
 //finish dashboard home
+//general email for customers to resign up
 
 //write to reusable project
 ////auth role checker
