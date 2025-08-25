@@ -1,7 +1,8 @@
 //To Do:
-//nav...
-//add accounts page
 //fill with proper information - rush shipping
+//services, about us, testimonials, contact us, rates
+//get images
+
 //enusre files have fileType in them
 //rework upload api - for just one route
 //add notifications
@@ -21,6 +22,7 @@
 //enable contact form - need business email/domain
 //finish dashboard home
 //general email for customers to resign up
+//add accounts page
 
 //write to reusable project
 ////auth role checker
@@ -57,3 +59,4 @@
 //custom auth on resources...
 //need rates page...
 //fix dashboards...
+//nav...
