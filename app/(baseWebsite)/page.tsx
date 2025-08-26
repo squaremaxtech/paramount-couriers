@@ -22,31 +22,31 @@ export default function Home() {
       <div style={{ position: "relative", zIndex: 0, padding: "var(--spacingEL) var(--spacingL)" }}>
         <Image alt="mainImg" src={welcomeBgImage} priority={true} fill={true} sizes="100vw" style={{ objectFit: "cover", zIndex: -1 }} />
 
-        <h2 style={{ textTransform: "uppercase", color: "var(--textC1)" }}>WELCOME TO WRAPO</h2>
+        <h2 style={{ textTransform: "uppercase", color: "var(--textC1)" }}>WELCOME TO PARAMOUNT COURIERS</h2>
 
-        <p className="titleText"><span style={{ color: "var(--c1)" }}>Best Courier &</span> Parcel Services</p>
+        <p className="titleText"><span style={{ color: "var(--c1)" }}>Fast and reliable</span> U.S. to Jamaica shipping</p>
 
         <ul style={{ display: "grid", alignContent: "flex-start", gridTemplateColumns: "repeat(auto-fit, minmax(min(250px, 100%), 1fr))", gap: "var(--spacingL)" }}>
           {[
             {
               img: welcomeStandardImage,
-              title: "standard",
-              link: "/services/#",
+              title: "Reliable Standard Service",
+              link: "/services/#standard",
             },
             {
               img: welcomeExpressImage,
-              title: "express",
-              link: "/services/#",
+              title: "Fast-Track Express",
+              link: "/services/#express",
             },
             {
               img: welcomeDoorToDoorImage,
-              title: "store to door",
-              link: "/services/#",
+              title: "Direct Store-to-Door Service",
+              link: "/services/#storeToDoor",
             },
             {
               img: welcomeWareHousingImage,
-              title: "ware housing",
-              link: "/services/#",
+              title: "Storage & Warehousing Solutions",
+              link: "/services/#wareHousing",
             },
           ].map((eachViewMoreObj, eachViewMoreObjIndex) => {
             return (
@@ -55,7 +55,7 @@ export default function Home() {
                 <Image alt={`${eachViewMoreObj.title} image`} src={eachViewMoreObj.img} fill={true} sizes="(max-width: 800px) 100vw, 50vw" style={{ objectFit: "cover", zIndex: -1 }} />
 
                 <div style={{ display: "grid", justifyItems: "center", margin: "var(--spacingL)" }} className="resetTextMargin">
-                  <h4>{eachViewMoreObj.title}</h4>
+                  <h4 style={{ textAlign: "center" }}>{eachViewMoreObj.title}</h4>
 
                   <Link href={eachViewMoreObj.title} className={styles.welcomeItemButton}>
                     <button className="button1">
@@ -77,7 +77,7 @@ export default function Home() {
             <Image alt="aboutUsIntroImg2" src={aboutUsIntroImg2} width={2000} height={2000} style={{ objectFit: "contain", position: "absolute", width: "70%", bottom: 0, right: 0 }} />
 
             <div style={{ position: "absolute", top: 0, right: 0, rotate: "-90deg", transformOrigin: "top right", translate: "-50% 0%" }}>
-              <h4 style={{ maxWidth: "150px" }}><span className="highlightText">25</span> Years Of Experience</h4>
+              <h4 style={{ maxWidth: "150px" }}><span className="highlightText">5</span> Years Of Experience</h4>
             </div>
 
             <div style={{ borderRadius: "var(--borderRadiusEL)", backgroundColor: "var(--c1)", aspectRatio: "1/1", width: "var(--sizeEEL)", padding: "var(--spacingS)", position: "relative", margin: "var(--spacingR)" }}>
@@ -90,31 +90,31 @@ export default function Home() {
           <div>
             <h2>About us</h2>
 
-            <h1>Top Courier <span className="highlightText">& Mover Service</span></h1>
+            <h1>Your<span className="highlightText"> Trusted Shipping</span> Partner</h1>
 
-            <h4>Build a Unique Creative Website with Courier Delivery & Storage Services</h4>
+            <h4>Fast, Reliable & Secure Shipping from the U.S. to Jamaica</h4>
 
-            <p>Couriers are distinguished from ordinary mail services by features such as speed, security, tracking, signature, specialization</p>
+            <p>We specialize in bridging the gap between the U.S. and Jamaica, offering a service built on speed, security, tracking, and convenience. With Paramount Couriers, you can ship with confidence, knowing your packages are handled with care and delivered on time.</p>
 
             <ul className="container" style={{ gridTemplateColumns: "1fr 1fr", paddingBlock: "var(--spacingR)" }}>
               {[
                 {
-                  title: "standard",
+                  title: "Standard Shipping",
                 },
                 {
-                  title: "ware housing",
+                  title: "Warehousing & Storage",
                 },
                 {
-                  title: "express",
+                  title: "Express Shipping",
                 },
                 {
                   title: "apply online",
                 },
                 {
-                  title: "door to door",
+                  title: "Door-to-Door Delivery",
                 },
                 {
-                  title: "receive goods",
+                  title: "Package Receiving",
                 },
               ].map((eachOffserService, eachOffserServiceIndex) => {
                 return (
@@ -173,20 +173,20 @@ export default function Home() {
       <section>
         <div className="twoColumnFlex">
           <div>
-            <h1>Mission & <span className="highlightText">Vision</span></h1>
+            <h1>Our <span className="highlightText">Mission</span></h1>
 
-            <p>Couriers are distinguished from ordinary mail services by features such as speed, security, tracking, signature, specialization and individualization of express services.</p>
+            <p>To make shipping from the U.S. to Jamaica simple, affordable, and reliable, by giving customers full visibility of their packages from purchase to delivery.</p>
 
             <ul className="container" style={{ paddingBlock: "var(--spacingR)" }}>
               {[
                 {
-                  title: "standard courier",
+                  title: "Transparency",
                 },
                 {
-                  title: "express courier",
+                  title: "Speed & Reliability",
                 },
                 {
-                  title: "pallet courier",
+                  title: "Customer Care",
                 },
               ].map((eachMissionCheck, eachMissionCheckIndex) => {
                 return (
@@ -206,21 +206,28 @@ export default function Home() {
             <ul className="container">
               {[
                 {
-                  iconName: "person_apron",
-                  amount: 500,
-                  title: "expert & professional staff",
-                  plus: true
+                  iconName: "calendar_month",
+                  amount: 2,
+                  title: "years in business",
                 },
                 {
                   iconName: "package",
-                  amount: 250,
-                  title: "goods delivered",
+                  amount: 1200,
+                  title: "packages delivered",
+                  plus: "+",
                 },
                 {
-                  iconName: "rewarded_ads",
-                  amount: 520,
-                  title: "awards achieved",
-                  plus: true
+                  iconName: "groups",
+                  amount: 300,
+                  title: "happy customers",
+                  plus: "+",
+                },
+                {
+                  iconName: "support_agent",
+                  amount: 24,
+                  title: "customer support available",
+                  short: "hours",
+                  plus: "hrs",
                 },
               ].map((eachMissionGoal, eachMissionGoalIndex) => {
                 return (
@@ -237,7 +244,7 @@ export default function Home() {
                           />
                         </p>
 
-                        {eachMissionGoal.plus && <span className="">+</span>}
+                        {eachMissionGoal.plus !== undefined && <span className="">{eachMissionGoal.plus}</span>}
                       </div>
 
                       <h5 style={{ color: "inherit" }}>{eachMissionGoal.title}</h5>
@@ -259,7 +266,7 @@ export default function Home() {
           <div>
             <h1>Express <span className="highlightText">Home</span> Delivery</h1>
 
-            <p>Couriers are distinguished from ordinary mail services by features such as speed, security, tracking, signature, specialization and individualization of express services.</p>
+            <p>With Paramount Couriers, your packages don&apos;t just stop at Jamaica — we bring them directly to you. Enjoy secure, on-time delivery from the U.S. store to your doorstep, with full tracking every step of the way.</p>
           </div>
         </div>
       </section>

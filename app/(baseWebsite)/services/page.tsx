@@ -31,25 +31,41 @@ export default function Page() {
                             <Image alt='servicesStart4 image' src={servicesStart4} width={2000} height={2000} style={{ objectFit: "contain" }} />
                         </div>
 
-                        <h1 style={{ fontSize: "var(--fontSizeML)" }}>AWESOME TEMPLATE FOR COURIER & DELIVERY SERVICES</h1>
+                        <h1 style={{ fontSize: "var(--fontSizeML)" }}>STELLAR DELIVERY</h1>
 
-                        <p>In 1852 Wells Fargo, then just one of many such services, was formed to provide both banking and express services. These went hand-in-hand, as the handling of California gold and other financial matters required a secure method for transporting them across the country. This put Wells Fargo securely in the stagecoach business and prompted them to participate in the Pony Express venture</p>
 
-                        <h3>Sit at Home We Will Take Care</h3>
 
-                        <p>From 1869 on, package services rapidly moved to the rail, which was faster and cheaper. The express office was a universal feature of the staffed railroad station. Packages travelled as "head-end" traffic in passenger trains. In 1918 the formation of the United States Railroad Administration resulted in a consolidation of all such services into a single agency, which after the war</p>
+
+
 
                         <Image alt='servicesStart5 image' src={servicesStart5} width={2000} height={2000} style={{ objectFit: 'cover', width: "100%" }} />
 
-                        <h3>We Provide Various Courier Delivery Services</h3>
-
-                        <p>1 January 1913, parcel post service began providing rural postal customers with package service along with their regular mail and obviating a trip to a town substantial enough to support an express office. This, along with Rural Free Delivery, fueled a huge rise in catalogue sales. By this time the post office monopoly on mail was effectively enforced, and Wells Fargo had exited the business in favour of its banking enterprises</p>
-
                         <div className='separator'></div>
 
-                        <h3>You Deserve a Beautiful Service</h3>
 
-                        <p>freight services arose quickly with the advent of gasoline and diesel-powered trucks. United Parcel Service had its origins in this era, initially as a private courier service. The general improvement of the highway system following World War II prompted its expansion into a nationwide service, and other similar services arose. At the same time, the contraction of rail passenger service hurt rail-based package shipping; these contractions led to the cancellation of the mail contracts with the railroads, which in turn caused further passenger cuts. Eventually</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                         <h3>Facility provided</h3>
 

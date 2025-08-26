@@ -35,9 +35,9 @@ export default function GetStarted() {
                 })}
             </ul>
 
-            <div>
+            <Link href={"/"}>
                 <button className='button2'>get started</button>
-            </div>
+            </Link>
         </div>
     )
 }

@@ -4,7 +4,7 @@ import { ratePricingType } from "@/types";
 import { StaticImageData } from "next/image";
 
 export const siteInfo = {
-    emailAddresses: ["example@example.com", "info@example.com"],
+    emailAddresses: ["support@paramount-couriers.com", "info@paramount-couriers.com"],
     addresses: ["12/A Daddy Yankee Tower", "12/A Daddy Yankee Tower"],
     phoneNumbers: ["+123 456 789 29", "123 478 373 38"],
 }
@@ -17,71 +17,71 @@ export const servicesData: {
     subItems: string[],
 }[] = [
         {
-            iconName: "plane_contrails",
-            title: "Flat Rate Fees",
-            link: "/services",
-            shortDescription: "Couriers are distinguished from ordinary mail services by features such as speed, security, tracking",
+            iconName: "notifications_active",
+            title: "Pre-Alert Your Packages",
+            link: "/services/pre-alert",
+            shortDescription: "Let us know what you’re shipping by submitting a pre-alert. This helps us prepare for smooth processing.",
             subItems: [
-                "Standard Courier",
-                "Express Courier",
-                "Pallet Courier"
-            ],
-        },
-        {
-            iconName: "conveyor_belt",
-            title: "Apply Online",
-            link: "/services",
-            shortDescription: "Couriers are distinguished from ordinary mail services by features such as speed, security, tracking",
-            subItems: [
-                "Standard Courier",
-                "Express Courier",
-                "Pallet Courier"
-            ],
-        },
-        {
-            iconName: "delivery_truck_speed",
-            title: "Submit Documents",
-            link: "/services",
-            shortDescription: "Couriers are distinguished from ordinary mail services by features such as speed, security, tracking",
-            subItems: [
-                "Standard Courier",
-                "Express Courier",
-                "Pallet Courier",
+                "Easy online pre-alert form",
+                "Instant confirmation",
+                "Link multiple items to one account",
             ],
         },
         {
             iconName: "package_2",
-            title: "Receive Goods",
-            link: "/services",
-            shortDescription: "Couriers are distinguished from ordinary mail services by features such as speed, security, tracking",
+            title: "Package Processing",
+            link: "/services/package-processing",
+            shortDescription: "Once your items arrive, we create secure packages and prepare them for shipment to Jamaica.",
             subItems: [
-                "Standard Courier",
-                "Express Courier",
-                "Pallet Courier"
+                "Items received & verified",
+                "Consolidation into one package",
+                "Safe packaging & labeling",
             ],
         },
         {
-            iconName: "location_home",
-            title: "Standard Courier",
-            link: "/services",
-            shortDescription: "Couriers are distinguished from ordinary mail services by features such as speed, security, tracking",
+            iconName: "location_searching",
+            title: "Real-Time Tracking",
+            link: "/services/tracking",
+            shortDescription: "Track your package every step of the way, from the U.S. to Jamaica.",
             subItems: [
-                "Standard Courier",
-                "Express Courier",
-                "Pallet Courier"
+                "Updates at each checkpoint",
+                "Email & SMS notifications",
+                "Transparent delivery timeline",
             ],
         },
         {
-            iconName: "orders",
-            title: "Standard Courier",
-            link: "/services",
-            shortDescription: "Couriers are distinguished from ordinary mail services by features such as speed, security, tracking",
+            iconName: "flight_takeoff",
+            title: "Shipment to Jamaica",
+            link: "/services/shipment",
+            shortDescription: "We handle all logistics to ensure your package gets to Jamaica quickly and securely.",
             subItems: [
-                "Standard Courier",
-                "Express Courier",
-                "Pallet Courier"
+                "Standard shipping",
+                "Express shipping",
+                "Special handling for large items",
             ],
-        }
+        },
+        {
+            iconName: "local_shipping",
+            title: "Customs & Arrival",
+            link: "/services/customs",
+            shortDescription: "Packages are cleared through customs and prepared for handover in Jamaica.",
+            subItems: [
+                "Customs processing",
+                "Duty & fee guidance",
+                "Secure handling on arrival",
+            ],
+        },
+        {
+            iconName: "handshake",
+            title: "Final Delivery",
+            link: "/services/delivery",
+            shortDescription: "Your package is released and handed directly to you in Jamaica.",
+            subItems: [
+                "Door-to-door delivery",
+                "Pickup at partner locations",
+                "Proof of handover",
+            ],
+        },
     ];
 
 export const testimonialsData: {

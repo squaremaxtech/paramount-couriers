@@ -24,6 +24,12 @@
 //general email for customers to resign up
 //add accounts page
 
+// Landing page should have
+// Faq section
+// Rates
+// Highlight how many times per week shipments are available
+// Highlight email updates for packages
+
 //write to reusable project
 ////auth role checker
 //write starts to share project
@@ -49,8 +55,6 @@
 //sync env
 //add checks all fields given, ensures whos asking only can create what they'd expect
 //update ensures only validated keys are given to the update object
-
-
 
 //completed
 //Find templates that look good…
