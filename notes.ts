@@ -1,9 +1,6 @@
 //To Do:
-//fill with proper information - rush shipping
-//services, about us, testimonials, contact us, rates
-//get images
-
-//enusre files have fileType in them
+//rename database
+//enusre files have fileType in them...
 //rework upload api - for just one route
 //add notifications
 //websockets?
@@ -23,6 +20,8 @@
 //finish dashboard home
 //general email for customers to resign up
 //add accounts page
+//get images
+//make gmail for manageparamountcouriers
 
 // Landing page should have
 // Faq section
@@ -64,3 +63,5 @@
 //need rates page...
 //fix dashboards...
 //nav...
+//fill with proper information - rush shipping...
+//services, about us, testimonials, contact us, rates...

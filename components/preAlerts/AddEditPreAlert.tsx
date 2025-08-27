@@ -285,11 +285,11 @@ export default function AddEditPreAlert({ sentPreAlert, wantedCrudObj, submissio
                         id='uploadInvoices'
                         accept='.pdf,.doc,.docx,.txt'
                         allowedFileTypes={allowedInvoiceFileTypes}
+                        type="invoice"
                         formDataSet={invoiceFormDataSet}
                         newDbRecordSetter={(dbFile) => {
                             //make new dbInvoice
                             const newDbInvoice: dbInvoiceType = {
-                                dbFileType: "invoice",
                                 type: "seller",
                                 file: dbFile
                             }

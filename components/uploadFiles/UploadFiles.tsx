@@ -10,7 +10,7 @@ import { makeDownloadFileUrl, makeValidFilename } from '@/utility/utility'
 import Link from 'next/link'
 import Image from 'next/image'
 
-export default function UploadFiles<T extends dbWithFileType>({ id, multiple = true, accept, allowedFileTypes, maxUploadSize = maxDocumentUploadSize, formDataSet, dbWithFileObjs, dbWithFileObjsSetter, newDbRecordSetter }: { id: string, multiple?: boolean, accept: string, allowedFileTypes: string[], maxUploadSize?: number, formDataSet: React.Dispatch<React.SetStateAction<FormData | null>>, dbWithFileObjs: T[], dbWithFileObjsSetter: (dbWithFileObjs: T[]) => void, newDbRecordSetter: (dbFile: dbFileType) => void }) {
+export default function UploadFiles<T extends dbWithFileType>({ id, multiple = true, accept, allowedFileTypes, maxUploadSize = maxDocumentUploadSize, formDataSet, dbWithFileObjs, dbWithFileObjsSetter, newDbRecordSetter, type }: { id: string, multiple?: boolean, accept: string, allowedFileTypes: string[], maxUploadSize?: number, formDataSet: React.Dispatch<React.SetStateAction<FormData | null>>, dbWithFileObjs: T[], dbWithFileObjsSetter: (dbWithFileObjs: T[]) => void, newDbRecordSetter: (dbFile: dbFileType) => void, type: dbFileType["type"] }) {
     return (
         <div className='container'>
             <button className='button1'>
@@ -57,7 +57,8 @@ export default function UploadFiles<T extends dbWithFileType>({ id, multiple = t
                             createdAt: newDate,
                             fileName: file.name,
                             status: "to-upload",
-                            uploadedAlready: false
+                            uploadedAlready: false,
+                            type: type
                         }
 
                         //add onto dbUploadedFiles

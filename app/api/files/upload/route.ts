@@ -5,7 +5,7 @@ import { ensureDirectoryExists } from "@/utility/manageFiles";
 import { allowedImageFileTypes, allowedInvoiceFileTypes, maxDocumentUploadSize, uploadedImagesDirectory, uploadedInvoicesDirectory } from "@/types/uploadTypes";
 import { convertBtyes } from "@/useful/usefulFunctions";
 import { sessionCheck } from "@/serverFunctions/handleAuth";
-import { dbFileTypeSchema } from "@/types";
+import { dbFileSchema } from "@/types";
 
 export async function POST(request: Request) {
     await sessionCheck()
@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     const formData = await request.formData();
     const body = Object.fromEntries(formData);
 
-    const seenUploadType = dbFileTypeSchema.parse(body["type"])
+    const seenUploadType = dbFileSchema.shape.type.parse(body["type"])
     if (seenUploadType === undefined) throw new Error("not seeing upload type")
 
     const addedFileNamesPre = await Promise.all(

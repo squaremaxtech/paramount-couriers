@@ -530,11 +530,11 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                         id='uploadInvoices'
                         accept={invoiceFileInputAccept}
                         allowedFileTypes={allowedInvoiceFileTypes}
+                        type="invoice"
                         formDataSet={invoiceFormDataSet}
                         newDbRecordSetter={(dbFile) => {
                             //make new dbInvoice
                             const newDbInvoice: dbInvoiceType = {
-                                dbFileType: "invoice",
                                 type: invoiceType,
                                 file: dbFile
                             }
@@ -571,11 +571,11 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                         id='uploadImages'
                         accept={imageFileInputAccept}
                         allowedFileTypes={allowedImageFileTypes}
+                        type="image"
                         formDataSet={imageFormDataSet}
                         newDbRecordSetter={(dbFile) => {
                             //make new dbImage
                             const newDbImage: dbImageType = {
-                                dbFileType: "image",
                                 file: dbFile,
                                 alt: dbFile.fileName,
                             }

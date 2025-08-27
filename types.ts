@@ -10,6 +10,10 @@ export const dateSchma = z.preprocess((val) => {
 export const decimalStringSchema = z.string()
     .regex(/^(0|[1-9]\d*)(\.\d{1,2})?$/, "Must be a valid number (max 2 decimal places)")
 
+
+
+
+//handle auth
 export type schemaType = typeof schema
 
 export type crudType = "c" | "r" | "u" | "d" | "co" | "ro" | "uo" | "do";
@@ -63,36 +67,41 @@ export type ensureCanAccessTableReturnType = {
 
 
 
+// handle files
 export const dbFileSchema = z.object({
     createdAt: dateSchma,
     fileName: z.string().min(1),
     src: z.string().min(1),
     status: z.enum(["to-delete", "to-upload", "uploaded"]),
-    uploadedAlready: z.boolean()
+    uploadedAlready: z.boolean(),
+    type: z.enum(["invoice", "image"])
 })
 export type dbFileType = z.infer<typeof dbFileSchema>
 
-export const dbFileTypeSchema = z.enum(["invoice", "image"])
-export type dbFileTypeType = z.infer<typeof dbFileTypeSchema>
-
 export const dbImageSchema = z.object({
-    dbFileType: z.literal(dbFileTypeSchema.Values.image),
     file: dbFileSchema,
     alt: z.string().min(1),
 })
 export type dbImageType = z.infer<typeof dbImageSchema>
 
 export const dbInvoiceSchema = z.object({
-    dbFileType: z.literal(dbFileTypeSchema.Values.invoice),
     file: dbFileSchema,
     type: z.enum(["seller", "delivery"]),
 })
 export type dbInvoiceType = z.infer<typeof dbInvoiceSchema>
 
 export type dbWithFileType = {
-    dbFileType: dbFileTypeType,
     file: dbFileType;
 } & Record<string, unknown>;
+
+export const uploadFileApiResponseSchema = z.object({
+    names: z.string().min(1).array(),
+})
+export type uploadFileApiResponseType = z.infer<typeof uploadFileApiResponseSchema>
+
+
+
+
 
 export type withId = {
     id: string | number;
@@ -101,11 +110,11 @@ export type withId = {
 
 
 
+//handle search
 export type tableFilterTypes<T> = {
     [key in keyof T]?: T[key]
 }
 
-//handle search component with limits/offsets
 export type searchObjType<T> = {
     searchItems: T[],
     loading?: true,
@@ -116,24 +125,6 @@ export type searchObjType<T> = {
 }
 
 export type provideFilterAndColumnForTableReturnType<T extends PgTableWithColumns<any>> = { filters: allFilters<T>, columns: (keyof T["_"]["columns"])[] }
-
-export const uploadFileApiResponseSchema = z.object({
-    names: z.string().min(1).array(),
-})
-export type uploadFileApiResponseType = z.infer<typeof uploadFileApiResponseSchema>
-
-
-
-
-export type dashboardMenu = {
-    icon: React.JSX.Element,
-    link: string | null,
-    title: string,
-    dashboardHome?: true,
-}
-
-
-
 
 export type baseFilterSearchType = {
     using?: true, //only use if true
@@ -180,6 +171,17 @@ export type filterSearchType =
 
 export type allFilters<T> = {
     [key in keyof T]?: filterSearchType
+}
+
+
+
+
+//other types
+export type dashboardMenu = {
+    icon: React.JSX.Element,
+    link: string | null,
+    title: string,
+    dashboardHome?: true,
 }
 
 export type ratePricingType = {

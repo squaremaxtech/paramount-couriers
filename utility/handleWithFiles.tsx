@@ -1,9 +1,9 @@
-import { dbFileTypeType, dbWithFileType, uploadFileApiResponseSchema } from "@/types";
+import { dbFileType, dbWithFileType, uploadFileApiResponseSchema } from "@/types";
 import toast from "react-hot-toast";
 import { deepClone } from "./utility";
 
 //handles upload/delete of any object containing the files key/value
-export async function handleWithFiles<T extends dbWithFileType>(dbWithFileObjs: T[], formData: FormData | null, dbFileUpload: dbFileTypeType, serverFunctions?: {
+export async function handleWithFiles<T extends dbWithFileType>(dbWithFileObjs: T[], formData: FormData | null, type: dbFileType["type"], serverFunctions?: {
     delete?: (dbWithFileObjs: T[]) => Promise<void>,
 }): Promise<T[]> {
     console.log(`$dbWithFileObjs`, deepClone(dbWithFileObjs));
@@ -13,7 +13,7 @@ export async function handleWithFiles<T extends dbWithFileType>(dbWithFileObjs: 
     console.log(`$dbWithFileObjsToUpload`, deepClone(dbWithFileObjsToUpload));
     if (dbWithFileObjsToUpload.length > 0 && formData !== null) {
         //set upload type
-        formData.append("type", dbFileUpload)
+        formData.append("type", type)
 
         const response = await fetch(`/api/files/upload`, {
             method: 'POST',
@@ -27,7 +27,7 @@ export async function handleWithFiles<T extends dbWithFileType>(dbWithFileObjs: 
         const seenUploadedFileSrcs = validatedUploadFileApiResponse.names
 
         //notify
-        toast.success(`${dbFileUpload} uploaded`)
+        toast.success(`${type} uploaded`)
 
         dbWithFileObjs = dbWithFileObjs.map(eachDbWithFileObj => {
             if (seenUploadedFileSrcs.includes(eachDbWithFileObj.file.src)) {
