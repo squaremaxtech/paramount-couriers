@@ -107,6 +107,48 @@ export const testimonialsData: {
         },
     ]
 
+export const faqData: {
+    question: string,
+    answer: string,
+}[] = [
+        {
+            question: "How does the service work?",
+            answer: "You shop online from any US store, ship to your unique US address, and we deliver your packages safely to Jamaica.",
+        },
+        {
+            question: "How do I get started as a new customer?",
+            answer: "Simply sign up for a free account, and you’ll receive your personal US shipping address. Use this address whenever you shop online.",
+        },
+        {
+            question: "How should I address my package?",
+            answer: "Enter your name and the US address we provide, making sure your account number or ID is included so we can match the package to you.",
+        },
+        {
+            question: "What items can I ship?",
+            answer: "Most items are accepted, but some goods may be restricted by US or Jamaican customs (e.g., hazardous materials, certain electronics, perishables).",
+        },
+        {
+            question: "How long does delivery take?",
+            answer: "Standard shipping usually takes X–Y business days, while express options arrive faster. Large freight or sea shipments take longer.",
+        },
+        {
+            question: "How do I pay for shipping?",
+            answer: "Shipping charges are calculated based on weight, size, and service type. You can pay online or at pickup.",
+        },
+        {
+            question: "Can I track my package?",
+            answer: "Yes — all shipments come with tracking so you can follow your package from the US to Jamaica.",
+        },
+        {
+            question: "Do you offer home delivery?",
+            answer: "Yes, you can choose between office pickup or door-to-door delivery.",
+        },
+        {
+            question: "How much does shipping cost?",
+            answer: "Costs vary based on weight and service. You can check our rate chart or request a quote online.",
+        },
+    ];
+
 export const rateByWeightArr: ratePricingType[] = [
     { weight: 1, rate: 450 },
     { weight: 2, rate: 750 },

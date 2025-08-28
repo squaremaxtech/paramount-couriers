@@ -225,5 +225,5 @@ export function provideFilterAndColumnForTable<T extends PgTableWithColumns<any>
 }
 
 export function makeDownloadFileUrl(dbWithFile: dbWithFileType) {
-    return `/api/files/download?src=${dbWithFile.file.src}&dbFileType=${dbWithFile.dbFileType}`
+    return `/api/files/download?src=${dbWithFile.file.src}&dbFileType=${dbWithFile.file.type}`
 }

@@ -5,6 +5,7 @@ import Image from 'next/image'
 import aboutUsStart1 from "@/public/aboutUs/aboutUsStart1.jpg"
 import PercentCard from '@/components/cards/percentCard/PercentCard'
 import AnimateRateChange from '@/components/animate/AnimateRateChange'
+import { ShowFAQ } from '@/components/FAQ/FAQ'
 
 export default function Page() {
     return (
@@ -78,7 +79,12 @@ export default function Page() {
                     })}
                 </ul>
             </section>
+
+            <section>
+                <h1 style={{ textAlign: "center" }}>FAQ</h1>
+
+                <ShowFAQ />
+            </section>
         </main>
     )
 }
-

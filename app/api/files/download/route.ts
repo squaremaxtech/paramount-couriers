@@ -1,7 +1,7 @@
 import path from "path";
-import { uploadedImagesDirectory, uploadedInvoicesDirectory } from "@/types/uploadTypes";
 import { downloadFile } from "@/utility/manageFiles";
-import { dbFileTypeSchema } from "@/types";
+import { dbFileSchema } from "@/types";
+import { imagesDirName, invoicesDirName, uploadedDataDir } from "@/lib/dirPaths";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -13,12 +13,14 @@ export async function GET(request: Request) {
   const dbFileType = searchParams.get("dbFileType");
   if (dbFileType === null) throw new Error("dbFileType not sent");
 
-  const validatedDbFileType = dbFileTypeSchema.parse(dbFileType)
+  const validatedDbFileType = dbFileSchema.shape.type.parse(dbFileType)
 
-  const seenBase = validatedDbFileType === "image" ? uploadedImagesDirectory : validatedDbFileType === "invoice" ? uploadedInvoicesDirectory : null
-  if (seenBase === null) throw new Error("dbFileType not supported")
+  const chosenFileDir = validatedDbFileType === "invoice" ? invoicesDirName : validatedDbFileType === "image" ? imagesDirName : null
+  if (chosenFileDir === null) throw new Error("chosenFileDir null")
 
-  const filePath = path.join(seenBase, src);
+  const mainDirectory = path.join(uploadedDataDir, chosenFileDir)
+
+  const filePath = path.join(mainDirectory, src);
 
   return downloadFile(filePath)
 }

@@ -13,6 +13,7 @@ import styles from "./page.module.css"
 import { servicesData, testimonialsData } from "@/lib/data";
 import AnimateRateChange from "@/components/animate/AnimateRateChange";
 import DisplayStars from "@/components/displayStars/DisplayStars";
+import { ShowFAQ } from "@/components/FAQ/FAQ";
 
 export default function Home() {
   return (
@@ -269,6 +270,12 @@ export default function Home() {
             <p>With Paramount Couriers, your packages don&apos;t just stop at Jamaica — we bring them directly to you. Enjoy secure, on-time delivery from the U.S. store to your doorstep, with full tracking every step of the way.</p>
           </div>
         </div>
+      </section>
+
+      <section>
+        <h1 style={{ textAlign: "center" }}>faq</h1>
+
+        <ShowFAQ />
       </section>
 
       <section>

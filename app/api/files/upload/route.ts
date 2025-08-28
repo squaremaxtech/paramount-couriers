@@ -2,10 +2,11 @@ import path from "path";
 import fs from "fs/promises";
 import { NextResponse } from "next/server";
 import { ensureDirectoryExists } from "@/utility/manageFiles";
-import { allowedImageFileTypes, allowedInvoiceFileTypes, maxDocumentUploadSize, uploadedImagesDirectory, uploadedInvoicesDirectory } from "@/types/uploadTypes";
+import { allowedImageFileTypes, allowedInvoiceFileTypes, maxDocumentUploadSize } from "@/types/uploadTypes";
 import { convertBtyes } from "@/useful/usefulFunctions";
 import { sessionCheck } from "@/serverFunctions/handleAuth";
 import { dbFileSchema } from "@/types";
+import { imagesDirName, invoicesDirName, uploadedDataDir } from "@/lib/dirPaths";
 
 export async function POST(request: Request) {
     await sessionCheck()
@@ -24,8 +25,10 @@ export async function POST(request: Request) {
 
             const file = eachEntryValue as File;
 
-            const mainDirectory = seenUploadType === "invoice" ? uploadedInvoicesDirectory : seenUploadType === "image" ? uploadedImagesDirectory : null
-            if (mainDirectory === null) throw new Error("mainDirectory null")
+            const chosenFileDir = seenUploadType === "invoice" ? invoicesDirName : seenUploadType === "image" ? imagesDirName : null
+            if (chosenFileDir === null) throw new Error("chosenFileDir null")
+
+            const mainDirectory = path.join(uploadedDataDir, chosenFileDir)
 
             //ensure directory exists
             await ensureDirectoryExists(mainDirectory)

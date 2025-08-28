@@ -9,8 +9,8 @@
 
 :root {
   /* --c1: #FBB12F; */
-  /* --c1: #e11d48; */
-  --c1: #ff2525;
+  /* --c1: #ff2525; */
+  --c1: #e11d48;
   --c1Light: hsl(from var(--c1) h s calc(l * 1.5));
   --c1Dark: hsl(from var(--c1) h s calc(l * 0.5));
 
