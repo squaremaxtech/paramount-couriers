@@ -1,4 +1,4 @@
-import { accessLevelOptions, dbImageType, dbInvoiceType, locationOptions, roleOptions, statusOptions, userType } from "@/types";
+import { accessLevelOptions, dbImageType, dbInvoiceType, locationOptions, packageType, roleOptions, statusOptions, userType } from "@/types";
 import { relations } from "drizzle-orm";
 import { boolean, timestamp, pgTable, text, primaryKey, integer, pgEnum, serial, json, decimal, index } from "drizzle-orm/pg-core"
 import type { AdapterAccountType } from "next-auth/adapters"
@@ -43,7 +43,9 @@ export const packages = pgTable("packages", {
     store: text("store").notNull(),
     consignee: text("consignee").notNull(),
     description: text("description").notNull(),
-    price: decimal("price").notNull(),
+    packageValue: decimal("packageValue").notNull(),
+    cifValue: decimal("cifValue").notNull(),
+    charges: json("charges").$type<packageType["charges"]>().notNull(),
     invoices: json("invoices").$type<dbInvoiceType[]>().notNull(),
     images: json("images").$type<dbImageType[]>().notNull(),
     weight: decimal("weight").notNull(),
@@ -77,7 +79,7 @@ export const preAlerts = pgTable("preAlerts", {
     store: text("store").notNull(),
     consignee: text("consignee").notNull(),
     description: text("description").notNull(),
-    price: decimal("price").notNull(),
+    packageValue: decimal("packageValue").notNull(),
     invoices: json("invoices").$type<dbInvoiceType[]>().notNull(),
 },
     (table) => {

@@ -88,13 +88,13 @@ export function ViewPackage({ seenPackage }: { seenPackage: packageType }) {
                     <li>
                         <p>declared value</p>
 
-                        <p>{formatAsMoney(seenPackage.price)}</p>
+                        <p>{formatAsMoney(seenPackage.packageValue)}</p>
                     </li>
 
                     <li>
                         <p>cif value</p>
 
-                        <p>{formatAsMoney(seenPackage.price)}</p>
+                        <p>{formatAsMoney(seenPackage.cifValue)}</p>
                     </li>
 
 

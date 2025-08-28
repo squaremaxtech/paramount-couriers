@@ -20,14 +20,14 @@ const fixedUserCrud: userCrudType = {
     employee_supervisor: read,
     customer: read,
 }
-const starterUserCrud: userCrudType = {
-    admin: ["c", "r", "u", "d", "co", "ro", "uo", "do"],
-    employee_regular: ["c", "r", "u", "d", "co", "ro", "uo", "do"],
-    employee_warehouse: ["c", "r", "u", "d", "co", "ro", "uo", "do"],
-    employee_elevated: ["c", "r", "u", "d", "co", "ro", "uo", "do"],
-    employee_supervisor: ["c", "r", "u", "d", "co", "ro", "uo", "do"],
-    customer: ["c", "r", "u", "d", "co", "ro", "uo", "do"],
-}
+// const starterUserCrud: userCrudType = {
+//     admin: ["c", "r", "u", "d", "co", "ro", "uo", "do"],
+//     employee_regular: ["c", "r", "u", "d", "co", "ro", "uo", "do"],
+//     employee_warehouse: ["c", "r", "u", "d", "co", "ro", "uo", "do"],
+//     employee_elevated: ["c", "r", "u", "d", "co", "ro", "uo", "do"],
+//     employee_supervisor: ["c", "r", "u", "d", "co", "ro", "uo", "do"],
+//     customer: ["c", "r", "u", "d", "co", "ro", "uo", "do"],
+// }
 
 type tableAccessType = {
     [T in tableNames]: {

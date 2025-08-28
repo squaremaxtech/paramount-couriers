@@ -240,7 +240,8 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                                             newFormObj.store = eachPreAlert.store
                                             newFormObj.consignee = eachPreAlert.consignee
                                             newFormObj.description = eachPreAlert.description
-                                            newFormObj.price = eachPreAlert.price
+                                            newFormObj.packageValue = eachPreAlert.packageValue
+                                            newFormObj.cifValue = newFormObj.packageValue //set cif value as default package value
                                             newFormObj.invoices = eachPreAlert.invoices
 
                                             return newFormObj
@@ -275,7 +276,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                         type={"text"}
                         label={"package id"}
                         placeHolder={"enter package id"}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        onChange={(e) => {
                             formObjSet(prevFormObj => {
                                 const newFormObj = { ...prevFormObj }
                                 if (newFormObj.id === undefined) return prevFormObj
@@ -399,7 +400,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                         type={"text"}
                         label={"tracking number"}
                         placeHolder={"enter tracking number"}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        onChange={(e) => {
                             formObjSet(prevFormObj => {
                                 const newFormObj = { ...prevFormObj }
                                 if (newFormObj.trackingNumber === undefined) return prevFormObj
@@ -423,7 +424,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                         type={"text"}
                         label={"store"}
                         placeHolder={"enter store"}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        onChange={(e) => {
                             formObjSet(prevFormObj => {
                                 const newFormObj = { ...prevFormObj }
                                 if (newFormObj.store === undefined) return prevFormObj
@@ -447,7 +448,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                         type={"text"}
                         label={"consignee"}
                         placeHolder={"consignee"}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        onChange={(e) => {
                             formObjSet(prevFormObj => {
                                 const newFormObj = { ...prevFormObj }
                                 if (newFormObj.consignee === undefined) return prevFormObj
@@ -471,7 +472,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                         type={"text"}
                         label={"description"}
                         placeHolder={"enter description"}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        onChange={(e) => {
                             formObjSet(prevFormObj => {
                                 const newFormObj = { ...prevFormObj }
                                 if (newFormObj.description === undefined) return prevFormObj
@@ -487,27 +488,137 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                 </>
             )}
 
-            {formObj.price !== undefined && tableColumnAccess["price"] && (
+            {formObj.packageValue !== undefined && tableColumnAccess["packageValue"] && (
                 <>
                     <TextInput
-                        name={"price"}
-                        value={formObj.price}
+                        name={"packageValue"}
+                        value={formObj.packageValue}
                         type={"text"}
-                        label={`price ${formatAsMoney(formObj.price)}`}
-                        placeHolder={"enter price"}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        label={`packageValue ${formatAsMoney(formObj.packageValue)}`}
+                        placeHolder={"enter package value"}
+                        onChange={(e) => {
                             formObjSet(prevFormObj => {
                                 const newFormObj = { ...prevFormObj }
-                                if (newFormObj.price === undefined) return prevFormObj
+                                if (newFormObj.packageValue === undefined) return prevFormObj
 
-                                newFormObj.price = e.target.value
+                                newFormObj.packageValue = e.target.value
 
                                 return newFormObj
                             })
                         }}
-                        onBlur={() => { checkIfValid(formObj, "price") }}
-                        errors={formErrors["price"]}
+                        onBlur={() => { checkIfValid(formObj, "packageValue") }}
+                        errors={formErrors["packageValue"]}
                     />
+                </>
+            )}
+
+            {formObj.cifValue !== undefined && tableColumnAccess["cifValue"] && (
+                <>
+                    <TextInput
+                        name={"cifValue"}
+                        value={formObj.cifValue}
+                        type={"text"}
+                        label={`CIF value ${formatAsMoney(formObj.cifValue)}`}
+                        placeHolder={"enter package value"}
+                        onChange={(e) => {
+                            formObjSet(prevFormObj => {
+                                const newFormObj = { ...prevFormObj }
+                                if (newFormObj.cifValue === undefined) return prevFormObj
+
+                                newFormObj.cifValue = e.target.value
+
+                                return newFormObj
+                            })
+                        }}
+                        onBlur={() => { checkIfValid(formObj, "cifValue") }}
+                        errors={formErrors["cifValue"]}
+                    />
+                </>
+            )}
+
+            {formObj.charges !== undefined && tableColumnAccess["charges"] && (
+                <>
+                    <label>charges</label>
+
+                    {formErrors["charges"] !== undefined && <p className='errorText'>{formErrors["charges"]}</p>}
+
+                    <div className='container' style={{ padding: "var(--spacingR)" }}>
+                        <TextInput
+                            name={"chargesService"}
+                            value={formObj.charges.service}
+                            type={"text"}
+                            label={`service fee ${formatAsMoney(formObj.charges.service)}`}
+                            placeHolder={"enter service fee"}
+                            onChange={(e) => {
+                                formObjSet(prevFormObj => {
+                                    const newFormObj = { ...prevFormObj }
+                                    if (newFormObj.charges === undefined) return prevFormObj
+
+                                    newFormObj.charges.service = e.target.value
+
+                                    return newFormObj
+                                })
+                            }}
+                            onBlur={() => { checkIfValid(formObj, "charges") }}
+                        />
+
+                        <TextInput
+                            name={"chargesFreight"}
+                            value={formObj.charges.freight}
+                            type={"text"}
+                            label={`freight fee ${formatAsMoney(formObj.charges.freight)}`}
+                            placeHolder={"enter freight fee"}
+                            onChange={(e) => {
+                                formObjSet(prevFormObj => {
+                                    const newFormObj = { ...prevFormObj }
+                                    if (newFormObj.charges === undefined) return prevFormObj
+
+                                    newFormObj.charges.freight = e.target.value
+
+                                    return newFormObj
+                                })
+                            }}
+                            onBlur={() => { checkIfValid(formObj, "charges") }}
+                        />
+
+                        <TextInput
+                            name={"chargesFuel"}
+                            value={formObj.charges.fuel}
+                            type={"text"}
+                            label={`fuel fee ${formatAsMoney(formObj.charges.fuel)}`}
+                            placeHolder={"enter fuel fee"}
+                            onChange={(e) => {
+                                formObjSet(prevFormObj => {
+                                    const newFormObj = { ...prevFormObj }
+                                    if (newFormObj.charges === undefined) return prevFormObj
+
+                                    newFormObj.charges.fuel = e.target.value
+
+                                    return newFormObj
+                                })
+                            }}
+                            onBlur={() => { checkIfValid(formObj, "charges") }}
+                        />
+
+                        <TextInput
+                            name={"chargesInsurance"}
+                            value={formObj.charges.insurance}
+                            type={"text"}
+                            label={`insurance fee ${formatAsMoney(formObj.charges.insurance)}`}
+                            placeHolder={"enter insurance fee"}
+                            onChange={(e) => {
+                                formObjSet(prevFormObj => {
+                                    const newFormObj = { ...prevFormObj }
+                                    if (newFormObj.charges === undefined) return prevFormObj
+
+                                    newFormObj.charges.insurance = e.target.value
+
+                                    return newFormObj
+                                })
+                            }}
+                            onBlur={() => { checkIfValid(formObj, "charges") }}
+                        />
+                    </div>
                 </>
             )}
 
@@ -612,7 +723,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                         type={"text"}
                         label={`weight ${formatWeight(formObj.weight)}`}
                         placeHolder={"enter weight"}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        onChange={(e) => {
                             formObjSet(prevFormObj => {
                                 const newFormObj = { ...prevFormObj }
                                 if (newFormObj.weight === undefined) return prevFormObj
@@ -636,7 +747,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                         type={"text"}
                         label={`payment ${formatAsMoney(formObj.payment)}`}
                         placeHolder={"enter payment"}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        onChange={(e) => {
                             formObjSet(prevFormObj => {
                                 const newFormObj = { ...prevFormObj }
                                 if (newFormObj.payment === undefined) return prevFormObj
@@ -660,7 +771,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                         type={"text"}
                         label={"comments"}
                         placeHolder={"enter comments"}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        onChange={(e) => {
                             formObjSet(prevFormObj => {
                                 const newFormObj = { ...prevFormObj }
                                 if (newFormObj.comments === undefined) return prevFormObj

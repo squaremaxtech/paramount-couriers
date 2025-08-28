@@ -6,7 +6,7 @@ export const initialNewPreAlertObj: newPreAlertType = {
     store: "",
     consignee: "",
     description: "",
-    price: "0.00",
+    packageValue: "0.00",
     invoices: [],
     acknowledged: false
 }
@@ -22,7 +22,14 @@ export const initialNewPackageObj: newPackageType = {
     store: "",
     consignee: "",
     description: "",
-    price: "",
+    packageValue: "0.00",
+    cifValue: "0.00",
+    charges: {
+        service: "0.00",
+        freight: "0.00",
+        fuel: "0.00",
+        insurance: "0.00",
+    },
     invoices: [],//
     comments: "",
     needAttention: false

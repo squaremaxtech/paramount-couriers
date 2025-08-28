@@ -33,7 +33,7 @@ export function ViewPreAlert({ preAlert, selectionAction, selectedId }: { preAle
 
             <p>consignee: {preAlert.consignee}</p>
 
-            <p>price: {preAlert.price}</p>
+            <p>price: {preAlert.packageValue}</p>
 
             <p>acknowledged: {preAlert.acknowledged.toString()}</p>
 

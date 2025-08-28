@@ -273,7 +273,14 @@ export const packageSchema = z.object({
     store: z.string().min(1),
     consignee: z.string().min(1),
     description: z.string().min(1),
-    price: decimalStringSchema,
+    packageValue: decimalStringSchema,
+    cifValue: decimalStringSchema,
+    charges: z.object({
+        service: decimalStringSchema,
+        freight: decimalStringSchema,
+        fuel: decimalStringSchema,
+        insurance: decimalStringSchema,
+    }),
     invoices: dbInvoiceSchema.array(),
     images: dbImageSchema.array(),
     weight: decimalStringSchema,
@@ -301,7 +308,7 @@ export const preAlertSchema = z.object({
     store: z.string().min(1),
     consignee: z.string().min(1),
     description: z.string().min(1),
-    price: decimalStringSchema,
+    packageValue: decimalStringSchema,
     invoices: dbInvoiceSchema.array(),
 })
 export type preAlertType = z.infer<typeof preAlertSchema> & {

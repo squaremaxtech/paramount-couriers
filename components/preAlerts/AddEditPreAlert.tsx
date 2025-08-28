@@ -229,26 +229,26 @@ export default function AddEditPreAlert({ sentPreAlert, wantedCrudObj, submissio
                 </>
             )}
 
-            {formObj.price !== undefined && tableColumnAccess["price"] && (
+            {formObj.packageValue !== undefined && tableColumnAccess["packageValue"] && (
                 <>
                     <TextInput
-                        name={"price"}
-                        value={formObj.price}
+                        name={"packageValue"}
+                        value={formObj.packageValue}
                         type={"text"}
-                        label={`price ${formatAsMoney(formObj.price)}`}
-                        placeHolder={"enter price"}
+                        label={`packageValue ${formatAsMoney(formObj.packageValue)}`}
+                        placeHolder={"enter package value"}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                             formObjSet(prevFormObj => {
                                 const newFormObj = { ...prevFormObj }
-                                if (newFormObj.price === undefined) return prevFormObj
+                                if (newFormObj.packageValue === undefined) return prevFormObj
 
-                                newFormObj.price = e.target.value
+                                newFormObj.packageValue = e.target.value
 
                                 return newFormObj
                             })
                         }}
-                        onBlur={() => { checkIfValid(formObj, "price") }}
-                        errors={formErrors["price"]}
+                        onBlur={() => { checkIfValid(formObj, "packageValue") }}
+                        errors={formErrors["packageValue"]}
                     />
                 </>
             )}
