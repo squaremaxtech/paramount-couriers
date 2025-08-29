@@ -25,7 +25,6 @@ export const initialNewPackageObj: newPackageType = {
     packageValue: "0.00",
     cifValue: "0.00",
     charges: {
-        service: "0.00",
         freight: "0.00",
         fuel: "0.00",
         insurance: "0.00",

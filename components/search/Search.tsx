@@ -256,7 +256,7 @@ export default function Search<T>({ searchObj, searchObjSet, searchFunc, showPag
                 <ShowMore
                     label='Filters'
                     content={
-                        <div style={{ display: "grid", alignContent: "flex-start", gap: "var(--spacingR)", paddingBlock: "1rem", position: "relative" }}>
+                        <div style={{ display: "grid", alignContent: "flex-start", gap: "var(--spacingR)", paddingBlock: "var(--spacingR)", position: "relative" }}>
                             {Object.entries(activeSearchFilters).map((eachEntry) => {
                                 const eachFilterKey = eachEntry[0] as keyof searchFiltersType<T>
                                 const eachFilterValue = eachEntry[1] as searchFiltersType<T>[keyof T]

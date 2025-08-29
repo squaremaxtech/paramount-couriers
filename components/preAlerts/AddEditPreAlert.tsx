@@ -139,6 +139,9 @@ export default function AddEditPreAlert({ sentPreAlert, wantedCrudObj, submissio
                 <>
                     <FormToggleButton
                         label='pre alert acknowledged?'
+                        buttonProps={{
+                            style: { justifySelf: "flex-start" }
+                        }}
                         onClick={() => {
                             if (!tableColumnAccess["acknowledged"]) return
 

@@ -2,9 +2,8 @@
 
 //change price to declared (package) value...
 //add cif value...
-//add charges: services fee, freight, fuel, insurance, governement fee
-//track payment in db
-//bulk upload for warehouse users
+//add charges: services fee, freight, fuel, insurance...
+//track payment in db...
 //add auth to view image/download
 //enable contact form - need business email/domain
 //finish dashboard home
@@ -14,6 +13,7 @@
 //get images
 //make gmail for manageparamountcouriers
 //add notifications - on specific package info change - location, status change, needs attention
+//charges start off at a certain value - takes into consideration the weight of the package - active rates - make a database
 
 //Landing page should have
 //Faq section...
@@ -34,6 +34,7 @@
 
 //Ideas
 //websockets?
+//bulk upload for warehouse users
 
 //naming
 //schema - plural

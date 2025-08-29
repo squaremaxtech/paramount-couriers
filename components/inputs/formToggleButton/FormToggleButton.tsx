@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { HTMLAttributes } from 'react'
 
-export default function FormToggleButton({ label, value, onClick, buttonText, errors }: { label: string, value: boolean, onClick: () => void, buttonText?: string, errors?: string }) {
+export default function FormToggleButton({ label, value, onClick, buttonText, errors, buttonProps = {} }: { label: string, value: boolean, onClick: () => void, buttonText?: string, errors?: string, buttonProps?: HTMLAttributes<HTMLButtonElement> }) {
     return (
-        <div style={{ display: "grid", alignContent: "flex-start", gap: "1rem" }}>
+        <div style={{ display: "grid", alignContent: "flex-start", gap: "var(--spacingR)" }}>
             <label>{label}</label>
 
-            <button className='button1'
+            <button {...buttonProps} className={`button1 ${buttonProps.className ?? ""}`} style={{ ...buttonProps.style }}
                 onClick={onClick}
             >{buttonText === undefined ? value.toString() : buttonText}</button>
 

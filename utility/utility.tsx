@@ -1,5 +1,5 @@
 import z from "zod"
-import { allFilters, dbWithFileType, ensureCanAccessTableReturnType, provideFilterAndColumnForTableReturnType } from "@/types";
+import { allFilters, dbWithFileType, ensureCanAccessTableReturnType, packageType, provideFilterAndColumnForTableReturnType } from "@/types";
 import { errorZodErrorAsString } from "@/useful/consoleErrorWithToast";
 import { eq, gte, sql, SQLWrapper } from "drizzle-orm";
 import { PgNumeric, PgInteger, PgTableWithColumns, PgEnumColumn, PgText, PgVarchar, PgBoolean, PgDate, PgJsonb, PgTimestamp, PgSerial, PgJson } from 'drizzle-orm/pg-core'
@@ -51,6 +51,10 @@ export function formatAsMoney(input: string, minimumFractionDigits = 2) {
         currency: "USD",
         minimumFractionDigits,
     }).format(num)
+}
+
+export function convertToCurrency(input: number, minimumFractionDigits = 2) {
+    return input.toFixed(minimumFractionDigits)
 }
 
 export function formatWithCommas(input: string) {
@@ -226,4 +230,12 @@ export function provideFilterAndColumnForTable<T extends PgTableWithColumns<any>
 
 export function makeDownloadFileUrl(dbWithFile: dbWithFileType) {
     return `/api/files/download?src=${dbWithFile.file.src}&dbFileType=${dbWithFile.file.type}`
+}
+
+export function calculatePackageServiceCost(charges: packageType["charges"]) {
+    const freight = parseFloat(charges.freight)
+    const fuel = parseFloat(charges.fuel)
+    const insurance = parseFloat(charges.insurance)
+
+    return freight + fuel + insurance
 }

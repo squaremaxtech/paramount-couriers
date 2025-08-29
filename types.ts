@@ -276,7 +276,6 @@ export const packageSchema = z.object({
     packageValue: decimalStringSchema,
     cifValue: decimalStringSchema,
     charges: z.object({
-        service: decimalStringSchema,
         freight: decimalStringSchema,
         fuel: decimalStringSchema,
         insurance: decimalStringSchema,

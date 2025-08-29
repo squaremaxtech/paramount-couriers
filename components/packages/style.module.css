@@ -1,8 +1,8 @@
 .form {
     display: grid;
     align-content: flex-start;
-    gap: 1rem;
-    padding: 1rem;
+    gap: var(--spacingR);
+    padding: var(--spacingR);
     overflow: auto;
 }
 

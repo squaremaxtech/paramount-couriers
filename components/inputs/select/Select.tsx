@@ -3,7 +3,7 @@ export default function Select<T extends string>({
         name: string, value: T, valueOptions: T[], onChange: (value: T) => void, label?: string, id?: string, errors?: string,
     } & Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'>) {
     return (
-        <div {...elProps} style={{ display: "grid", alignContent: "flex-start", gap: "1rem", ...elProps?.style }}>
+        <div {...elProps} style={{ display: "grid", alignContent: "flex-start", gap: "var(--spacingR)", ...elProps?.style }}>
             {label !== undefined && <label htmlFor={id !== undefined ? id : name}>{label}</label>}
 
             <select value={value} id={id !== undefined ? id : name} name={name}

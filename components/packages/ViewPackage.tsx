@@ -1,6 +1,6 @@
 import { locationOptions, locationType, packageType } from "@/types";
 import styles from "./style.module.css"
-import { formatAsMoney, formatWeight, generateTrackingNumber, makeDownloadFileUrl } from "@/utility/utility";
+import { calculatePackageServiceCost, formatAsMoney, formatWeight, generateTrackingNumber, makeDownloadFileUrl } from "@/utility/utility";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -110,44 +110,32 @@ export function ViewPackage({ seenPackage }: { seenPackage: packageType }) {
                 <p>charges</p>
 
                 <ul className={`titleBoxMenu ${styles.noBorder}`}>
-                    <li className={styles.large}>
-                        <p>services fee</p>
-
-                        <p>{formatAsMoney(`11.35`)}</p>
-                    </li>
-
                     <li>
                         <p>freight</p>
 
-                        <p>{formatAsMoney(`8.39`)}</p>
+                        <p>{formatAsMoney(seenPackage.charges.freight)}</p>
                     </li>
 
                     <li>
                         <p>fuel</p>
 
-                        <p>{formatAsMoney(`1.48`)}</p>
+                        <p>{formatAsMoney(seenPackage.charges.fuel)}</p>
                     </li>
 
                     <li>
                         <p>insurance</p>
 
-                        <p>{formatAsMoney(`1.48`)}</p>
-                    </li>
-
-                    <li className={styles.large}>
-                        <p>government fee</p>
-
-                        <p>{formatAsMoney(`0.00`)}</p>
+                        <p>{formatAsMoney(seenPackage.charges.insurance)}</p>
                     </li>
                 </ul>
 
                 <div>
-                    <h2 style={{ textAlign: "center" }}>Total: {formatAsMoney(`11.35`)}</h2>
+                    <h2 style={{ textAlign: "center" }}>Total: {formatAsMoney(`${calculatePackageServiceCost(seenPackage.charges)}`)}</h2>
 
-                    <h1 style={{ textAlign: "end", color: "var(--c1)" }}>Total Paid: {formatAsMoney(`11.35`)}</h1>
+                    <h1 style={{ textAlign: "end", color: "var(--c1)" }}>Total Paid: {formatAsMoney(seenPackage.payment)}</h1>
                 </div>
 
-                {parseInt(seenPackage.payment) !== 0 && (
+                {parseFloat(seenPackage.payment) > 0 && (
                     <div style={{ backgroundColor: "var(--c1)", color: "var(--textC2)", fontWeight: "bold", display: "grid", justifyItems: "center", padding: "var(--spacingR)" }} className="resetTextMargin">
                         <h2 style={{ color: "var(--textC2)" }}>Thanks for your payment!</h2>
 

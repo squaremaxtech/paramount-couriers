@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useState } from 'react'
 import styles from "./style.module.css"
-import { deepClone, formatAsMoney, formatWeight } from '@/utility/utility'
+import { calculatePackageServiceCost, convertToCurrency, deepClone, formatAsMoney, formatWeight } from '@/utility/utility'
 import toast from 'react-hot-toast'
 import TextInput from '../inputs/textInput/TextInput'
 import { dbInvoiceType, newPackageSchema, packageType, wantedCrudObjType, packageSchema, searchObjType, preAlertType, userType, locationOptions, statusOptions, dbImageType } from '@/types'
@@ -23,6 +23,7 @@ import { ViewUser } from '../users/ViewUser'
 import ViewItems from '../items/ViewItem'
 import FormToggleButton from '../inputs/formToggleButton/FormToggleButton'
 import Select from '../inputs/select/Select'
+import { rateByWeightArr } from '@/lib/data'
 
 const seenStatusOptions = [...statusOptions]
 const seenLocationOptions = [...locationOptions]
@@ -73,6 +74,35 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
         search()
     }, [formObj.userId])
 
+    //start off charges from rates
+    useEffect(() => {
+        console.log(`$got here`);
+        console.log(`$tableColumnAccess["charges"]`, tableColumnAccess["charges"]);
+
+        if (formObj.charges === undefined || !tableColumnAccess["charges"]) return
+
+        formObjSet(prevFormObj => {
+            const newFormObj = { ...prevFormObj }
+
+            if (newFormObj.charges === undefined || formObj.weight === undefined) return prevFormObj
+
+            const seenWeight = parseFloat(formObj.weight)
+            console.log(`$seenWeight`, seenWeight);
+
+            const foundRateForWeight = rateByWeightArr.find(eachRateByWeight => eachRateByWeight.weight === seenWeight)
+            console.log(`$foundRateForWeight`, foundRateForWeight);
+            if (foundRateForWeight === undefined) return prevFormObj
+
+            const seenRate = foundRateForWeight.rate
+
+            newFormObj.charges.freight = `${convertToCurrency(seenRate * .7)}`
+            newFormObj.charges.fuel = `${convertToCurrency(seenRate * .1)}`
+            newFormObj.charges.insurance = `${convertToCurrency(seenRate * .2)}`
+
+            return newFormObj
+        })
+    }, [formObj.weight, tableColumnAccess["charges"]])
+
     async function handleSubmit() {
         try {
             toast.success("submittting")
@@ -82,7 +112,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                 //validate - replace with initial defaults if no access to "c"
                 const filteredPackage = filterTableObjectByColumnAccess(tableColumnAccess, formObj, initialNewPackageObj)
 
-                //files - can sometimes contain files from given preAlert
+                //invoices
                 if (filteredPackage.invoices !== undefined) {
                     filteredPackage.invoices = await handleWithFiles(filteredPackage.invoices, invoiceFormData, "invoice", {
                         delete: async (dbWithFilesObjs) => {
@@ -92,6 +122,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                         }
                     })
                 }
+
                 //images
                 if (filteredPackage.images !== undefined) {
                     filteredPackage.images = await handleWithFiles(filteredPackage.images, imageFormData, "image", {
@@ -126,7 +157,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                 //auth
                 const filteredPackage = filterTableObjectByColumnAccess(tableColumnAccess, validatedPackage)
 
-                //files
+                //invoices
                 if (filteredPackage.invoices !== undefined) {
                     filteredPackage.invoices = await handleWithFiles(filteredPackage.invoices, invoiceFormData, "invoice", {
                         delete: async (dbWithFilesObjs) => {
@@ -536,92 +567,6 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                 </>
             )}
 
-            {formObj.charges !== undefined && tableColumnAccess["charges"] && (
-                <>
-                    <label>charges</label>
-
-                    {formErrors["charges"] !== undefined && <p className='errorText'>{formErrors["charges"]}</p>}
-
-                    <div className='container' style={{ padding: "var(--spacingR)" }}>
-                        <TextInput
-                            name={"chargesService"}
-                            value={formObj.charges.service}
-                            type={"text"}
-                            label={`service fee ${formatAsMoney(formObj.charges.service)}`}
-                            placeHolder={"enter service fee"}
-                            onChange={(e) => {
-                                formObjSet(prevFormObj => {
-                                    const newFormObj = { ...prevFormObj }
-                                    if (newFormObj.charges === undefined) return prevFormObj
-
-                                    newFormObj.charges.service = e.target.value
-
-                                    return newFormObj
-                                })
-                            }}
-                            onBlur={() => { checkIfValid(formObj, "charges") }}
-                        />
-
-                        <TextInput
-                            name={"chargesFreight"}
-                            value={formObj.charges.freight}
-                            type={"text"}
-                            label={`freight fee ${formatAsMoney(formObj.charges.freight)}`}
-                            placeHolder={"enter freight fee"}
-                            onChange={(e) => {
-                                formObjSet(prevFormObj => {
-                                    const newFormObj = { ...prevFormObj }
-                                    if (newFormObj.charges === undefined) return prevFormObj
-
-                                    newFormObj.charges.freight = e.target.value
-
-                                    return newFormObj
-                                })
-                            }}
-                            onBlur={() => { checkIfValid(formObj, "charges") }}
-                        />
-
-                        <TextInput
-                            name={"chargesFuel"}
-                            value={formObj.charges.fuel}
-                            type={"text"}
-                            label={`fuel fee ${formatAsMoney(formObj.charges.fuel)}`}
-                            placeHolder={"enter fuel fee"}
-                            onChange={(e) => {
-                                formObjSet(prevFormObj => {
-                                    const newFormObj = { ...prevFormObj }
-                                    if (newFormObj.charges === undefined) return prevFormObj
-
-                                    newFormObj.charges.fuel = e.target.value
-
-                                    return newFormObj
-                                })
-                            }}
-                            onBlur={() => { checkIfValid(formObj, "charges") }}
-                        />
-
-                        <TextInput
-                            name={"chargesInsurance"}
-                            value={formObj.charges.insurance}
-                            type={"text"}
-                            label={`insurance fee ${formatAsMoney(formObj.charges.insurance)}`}
-                            placeHolder={"enter insurance fee"}
-                            onChange={(e) => {
-                                formObjSet(prevFormObj => {
-                                    const newFormObj = { ...prevFormObj }
-                                    if (newFormObj.charges === undefined) return prevFormObj
-
-                                    newFormObj.charges.insurance = e.target.value
-
-                                    return newFormObj
-                                })
-                            }}
-                            onBlur={() => { checkIfValid(formObj, "charges") }}
-                        />
-                    </div>
-                </>
-            )}
-
             {formObj.invoices !== undefined && tableColumnAccess["invoices"] && (
                 <>
                     <label>
@@ -739,6 +684,73 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                 </>
             )}
 
+            {formObj.charges !== undefined && tableColumnAccess["charges"] && (
+                <>
+                    <label>service charges - total: {formatAsMoney(`${calculatePackageServiceCost(formObj.charges)}`)}</label>
+
+                    {formErrors["charges"] !== undefined && <p className='errorText'>{formErrors["charges"]}</p>}
+
+                    <div className='container' style={{ padding: "var(--spacingR)" }}>
+                        <TextInput
+                            name={"chargesFreight"}
+                            value={formObj.charges.freight}
+                            type={"text"}
+                            label={`freight fee ${formatAsMoney(formObj.charges.freight)}`}
+                            placeHolder={"enter freight fee"}
+                            onChange={(e) => {
+                                formObjSet(prevFormObj => {
+                                    const newFormObj = { ...prevFormObj }
+                                    if (newFormObj.charges === undefined) return prevFormObj
+
+                                    newFormObj.charges.freight = e.target.value
+
+                                    return newFormObj
+                                })
+                            }}
+                            onBlur={() => { checkIfValid(formObj, "charges") }}
+                        />
+
+                        <TextInput
+                            name={"chargesFuel"}
+                            value={formObj.charges.fuel}
+                            type={"text"}
+                            label={`fuel fee ${formatAsMoney(formObj.charges.fuel)}`}
+                            placeHolder={"enter fuel fee"}
+                            onChange={(e) => {
+                                formObjSet(prevFormObj => {
+                                    const newFormObj = { ...prevFormObj }
+                                    if (newFormObj.charges === undefined) return prevFormObj
+
+                                    newFormObj.charges.fuel = e.target.value
+
+                                    return newFormObj
+                                })
+                            }}
+                            onBlur={() => { checkIfValid(formObj, "charges") }}
+                        />
+
+                        <TextInput
+                            name={"chargesInsurance"}
+                            value={formObj.charges.insurance}
+                            type={"text"}
+                            label={`insurance fee ${formatAsMoney(formObj.charges.insurance)}`}
+                            placeHolder={"enter insurance fee"}
+                            onChange={(e) => {
+                                formObjSet(prevFormObj => {
+                                    const newFormObj = { ...prevFormObj }
+                                    if (newFormObj.charges === undefined) return prevFormObj
+
+                                    newFormObj.charges.insurance = e.target.value
+
+                                    return newFormObj
+                                })
+                            }}
+                            onBlur={() => { checkIfValid(formObj, "charges") }}
+                        />
+                    </div>
+                </>
+            )}
+
             {formObj.payment !== undefined && tableColumnAccess["payment"] && (
                 <>
                     <TextInput
@@ -791,6 +803,9 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                 <>
                     <FormToggleButton
                         label='package needs attention?'
+                        buttonProps={{
+                            style: { justifySelf: "flex-start" }
+                        }}
                         onClick={() => {
                             if (!tableColumnAccess["needAttention"]) return
 
