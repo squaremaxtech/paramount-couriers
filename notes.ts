@@ -1,9 +1,39 @@
-//To Do:
+// To Do:
+// over 5 years experience
+// we offer door to door - save customer address - ask more
 
-//change price to declared (package) value...
-//add cif value...
-//add charges: services fee, freight, fuel, insurance...
-//track payment in db...
+// change to our unique address
+
+// ships 3 times a week - Monday, Wednesday and Saturday
+
+// update testimonials
+
+// update copyright footer
+
+// designs for services
+
+// make sign up form
+
+// green is nice, red and black
+
+// Jamaica arrives - ready for pickup
+
+// delivered at the end
+
+// clear up pre alert - tracking number - api from cool couriers
+
+// Show an example of using Amazon/Shein - show shipping address - name with PMR - when making a package, on new sign up - Add PMR in
+
+// clear up customer home shipping choice - area of operations: Kingston, St. Elizabeth - entire Jamaica
+
+// extensive customer sign up
+
+// new logo - getting a new one
+
+// bulk actions
+
+
+//finish this in a week - final copy, final design, finalise each page - make dashboards look good.
 //add auth to view image/download
 //enable contact form - need business email/domain
 //finish dashboard home
@@ -73,3 +103,7 @@
 //add FAQ - common questions of the business...
 //ask how will warehouse employees update a package...
 //proper nav - sub menus - mobile as well...
+//change price to declared (package) value...
+//add cif value...
+//add charges: services fee, freight, fuel, insurance...
+//track payment in db...

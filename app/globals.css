@@ -4,13 +4,13 @@
 *::before,
 *::after {
   box-sizing: border-box;
-  border: 1px solid red !important;
+  /* border: 1px solid red !important; */
 }
 
 :root {
-  --c1: #FBB12F;
   /* --c1: #e11d48; */
-  /* --c1: #ff2525; */
+  --c1: #ff2525;
+  --c2: #FBB12F;
   --c1Light: hsl(from var(--c1) h s calc(l * 1.5));
   --c1Dark: hsl(from var(--c1) h s calc(l * 0.5));
 
