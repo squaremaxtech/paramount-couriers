@@ -76,9 +76,6 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
 
     //start off charges from rates
     useEffect(() => {
-        console.log(`$got here`);
-        console.log(`$tableColumnAccess["charges"]`, tableColumnAccess["charges"]);
-
         if (formObj.charges === undefined || !tableColumnAccess["charges"]) return
 
         formObjSet(prevFormObj => {
@@ -87,17 +84,15 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
             if (newFormObj.charges === undefined || formObj.weight === undefined) return prevFormObj
 
             const seenWeight = parseFloat(formObj.weight)
-            console.log(`$seenWeight`, seenWeight);
 
             const foundRateForWeight = rateByWeightArr.find(eachRateByWeight => eachRateByWeight.weight === seenWeight)
-            console.log(`$foundRateForWeight`, foundRateForWeight);
             if (foundRateForWeight === undefined) return prevFormObj
 
             const seenRate = foundRateForWeight.rate
 
-            newFormObj.charges.freight = `${convertToCurrency(seenRate * .7)}`
-            newFormObj.charges.fuel = `${convertToCurrency(seenRate * .1)}`
-            newFormObj.charges.insurance = `${convertToCurrency(seenRate * .2)}`
+            newFormObj.charges.freight = convertToCurrency(seenRate * .7)
+            newFormObj.charges.fuel = convertToCurrency(seenRate * .1)
+            newFormObj.charges.insurance = convertToCurrency(seenRate * .2)
 
             return newFormObj
         })
@@ -333,7 +328,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                                     searchObj={usersSearchObj}
                                     searchObjSet={usersSearchObjSet}
                                     searchFunc={async (seenFilters) => {
-                                        return await getUsers({ ...seenFilters }, { crud: "r" }, usersSearchObj.limit, usersSearchObj.offset)
+                                        return await getUsers({ ...seenFilters }, { crud: "r" }, {}, usersSearchObj.limit, usersSearchObj.offset)
                                     }}
                                     showPage={true}
                                     searchFilters={{

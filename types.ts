@@ -228,6 +228,7 @@ export const userSchema = z.object({
     id: z.string().min(1),
     role: roleSchema,
     accessLevel: accessLevelSchema,
+    address: z.string().min(1),
     authorizedUsers: z.object({
         userId: z.string().min(1)
     }).array(),
@@ -245,11 +246,8 @@ export type userType = z.infer<typeof userSchema> & {
     preAlerts?: preAlertType[],
 }
 
-export const newUserSchema = userSchema.omit({ id: true, role: true })
+export const newUserSchema = userSchema.omit({ id: true })
 export type newUserType = z.infer<typeof newUserSchema>
-
-export const updateUserSchema = userSchema.omit({ id: true, emailVerified: true })
-export type updateUserType = z.infer<typeof updateUserSchema>
 
 
 
@@ -258,7 +256,7 @@ export const statusOptions = ["fulfilled", "in progress", "cancelled", "on hold"
 export const statusSchema = z.enum(statusOptions)
 export type statusType = z.infer<typeof statusSchema>
 
-export const locationOptions = ["on way to warehouse", "warehouse delivered", "in transit to jamaica", "jamaica arrived", "ready for pickup"] as const
+export const locationOptions = ["on way to warehouse", "warehouse delivered", "in transit to jamaica", "jamaica arrived", "ready for pickup", "delivered"] as const
 export const locationSchema = z.enum(locationOptions)
 export type locationType = z.infer<typeof locationSchema>
 
@@ -316,6 +314,3 @@ export type preAlertType = z.infer<typeof preAlertSchema> & {
 
 export const newPreAlertSchema = preAlertSchema.omit({ id: true, dateCreated: true })
 export type newPreAlertType = z.infer<typeof newPreAlertSchema>
-
-// export const updatePreAlertSchema = preAlertSchema.omit({ id: true, dateCreated: true, userId: true })
-// export type updatePreAlertType = z.infer<typeof updatePreAlertSchema>

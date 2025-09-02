@@ -208,8 +208,9 @@ export default function Home() {
               {[
                 {
                   iconName: "calendar_month",
-                  amount: 2,
+                  amount: 5,
                   title: "years in business",
+                  plus: "+",
                 },
                 {
                   iconName: "package",
@@ -219,7 +220,7 @@ export default function Home() {
                 },
                 {
                   iconName: "groups",
-                  amount: 300,
+                  amount: 100,
                   title: "happy customers",
                   plus: "+",
                 },

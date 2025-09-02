@@ -11,6 +11,7 @@ export const users = pgTable("users", {
     id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
     role: roleEnum().notNull().default("customer"),
     accessLevel: accessLevelEnum().notNull().default("regular"),
+    address: text("address").notNull().default(""),
     authorizedUsers: json("authorizedUsers").$type<userType["authorizedUsers"]>().notNull().default([]),
 
     //regular
@@ -21,7 +22,7 @@ export const users = pgTable("users", {
     emailVerified: timestamp("emailVerified", { mode: "date" }),
     image: text("image"),
 })
-export const userRelations = relations(users, ({ one, many }) => ({
+export const userRelations = relations(users, ({ many }) => ({
     packages: many(packages),
     preAlerts: many(preAlerts),
 }));

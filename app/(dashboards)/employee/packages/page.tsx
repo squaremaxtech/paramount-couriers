@@ -28,9 +28,6 @@ export default async function Page() {
                         return await getPackages(activeFilters as tableFilterTypes<packageType>, { crud: "r" }, { fromUser: true }, wantedItemsSearchObj.limit, wantedItemsSearchObj.offset)
                     }}
                     headingOrder={["id", "dateCreated", "fromUser"]}
-                    renameTableHeadings={{
-                        id: "reggaeRushTrack"
-                    }}
                     replaceData={{
                         id: {
                             link: `/employee/packages/edit`,

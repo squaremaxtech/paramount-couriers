@@ -4,15 +4,18 @@
 *::before,
 *::after {
   box-sizing: border-box;
-  /* border: 1px solid red !important; */
+  border: 1px solid red !important;
 }
 
 :root {
   /* --c1: #e11d48; */
   --c1: #ff2525;
-  --c2: #FBB12F;
   --c1Light: hsl(from var(--c1) h s calc(l * 1.5));
   --c1Dark: hsl(from var(--c1) h s calc(l * 0.5));
+  --c2: #FBB12F;
+  --c2Light: hsl(from var(--c2) h s calc(l * 1.5));
+  --c2Dark: hsl(from var(--c2) h s calc(l * 0.5));
+  --c3: green;
 
   /* used with outlines/borders */
   --shade1: #474747;
@@ -455,7 +458,7 @@ option {
 
 .recordTable tr:not(:has(th)):hover,
 .recordTable tr.selected {
-  background-color: hsl(from var(--c1) h s calc(l * 1.6));
+  background-color: var(--c2Light);
 }
 
 .recordTable th:not(.noBorder) {

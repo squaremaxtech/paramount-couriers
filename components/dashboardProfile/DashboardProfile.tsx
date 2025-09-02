@@ -14,7 +14,7 @@ export default function DashboardProfile() {
 
     return (
         <div className={styles.cont}>
-            <div style={{ display: "flex", gap: "var(--spacingS)", cursor: "pointer", color: "var(--textC2)", alignItems: "center" }}
+            <div style={{ display: "flex", gap: "var(--spacingS)", cursor: "pointer", color: "var(--textC4)", alignItems: "center" }}
                 onClick={() => { showingNavSet(prev => !prev) }}
             >
                 <Image alt="userImage" src={session.user.image !== null ? session.user.image : defaultProfileIcon} width={40} height={40} style={{ objectFit: "cover", borderRadius: "var(--borderRadiusEL)" }} />

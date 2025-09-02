@@ -108,6 +108,9 @@ export default function AddEditPreAlert({ sentPreAlert, wantedCrudObj, submissio
         }
     }
 
+    //how does pre alterting work
+    //package address examples
+
     return (
         <form className={styles.form} action={() => { }}>
             {formObj.userId !== undefined && tableColumnAccess["userId"] && session !== null && session.user.role !== "customer" && (//+ special rule for userId

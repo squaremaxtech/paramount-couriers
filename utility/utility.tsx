@@ -71,7 +71,7 @@ export function formatWeight(weight: string) {
     return `${formatWithCommas(weight)} lb${parseInt(weight) > 1 ? "s" : ""}`
 }
 
-export function generateTrackingNumber(id: number, branding: string = "RR"): string {
+export function generateTrackingNumber(id: number, branding: string = "PC"): string {
     const paddedNumber = id.toString().padStart(11, '0');
 
     return `${branding}${paddedNumber}`;
@@ -101,7 +101,7 @@ export async function safeServerErrors(func: () => Promise<void>) {
 }
 
 export function handleEnsureCanAccessTableResults(ensureCanAccessTableReturn: ensureCanAccessTableReturnType, option: "table" | "column" | "both") {
-    if (option === "both" && ((ensureCanAccessTableReturn.columnErrors !== undefined) || (ensureCanAccessTableReturn.columnErrors !== undefined))) {
+    if (option === "both" && ((ensureCanAccessTableReturn.tableErrors !== undefined) || (ensureCanAccessTableReturn.columnErrors !== undefined))) {
         throw new Error(`${ensureCanAccessTableReturn.tableErrors} ${ensureCanAccessTableReturn.columnErrors}`)
 
     } else if (option === "table" && ensureCanAccessTableReturn.tableErrors !== undefined) {

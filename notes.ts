@@ -1,37 +1,8 @@
-// To Do:
-// over 5 years experience
-// we offer door to door - save customer address - ask more
-
-// change to our unique address
-
-// ships 3 times a week - Monday, Wednesday and Saturday
-
-// update testimonials
-
-// update copyright footer
-
-// designs for services
-
-// make sign up form
-
-// green is nice, red and black
-
-// Jamaica arrives - ready for pickup
-
-// delivered at the end
-
-// clear up pre alert - tracking number - api from cool couriers
-
-// Show an example of using Amazon/Shein - show shipping address - name with PMR - when making a package, on new sign up - Add PMR in
-
-// clear up customer home shipping choice - area of operations: Kingston, St. Elizabeth - entire Jamaica
-
-// extensive customer sign up
-
-// new logo - getting a new one
-
-// bulk actions
-
+//To Do:
+//api from cool couriers
+//designs for services
+//bulk actions
+//Show an example of using Amazon/Shein - show shipping address - name with PMR - when making a package, on new sign up - Add PMR in
 
 //finish this in a week - final copy, final design, finalise each page - make dashboards look good.
 //add auth to view image/download
@@ -43,7 +14,6 @@
 //get images
 //make gmail for manageparamountcouriers
 //add notifications - on specific package info change - location, status change, needs attention
-//charges start off at a certain value - takes into consideration the weight of the package - active rates - make a database
 
 //Landing page should have
 //Faq section...
@@ -54,6 +24,8 @@
 //write to reusable project
 ////auth role checker
 //write starts to share project
+//update testimonials
+//make admin page - manage all fields
 
 //we use prc
 //anything that comes to the warehouse with prt is ours - customer name on there
@@ -74,7 +46,7 @@
 //copy design -
 ////put content down - then style
 ////note ahead of time what element types youll need - h1, title...etc
-//copy content - gpt/reggae rush
+//copy content - gpt/paramount couriers
 
 
 
@@ -107,3 +79,12 @@
 //add cif value...
 //add charges: services fee, freight, fuel, insurance...
 //track payment in db...
+//over 5 years experience...
+//we offer door to door - save customer address - ask more...
+//change to our unique address, phone number...
+//ships 3 times a week - Monday, Wednesday and Saturday...
+//update copyright footer...
+//green is nice, red and black...
+//Jamaica arrives - ready for pickup, delivered at the end...
+//new logo...
+//charges start off at a certain value - takes into consideration the weight of the package - active rates - make a database...

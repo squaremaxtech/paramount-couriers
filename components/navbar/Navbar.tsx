@@ -4,7 +4,7 @@ import styles from "./style.module.css"
 import Link from 'next/link'
 import Logo from "@/components/logo/Logo"
 import Image from 'next/image'
-import defaultImage from "@/public/logo.png"
+import defaultImage from "@/public/defaultProfileImage.jpg"
 import { auth } from '@/auth/auth'
 
 type menuItem = {

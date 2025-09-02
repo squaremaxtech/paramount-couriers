@@ -5,8 +5,8 @@ import { StaticImageData } from "next/image";
 
 export const siteInfo = {
     emailAddresses: ["support@paramount-couriers.com", "info@paramount-couriers.com"],
-    addresses: ["12/A Daddy Yankee Tower", "12/A Daddy Yankee Tower"],
-    phoneNumbers: ["+123 456 789 29", "123 478 373 38"],
+    addresses: ["W6PC+FC, Port Royal", "4500 north hiatus road"],
+    phoneNumbers: ["+1 (876) 782-9165", "+1 (876) 782-9165"],
 }
 
 export const servicesData: {
@@ -113,15 +113,11 @@ export const faqData: {
 }[] = [
         {
             question: "How does the service work?",
-            answer: "You shop online from any US store, ship to your unique US address, and we deliver your packages safely to Jamaica.",
+            answer: "You shop online from any US store, ship to our US address, and we deliver your packages safely to Jamaica. (Shipping done on Monday, Wednesday and Saturday)",
         },
         {
             question: "How do I get started as a new customer?",
-            answer: "Simply sign up for a free account, and you’ll receive your personal US shipping address. Use this address whenever you shop online.",
-        },
-        {
-            question: "How should I address my package?",
-            answer: "Enter your name and the US address we provide, making sure your account number or ID is included so we can match the package to you.",
+            answer: "Simply sign up so and use our address whenever you shop online.",
         },
         {
             question: "What items can I ship?",
@@ -129,11 +125,11 @@ export const faqData: {
         },
         {
             question: "How long does delivery take?",
-            answer: "Standard shipping usually takes X–Y business days, while express options arrive faster. Large freight or sea shipments take longer.",
+            answer: "Standard shipping usually takes 2 days.",
         },
         {
             question: "How do I pay for shipping?",
-            answer: "Shipping charges are calculated based on weight, size, and service type. You can pay online or at pickup.",
+            answer: "Shipping charges are calculated based on weight, You can pay online (bank transfer) or at pickup.",
         },
         {
             question: "Can I track my package?",
@@ -145,7 +141,7 @@ export const faqData: {
         },
         {
             question: "How much does shipping cost?",
-            answer: "Costs vary based on weight and service. You can check our rate chart or request a quote online.",
+            answer: "Costs vary based on weight and service. You can check our rates page for details",
         },
     ];
 

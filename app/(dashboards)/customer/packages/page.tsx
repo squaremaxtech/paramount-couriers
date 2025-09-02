@@ -14,7 +14,7 @@ export default async function Page() {
                 (
                     <ViewTable
                         wantedItems={seenPackages}
-                        headingOrder={["id", "trackingNumber", "store", "description", "dateCreated", "location", "status", "invoices", "dateCreated", "price", "payment", "needAttention"]}
+                        headingOrder={["id", "trackingNumber", "store", "description", "dateCreated", "location", "status", "invoices", "dateCreated", "packageValue", "payment", "needAttention"]}
                         hideColumns={["userId", "comments", ("enableRLS") as (keyof packageType)]}
                         tableProvider={provideFilterAndColumnForTable(packages)}
                         sizeClass={{
@@ -24,9 +24,6 @@ export default async function Page() {
                         searchFunc={async (activeFilters, wantedItemsSearchObj) => {
                             "use server"
                             return await getPackages(activeFilters as tableFilterTypes<packageType>, { crud: "ro" }, {}, wantedItemsSearchObj.limit, wantedItemsSearchObj.offset)
-                        }}
-                        renameTableHeadings={{
-                            id: "reggaeRushTrack"
                         }}
                         replaceData={{
                             id: {

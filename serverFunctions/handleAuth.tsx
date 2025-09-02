@@ -83,6 +83,14 @@ const tableAccess: tableAccessType = {
                 employee_supervisor: readUpdate,
                 customer: ["r", "uo"],
             },
+            address: {
+                admin: fullAccess,
+                employee_regular: readUpdate,
+                employee_warehouse: read,
+                employee_elevated: readUpdate,
+                employee_supervisor: readUpdate,
+                customer: ["ro", "uo"],
+            },
             authorizedUsers: {
                 admin: fullAccess,
                 employee_regular: read,

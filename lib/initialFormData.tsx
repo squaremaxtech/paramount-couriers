@@ -35,10 +35,13 @@ export const initialNewPackageObj: newPackageType = {
 }
 
 export const initialNewUserObj: newUserType = {
-    image: null,
+    role: "employee",
     accessLevel: "regular",
+    address: "",
     authorizedUsers: [],
-    name: null,
+
+    name: "",
     email: "",
     emailVerified: null,
+    image: "",
 }

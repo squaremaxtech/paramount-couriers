@@ -104,7 +104,7 @@ export default function Footer() {
             </div>
 
             <div className='container' style={{ borderTop: "1px solid var(--shade1)", paddingBlock: "var(--spacingL)", justifySelf: "center", width: "80%", justifyItems: "center" }}>
-                <p>© ReggaeRush - 2025, Made With Love</p>
+                <p>© Paramount Couriers - 2025</p>
             </div>
         </footer>
     )

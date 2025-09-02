@@ -12,7 +12,7 @@
 .sidebar {
     display: grid;
     align-content: flex-start;
-    background-color: var(--c1);
+    background-color: var(--c2);
     color: var(--textC2);
     text-align: center;
     text-transform: capitalize;
@@ -30,7 +30,7 @@
 
 .menuItem:hover,
 .selected {
-    background-color: var(--c1Dark);
+    background-color: var(--c2Dark);
 }
 
 .menuItem p {
@@ -49,7 +49,7 @@
     align-content: flex-start;
     grid-template-columns: 1fr auto;
     align-items: center;
-    background-color: var(--c1Light);
+    background-color: var(--c2Light);
     padding: var(--spacingR) var(--spacingL);
     position: relative;
 }

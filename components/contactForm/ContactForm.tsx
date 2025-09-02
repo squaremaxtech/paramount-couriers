@@ -35,7 +35,7 @@ export default function ContactForm({ submissionAction }: { submissionAction?: (
 
             //send email
             await sendNodeEmail({
-                sendTo: "info@reggaerush.com",
+                sendTo: "support@paramount-couriers.com",
                 replyTo: formObj.email,
                 subject: `Customer Contact from ${formObj.fullname}`,
                 text: `fullname:\n${formObj.fullname}\nmessage:\n${formObj.message}`
