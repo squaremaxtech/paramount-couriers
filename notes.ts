@@ -1,8 +1,8 @@
 //To Do:
-//api from cool couriers
 //designs for services
 //bulk actions
 //Show an example of using Amazon/Shein - show shipping address - name with PMR - when making a package, on new sign up - Add PMR in
+//api from cool couriers
 
 //finish this in a week - final copy, final design, finalise each page - make dashboards look good.
 //add auth to view image/download
@@ -14,6 +14,7 @@
 //get images
 //make gmail for manageparamountcouriers
 //add notifications - on specific package info change - location, status change, needs attention
+//update amt of points for each service - points made
 
 //Landing page should have
 //Faq section...

@@ -31,23 +31,23 @@ export default function Home() {
           {[
             {
               img: welcomeStandardImage,
-              title: "Reliable Standard Service",
-              link: "/services/#standard",
+              title: "barrel shipping",
+              link: "/services/#shipping",
             },
             {
               img: welcomeExpressImage,
-              title: "Fast-Track Express",
-              link: "/services/#express",
+              title: "freight shipping",
+              link: "/services/#shipping",
             },
             {
               img: welcomeDoorToDoorImage,
-              title: "Direct Store-to-Door Service",
-              link: "/services/#storeToDoor",
+              title: "air & sea cargo",
+              link: "/services/#shipping",
             },
             {
               img: welcomeWareHousingImage,
-              title: "Storage & Warehousing Solutions",
-              link: "/services/#wareHousing",
+              title: "delivery",
+              link: "/services/#delivery",
             },
           ].map((eachViewMoreObj, eachViewMoreObjIndex) => {
             return (
@@ -100,22 +100,22 @@ export default function Home() {
             <ul className="container" style={{ gridTemplateColumns: "1fr 1fr", paddingBlock: "var(--spacingR)" }}>
               {[
                 {
-                  title: "Standard Shipping",
+                  title: "barrel shipping",
                 },
                 {
-                  title: "Warehousing & Storage",
+                  title: "freight shipping",
                 },
                 {
-                  title: "Express Shipping",
+                  title: "air cargo",
                 },
                 {
-                  title: "apply online",
+                  title: "sea cargo",
                 },
                 {
-                  title: "Door-to-Door Delivery",
+                  title: "store-to-Door Delivery",
                 },
                 {
-                  title: "Package Receiving",
+                  title: "local pickup",
                 },
               ].map((eachOffserService, eachOffserServiceIndex) => {
                 return (
@@ -132,7 +132,9 @@ export default function Home() {
               })}
             </ul>
 
-            <button className="button1">learn more</button>
+            <Link href={"/services"}>
+              <button className="button1">learn more</button>
+            </Link>
           </div>
         </div>
       </section>
@@ -144,7 +146,7 @@ export default function Home() {
           {servicesData.map((eachService, eachServiceIndex) => {
             return (
               <li key={eachServiceIndex}>
-                <Link href={eachService.link} className={`${styles.eachService} container`}>
+                <Link href={`services/${eachService.slug}`} className={`${styles.eachService} container`}>
                   <span className={`${styles.swapColor} material-symbols-outlined largerIcon`}>
                     {eachService.iconName}
                   </span>
