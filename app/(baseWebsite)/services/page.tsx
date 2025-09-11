@@ -34,56 +34,45 @@ export default function Page() {
 
                         <h1 style={{ fontSize: "var(--fontSizeML)" }}>STELLAR DELIVERY</h1>
 
-                        <h3>Pre-Alert Your Packages</h3>
-                        <p></p>
-
-                        <h3>Package Processing</h3>
-                        <p></p>
-
-                        <h3>Real-Time Tracking</h3>
-                        <p></p>
-
-                        <h3>Shipment to Jamaica</h3>
-                        <p></p>
-
-                        <h3>Air Freight</h3>
-                        <p>Need to move bulkier shipments or commercial goods? Our Air Freight option is the most efficient way to get large packages and pallets from the U.S. to Jamaica. With competitive rates and flexible schedules, we ensure your freight arrives on time and in excellent condition.</p>
-
-                        <h3>General Shipping</h3>
-                        <p>Whether it’s a small online order or multiple boxes, we offer reliable shipping solutions to meet your needs. Customers can select from flat-rate options, express delivery, or economy shipping—always backed by our secure handling and transparent tracking system.</p>
-
-                        <h3>Customs & Clearing</h3>
-                        <p></p>
-
-                        <h3>Pickup & Delivery</h3>
-                        <p></p>
+                        {servicesData.map((eachService, eachServiceIndex) => {
+                            return (
+                                <React.Fragment key={eachServiceIndex}>
+                                    <h3 id={eachService.slug}>{eachService.title}</h3>
+                                    <p>{eachService.description}</p>
+                                </React.Fragment>
+                            )
+                        })}
 
                         <h3>FAQs</h3>
                         <p>Have questions about our services, rates, or policies? Check out our FAQ section for quick answers to the most common shipping concerns. From how to pre-alert a package to understanding customs fees, our FAQs are here to guide you every step of the way.</p>
 
-                        {/* <Image alt='servicesStart5 image' src={servicesStart5} width={2000} height={2000} style={{ objectFit: 'cover', width: "100%" }} /> */}
+                        <Image alt='servicesStart5 image' src={servicesStart5} width={2000} height={2000} style={{ objectFit: 'cover', width: "100%" }} />
 
-                        <div className='separator'></div>
+                        <h3>Service Highlights</h3>
 
-                        <h3>Facility provided</h3>
-
-                        <div className='container' style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))", gap: "var(--spacingL)" }}>
+                        <div
+                            className="container"
+                            style={{
+                                gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))",
+                                gap: "var(--spacingL)",
+                            }}
+                        >
                             <ShortCardDescription
-                                iconName='box'
-                                title='fast delivery'
-                                description='Air mail was conceived of early, and scheduled service began in 1918.'
-                                link='#fastDelivery'
+                                iconName="box"
+                                title="Fast Delivery"
+                                description="Quick, reliable shipping with delivery across all of Jamaica."
+                                link="#shipment"
                             />
 
                             <ShortCardDescription
-                                iconName='phone_forwarded'
-                                title='world wide shipping'
-                                description='Air mail was conceived of early, and scheduled service began in 1918.'
-                                link='#worldWideShipping'
+                                iconName="phone_forwarded"
+                                title="Worldwide Shipping"
+                                description="Shop anywhere in the U.S. and get your packages delivered right to Jamaica."
+                                link="#shipment"
                             />
                         </div>
 
-                        <div className='twoColumnFlex'>
+                        {/* <div className='twoColumnFlex'>
                             <div className='container' style={{ flex: "1 1 200px" }}>
                                 <p>
                                     At Paramount Couriers, speed and reliability are at the core of what we do.
@@ -119,11 +108,9 @@ export default function Page() {
                                     style={{ objectFit: 'cover', width: "100%" }}
                                 />
                             </div>
-                        </div>
+                        </div> */}
 
-                        <div className='separator'></div>
-
-                        <div className='twoColumnFlex'>
+                        {/* <div className='twoColumnFlex'>
                             <div style={{ flex: "1 1 200px" }}>
                                 <Image alt='servicesStart7 image' src={servicesStart7} width={2000} height={2000} style={{ objectFit: 'cover', width: "100%" }} />
                             </div>
@@ -131,9 +118,7 @@ export default function Page() {
                             <div style={{ flex: "1.5 1 300px" }}>
                                 <p>White glove refers to the highest service level for last-mile delivery of heavy goods. It involves the delivery team bringing the item to the room of choice, unpacking and assembling it, and removing all packaging and debris from the customer's home. There are over 4,000 white glove delivery companies in the United States, most of which only perform local deliveries. Some large less-than-truckload shipping carriers also offer white glove delivery service, and in recent years start-ups have emerged that offer</p>
                             </div>
-                        </div>
-
-                        <p>The individual sorting and handling systems of small parcel carriers can put severe stress on the packages and contents. Packaging needs to be designed for the potential hazards which may be encountered in parcel delivery systems. The major carriers have a packaging engineering staff which provides packaging guidelines and sometimes package design and package testing services.</p>
+                        </div> */}
                     </div>
 
                     <div style={{ flex: "1 1 300px" }} className='container'>

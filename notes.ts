@@ -1,14 +1,14 @@
 //To Do:
-//designs for services
-//bulk actions
-//Show an example of using Amazon/Shein - show shipping address - name with PMR - when making a package, on new sign up - Add PMR in
+//designs for services...
 //api from cool couriers
-
+//Show an example of using Amazon/Shein - show shipping address - name with PMR - when making a package, on new sign up - Add PMR in
+//contact us map
 //finish this in a week - final copy, final design, finalise each page - make dashboards look good.
 //add auth to view image/download
 //enable contact form - need business email/domain
 //finish dashboard home
 //general email for customers to resign up
+//bulk actions
 //new customer onboarding process - completed check - if not customer sees update info
 //add accounts page
 //get images

@@ -1,5 +1,6 @@
 import Footer from "@/components/footer/Footer";
 import Navbar from "@/components/navbar/Navbar";
+import { servicesData } from "@/lib/data";
 
 export default function BaseWebsiteLayout({
   children,
@@ -18,12 +19,12 @@ export default function BaseWebsiteLayout({
           {
             title: "services",
             link: "/services",
-            subMenu: [
-              {
-                title: "service details",
-                link: "/services",
-              },
-            ]
+            subMenu: servicesData.map(eachService => {
+              return {
+                title: eachService.title,
+                link: `/services#${eachService.slug}`
+              }
+            })
           },
           {
             title: "about us",
