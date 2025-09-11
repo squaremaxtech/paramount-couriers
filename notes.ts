@@ -28,9 +28,6 @@
 //update testimonials
 //make admin page - manage all fields
 
-//we use prc
-//anything that comes to the warehouse with prt is ours - customer name on there
-
 
 
 
@@ -59,6 +56,10 @@
 
 //add checks all fields given, ensures whos asking only can create what they'd expect
 //update ensures only validated keys are given to the update object
+
+//we use prc
+//anything that comes to the warehouse with prt is ours - customer name on there
+
 
 //completed
 //Find templates that look good…
