@@ -32,7 +32,6 @@ export type tableColumns = {
     // used
     users: keyof schemaType["users"]["$inferSelect"];
     packages: keyof schemaType["packages"]["$inferSelect"];
-    preAlerts: keyof schemaType["preAlerts"]["$inferSelect"];
 
     // not used
     accounts: ""
@@ -243,7 +242,6 @@ export const userSchema = z.object({
 })
 export type userType = z.infer<typeof userSchema> & {
     packages?: packageType[],
-    preAlerts?: preAlertType[],
 }
 
 export const newUserSchema = userSchema.omit({ id: true })
@@ -252,7 +250,7 @@ export type newUserType = z.infer<typeof newUserSchema>
 
 
 
-export const statusOptions = ["fulfilled", "in progress", "cancelled", "on hold"] as const
+export const statusOptions = ["pre-alerted", "fulfilled", "in progress", "cancelled", "on hold"] as const
 export const statusSchema = z.enum(statusOptions)
 export type statusType = z.infer<typeof statusSchema>
 
@@ -291,26 +289,3 @@ export type packageType = z.infer<typeof packageSchema> & {
 
 export const newPackageSchema = packageSchema.omit({ id: true, dateCreated: true })
 export type newPackageType = z.infer<typeof newPackageSchema>
-
-
-
-
-export const preAlertSchema = z.object({
-    id: z.string().min(1),
-    dateCreated: dateSchma,
-
-    userId: z.string().min(1),
-    trackingNumber: z.string().min(1),
-    acknowledged: z.boolean(),
-    store: z.string().min(1),
-    consignee: z.string().min(1),
-    description: z.string().min(1),
-    packageValue: decimalStringSchema,
-    invoices: dbInvoiceSchema.array(),
-})
-export type preAlertType = z.infer<typeof preAlertSchema> & {
-    fromUser?: userType,
-}
-
-export const newPreAlertSchema = preAlertSchema.omit({ id: true, dateCreated: true })
-export type newPreAlertType = z.infer<typeof newPreAlertSchema>

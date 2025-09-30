@@ -9,9 +9,11 @@ import { getSpecificUser } from "./handleUsers";
 const fullAccess: crudType[] = ["c", "r", "u", "d"];
 const read: crudType[] = ["r"];
 const readOwn: crudType[] = ["ro"];
+const readUpdateOwn: crudType[] = ["r", "uo"];
 const readUpdate: crudType[] = ["r", "u"];
 const createReadUpdateOwn: crudType[] = ["c", "r", "uo", "do"];
 const createReadUpdate: crudType[] = ["c", "r", "u"];
+const createUpdateOwn: crudType[] = ["c", "uo"];
 const createReadUpdateDeleteOwn: crudType[] = ["c", "ro", "uo", "do"];
 const fixedUserCrud: userCrudType = {
     admin: read,
@@ -109,7 +111,7 @@ const tableAccess: tableAccessType = {
             employee_warehouse: fullAccess,
             employee_elevated: fullAccess,
             employee_supervisor: fullAccess,
-            customer: readOwn,
+            customer: createUpdateOwn,
         },
         columnDefaultCrud: {
             admin: fullAccess,
@@ -119,50 +121,94 @@ const tableAccess: tableAccessType = {
             employee_supervisor: readUpdate,
             customer: readOwn,
         },
+        //trying to ensure customers can create values on a pckage
+        //in some cases can update
+
         columns: {
             id: fixedUserCrud,
             dateCreated: fixedUserCrud,
             comments: {
                 admin: fullAccess,
-                employee_regular: createReadUpdateOwn,
-                employee_warehouse: createReadUpdateOwn,
-                employee_elevated: createReadUpdateOwn,
-                employee_supervisor: fullAccess,
+                employee_regular: readUpdate,
+                employee_warehouse: readUpdate,
+                employee_elevated: readUpdate,
+                employee_supervisor: readUpdate,
                 customer: [],
             },
-        },
-    },
-    preAlerts: {
-        tableCrud: {
-            admin: fullAccess,
-            employee_regular: fullAccess,
-            employee_warehouse: read,
-            employee_elevated: fullAccess,
-            employee_supervisor: fullAccess,
-            customer: createReadUpdateDeleteOwn,
-        },
-        columnDefaultCrud: {
-            admin: fullAccess,
-            employee_regular: ["c", "r"],
-            employee_warehouse: createReadUpdate,
-            employee_elevated: createReadUpdate,
-            employee_supervisor: createReadUpdate,
-            customer: createReadUpdateDeleteOwn,
-        },
-        columns: {
-            id: fixedUserCrud,
-            dateCreated: fixedUserCrud,
-            acknowledged: {
-                admin: createReadUpdate,
-                employee_regular: createReadUpdate,
-                employee_warehouse: createReadUpdate,
-                employee_elevated: createReadUpdate,
-                employee_supervisor: createReadUpdate,
-                customer: readOwn,
+            trackingNumber: {
+                admin: fullAccess,
+                employee_regular: read,
+                employee_warehouse: readUpdate,
+                employee_elevated: readUpdate,
+                employee_supervisor: readUpdate,
+                customer: readUpdateOwn,
+            },
+            store: {
+                admin: fullAccess,
+                employee_regular: read,
+                employee_warehouse: readUpdate,
+                employee_elevated: readUpdate,
+                employee_supervisor: readUpdate,
+                customer: readUpdateOwn,
+            },
+            consignee: {
+                admin: fullAccess,
+                employee_regular: read,
+                employee_warehouse: readUpdate,
+                employee_elevated: readUpdate,
+                employee_supervisor: readUpdate,
+                customer: readUpdateOwn,
+            },
+            description: {
+                admin: fullAccess,
+                employee_regular: read,
+                employee_warehouse: readUpdate,
+                employee_elevated: readUpdate,
+                employee_supervisor: readUpdate,
+                customer: readUpdateOwn,
+            },
+            packageValue: {
+                admin: fullAccess,
+                employee_regular: read,
+                employee_warehouse: readUpdate,
+                employee_elevated: readUpdate,
+                employee_supervisor: readUpdate,
+                customer: readUpdateOwn,
+            },
+            cifValue: {
+                admin: fullAccess,
+                employee_regular: read,
+                employee_warehouse: readUpdate,
+                employee_elevated: readUpdate,
+                employee_supervisor: readUpdate,
+                customer: readUpdateOwn,
+            },
+            invoices: {
+                admin: fullAccess,
+                employee_regular: read,
+                employee_warehouse: readUpdate,
+                employee_elevated: readUpdate,
+                employee_supervisor: readUpdate,
+                customer: readUpdateOwn,
+            },
+            images: {
+                admin: fullAccess,
+                employee_regular: read,
+                employee_warehouse: readUpdate,
+                employee_elevated: readUpdate,
+                employee_supervisor: readUpdate,
+                customer: readUpdateOwn,
+            },
+            weight: {
+                admin: fullAccess,
+                employee_regular: read,
+                employee_warehouse: readUpdate,
+                employee_elevated: readUpdate,
+                employee_supervisor: readUpdate,
+                customer: readUpdateOwn,
             },
         },
     },
-
 
 
 
@@ -179,7 +225,6 @@ const tableAccess: tableAccessType = {
 
     userRelations: undefined,
     packageRelations: undefined,
-    preAlertRelations: undefined,
 };
 
 export async function sessionCheck() {
@@ -319,12 +364,6 @@ export async function ensureCanAccessTable<T extends tableNames>(tableName: T, w
                 const seenPackage = await getSpecificPackage(parseInt(wantedCrudObj.resourceId), { crud: "r" }, false);
                 if (seenPackage === undefined) throw new Error(`Resource id not found for ${tableName}`)
                 ownershipId = seenPackage.userId;
-
-            } else if (tableName === "preAlerts") {
-                //more tables
-                const seenPreAlert = await getSpecificPreAlert(wantedCrudObj.resourceId, { crud: "r" }, false);
-                if (seenPreAlert === undefined) throw new Error(`Resource id not found for ${tableName}`)
-                ownershipId = seenPreAlert.userId;
 
             } else if (tableName === "users") {
                 //more tables

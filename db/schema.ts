@@ -24,14 +24,13 @@ export const users = pgTable("users", {
 })
 export const userRelations = relations(users, ({ many }) => ({
     packages: many(packages),
-    preAlerts: many(preAlerts),
 }));
 
 
 
 
-export const statusEnum = pgEnum("status", statusOptions);
 export const locationEnum = pgEnum("location", locationOptions);
+export const statusEnum = pgEnum("status", statusOptions);
 
 export const packages = pgTable("packages", {
     id: serial("id").primaryKey(),
@@ -66,42 +65,6 @@ export const packageRelations = relations(packages, ({ one, many }) => ({
         references: [users.id]
     }),
 }));
-
-
-
-
-export const preAlerts = pgTable("preAlerts", {
-    id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
-    dateCreated: timestamp("dateCreated", { mode: "date" }).notNull().defaultNow(),
-
-    userId: text("userId").notNull().references(() => users.id),
-    acknowledged: boolean("acknowledged").notNull(),
-    trackingNumber: text("trackingNumber").notNull(),
-    store: text("store").notNull(),
-    consignee: text("consignee").notNull(),
-    description: text("description").notNull(),
-    packageValue: decimal("packageValue").notNull(),
-    invoices: json("invoices").$type<dbInvoiceType[]>().notNull(),
-},
-    (table) => {
-        return {
-            preAlertUserIdIndex: index("preAlertUserIdIndex").on(table.userId),
-            preAlertTrackingNumberIndex: index("preAlertTrackingNumberIndex").on(table.trackingNumber),
-        };
-    })
-export const preAlertRelations = relations(preAlerts, ({ one }) => ({
-    fromUser: one(users, {
-        fields: [preAlerts.userId],
-        references: [users.id]
-    })
-}));
-
-
-
-
-
-
-
 
 
 
