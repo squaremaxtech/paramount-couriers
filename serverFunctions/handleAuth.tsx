@@ -4,6 +4,7 @@ import { crudType, ensureCanAccessTableReturnType, tableColumnAccessType, tableC
 import { getSpecificPackage } from "./handlePackages";
 import { getSpecificPreAlert } from "./handlePreAlerts";
 import { errorZodErrorAsString } from "@/useful/consoleErrorWithToast";
+import { getSpecificUser } from "./handleUsers";
 
 const fullAccess: crudType[] = ["c", "r", "u", "d"];
 const read: crudType[] = ["r"];
@@ -324,6 +325,12 @@ export async function ensureCanAccessTable<T extends tableNames>(tableName: T, w
                 const seenPreAlert = await getSpecificPreAlert(wantedCrudObj.resourceId, { crud: "r" }, false);
                 if (seenPreAlert === undefined) throw new Error(`Resource id not found for ${tableName}`)
                 ownershipId = seenPreAlert.userId;
+
+            } else if (tableName === "users") {
+                //more tables
+                const seenUser = await getSpecificUser(wantedCrudObj.resourceId, { crud: "r" }, false);
+                if (seenUser === undefined) throw new Error(`Resource id not found for ${tableName}`)
+                ownershipId = seenUser.id;
 
             } else throw new Error(`Ownership check not implemented for this table`)
 

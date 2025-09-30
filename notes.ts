@@ -1,4 +1,26 @@
 //To Do:
+//make overview
+//shoe packes not closed
+//recently delivered
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //designs for services...
 //api from cool couriers
 //Show an example of using Amazon/Shein - show shipping address - name with PMR - when making a package, on new sign up - Add PMR in
