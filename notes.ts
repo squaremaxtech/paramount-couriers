@@ -5,6 +5,41 @@
 
 
 
+// paramount couriers
+
+// managaeparamountcouriers@gmail.com
+
+
+// meeting questions:
+// how do they work - new shipping provider
+
+// whats my role
+
+// what happens net
+
+// full us address?:
+// pmc address
+
+// agent
+// Kingston, st Thomas
+
+
+// notes:
+
+
+// to do:
+// add customer address to package info table - Kingston/st. thomas
+
+
+
+//they handle clearance they delever to you in kingston
+//paramount offers home address delevery and branch pickup
+
+
+
+
+
+
 
 
 
