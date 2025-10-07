@@ -1,6 +1,12 @@
 //To Do:
+//auth table updated...
+//make packages table use permissions for all users
+//ensure resource id passed to function always
+
+
+
 //make overview
-//shoe packes not closed
+//show packages not closed
 //recently delivered
 
 
@@ -85,7 +91,7 @@
 //update testimonials
 //make admin page - manage all fields
 
-
+////make comments own table
 
 
 

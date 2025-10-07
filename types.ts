@@ -17,6 +17,7 @@ export const decimalStringSchema = z.string()
 export type schemaType = typeof schema
 
 export type crudType = "c" | "r" | "u" | "d" | "co" | "ro" | "uo" | "do";
+export type crudBaseType = "c" | "r" | "u" | "d"
 export type userCrudType = {
     admin: crudType[];
     employee_regular: crudType[];
