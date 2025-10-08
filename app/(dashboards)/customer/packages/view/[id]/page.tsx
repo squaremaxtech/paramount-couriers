@@ -9,7 +9,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     const usableId = extractIdFromTrackingNumber(id)
 
     //validate
-    const seenPackage = await getSpecificPackage(usableId, { crud: "ro", resourceId: `${usableId}` })
+    const seenPackage = await getSpecificPackage(usableId, { action: "r", resourceId: `${usableId}` })
     if (seenPackage === undefined) return (<p>not seeing specific package</p>)
 
     return (

@@ -7,7 +7,8 @@ import Link from 'next/link'
 import React from 'react'
 
 export default async function Page() {
-    const seenPackages = await getPackages({}, { crud: "r" }, { fromUser: true })
+    const seenPackages = await getPackages({}, { action: "r" }, { fromUser: true })
+    console.log(`$seenPackages`, seenPackages);
 
     return (
         <main className='container'>
@@ -25,7 +26,7 @@ export default async function Page() {
                     }}
                     searchFunc={async (activeFilters, wantedItemsSearchObj) => {
                         "use server"
-                        return await getPackages(activeFilters as tableFilterTypes<packageType>, { crud: "r" }, { fromUser: true }, wantedItemsSearchObj.limit, wantedItemsSearchObj.offset)
+                        return await getPackages(activeFilters as tableFilterTypes<packageType>, { action: "r" }, { fromUser: true }, wantedItemsSearchObj.limit, wantedItemsSearchObj.offset)
                     }}
                     headingOrder={["id", "dateCreated", "fromUser"]}
                     replaceData={{

@@ -1,3 +1,4 @@
+import { auth } from '@/auth/auth'
 import ViewTable from '@/components/viewTable/ViewTable'
 import { packages } from '@/db/schema'
 import { getPackages } from '@/serverFunctions/handlePackages'
@@ -6,7 +7,11 @@ import { provideFilterAndColumnForTable } from '@/utility/utility'
 import React from 'react'
 
 export default async function Page() {
-    const seenPackages = await getPackages({}, { crud: "ro" }, {})
+    const session = await auth()
+    if (session === null) return <p>not seeing session</p>
+
+    //ensures can only read own records
+    const seenPackages = await getPackages({ userId: session.user.id }, { action: "r", skipOwnershipCheck: true }, {})
 
     return (
         <main>
@@ -23,7 +28,7 @@ export default async function Page() {
                         }}
                         searchFunc={async (activeFilters, wantedItemsSearchObj) => {
                             "use server"
-                            return await getPackages(activeFilters as tableFilterTypes<packageType>, { crud: "ro" }, {}, wantedItemsSearchObj.limit, wantedItemsSearchObj.offset)
+                            return await getPackages({ ...activeFilters, userId: session.user.id } as tableFilterTypes<packageType>, { action: "r", skipOwnershipCheck: true }, {}, wantedItemsSearchObj.limit, wantedItemsSearchObj.offset)
                         }}
                         replaceData={{
                             id: {

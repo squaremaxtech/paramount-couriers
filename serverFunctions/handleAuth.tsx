@@ -1,19 +1,15 @@
 "use server";
 import { auth } from "@/auth/auth";
-import { crudBaseType, crudType, ensureCanAccessTableReturnType, tableColumnAccessType, tableColumns, tableNames, userCrudType, userCrudTypeKeys, userType, wantedCrudObjType } from "@/types";
+import { crudActionObjType, crudBaseType, crudType, ensureCanAccessTableReturnType, tableColumnAccessType, tableColumns, tableNames, userCrudType, userCrudTypeKeys, userType } from "@/types";
 import { getSpecificPackage } from "./handlePackages";
-import { getSpecificPreAlert } from "./handlePreAlerts";
 import { errorZodErrorAsString } from "@/useful/consoleErrorWithToast";
 import { getSpecificUser } from "./handleUsers";
 
 const fullAccess: crudType[] = ["c", "r", "u", "d"];
 const read: crudType[] = ["r"];
 const readOwn: crudType[] = ["ro"];
-const readUpdateOwn: crudType[] = ["r", "uo"];
 const readUpdate: crudType[] = ["r", "u"];
-const createReadUpdateOwn: crudType[] = ["c", "r", "uo", "do"];
 const createReadUpdate: crudType[] = ["c", "r", "u"];
-const createUpdateOwn: crudType[] = ["c", "uo"];
 const createReadUpdateDeleteOwn: crudType[] = ["c", "ro", "uo", "do"];
 const fixedUserCrud: userCrudType = {
     admin: read,
@@ -41,10 +37,6 @@ type tableAccessType = {
         };
     } | undefined
 };
-
-//each table mappes
-//each column has what each user can do crud, corouodo
-//unction checks what user wants to do (crud) then sees if they need ownership or not
 
 const tableAccess: tableAccessType = {
     users: {
@@ -111,95 +103,95 @@ const tableAccess: tableAccessType = {
     packages: {
         //who can add to the packages table
         table: {
-            admin: ["c", "r", "u", "d"],
-            employee_regular: ["c", "r", "u"],
-            employee_warehouse: ["c", "r", "u", "d"],
-            employee_elevated: ["c", "r", "u", "d"],
-            employee_supervisor: ["c", "r", "u", "d"],
+            admin: fullAccess,
+            employee_regular: createReadUpdate,
+            employee_warehouse: fullAccess,
+            employee_elevated: fullAccess,
+            employee_supervisor: fullAccess,
             customer: ["c", "ro"],
         },
         columnDefault: {
-            admin: ["c", "r", "u", "d"],
-            employee_regular: ["c", "r", "u"],
-            employee_warehouse: ["c", "r", "u", "d"],
-            employee_elevated: ["c", "r", "u", "d"],
-            employee_supervisor: ["c", "r", "u", "d"],
+            admin: fullAccess,
+            employee_regular: createReadUpdate,
+            employee_warehouse: fullAccess,
+            employee_elevated: fullAccess,
+            employee_supervisor: fullAccess,
             customer: ["ro"],
         },
         columns: {
             id: fixedUserCrud,
             dateCreated: fixedUserCrud,
             comments: {
-                admin: ["c", "r", "u", "d"],
-                employee_regular: ["c", "r", "u", "d"],
-                employee_warehouse: ["c", "r", "u", "d"],
-                employee_elevated: ["c", "r", "u", "d"],
-                employee_supervisor: ["c", "r", "u", "d"],
+                admin: fullAccess,
+                employee_regular: fullAccess,
+                employee_warehouse: fullAccess,
+                employee_elevated: fullAccess,
+                employee_supervisor: fullAccess,
                 customer: [],
             },
             userId: {
-                admin: ["c", "r", "u", "d"],
-                employee_regular: ["c", "r", "u", "d"],
-                employee_warehouse: ["c", "r", "u", "d"],
-                employee_elevated: ["c", "r", "u", "d"],
-                employee_supervisor: ["c", "r", "u", "d"],
+                admin: fullAccess,
+                employee_regular: fullAccess,
+                employee_warehouse: fullAccess,
+                employee_elevated: fullAccess,
+                employee_supervisor: fullAccess,
                 customer: ["c", "ro"],
             },
             trackingNumber: {
-                admin: ["c", "r", "u", "d"],
-                employee_regular: ["c", "r", "u", "d"],
-                employee_warehouse: ["c", "r", "u", "d"],
-                employee_elevated: ["c", "r", "u", "d"],
-                employee_supervisor: ["c", "r", "u", "d"],
+                admin: fullAccess,
+                employee_regular: fullAccess,
+                employee_warehouse: fullAccess,
+                employee_elevated: fullAccess,
+                employee_supervisor: fullAccess,
                 customer: ["c", "ro"],
             },
             store: {
-                admin: ["c", "r", "u", "d"],
-                employee_regular: ["c", "r", "u", "d"],
-                employee_warehouse: ["c", "r", "u", "d"],
-                employee_elevated: ["c", "r", "u", "d"],
-                employee_supervisor: ["c", "r", "u", "d"],
+                admin: fullAccess,
+                employee_regular: fullAccess,
+                employee_warehouse: fullAccess,
+                employee_elevated: fullAccess,
+                employee_supervisor: fullAccess,
                 customer: ["c", "ro"],
             },
             consignee: {
-                admin: ["c", "r", "u", "d"],
-                employee_regular: ["c", "r", "u", "d"],
-                employee_warehouse: ["c", "r", "u", "d"],
-                employee_elevated: ["c", "r", "u", "d"],
-                employee_supervisor: ["c", "r", "u", "d"],
+                admin: fullAccess,
+                employee_regular: fullAccess,
+                employee_warehouse: fullAccess,
+                employee_elevated: fullAccess,
+                employee_supervisor: fullAccess,
                 customer: ["c", "ro"],
             },
             description: {
-                admin: ["c", "r", "u", "d"],
-                employee_regular: ["c", "r", "u", "d"],
-                employee_warehouse: ["c", "r", "u", "d"],
-                employee_elevated: ["c", "r", "u", "d"],
-                employee_supervisor: ["c", "r", "u", "d"],
+                admin: fullAccess,
+                employee_regular: fullAccess,
+                employee_warehouse: fullAccess,
+                employee_elevated: fullAccess,
+                employee_supervisor: fullAccess,
                 customer: ["c", "ro"],
             },
             packageValue: {
-                admin: ["c", "r", "u", "d"],
-                employee_regular: ["c", "r", "u", "d"],
-                employee_warehouse: ["c", "r", "u", "d"],
-                employee_elevated: ["c", "r", "u", "d"],
-                employee_supervisor: ["c", "r", "u", "d"],
+                admin: fullAccess,
+                employee_regular: fullAccess,
+                employee_warehouse: fullAccess,
+                employee_elevated: fullAccess,
+                employee_supervisor: fullAccess,
                 customer: ["c", "ro"],
             },
             cifValue: {
-                admin: ["c", "r", "u", "d"],
-                employee_regular: ["c", "r", "u", "d"],
-                employee_warehouse: ["c", "r", "u", "d"],
-                employee_elevated: ["c", "r", "u", "d"],
-                employee_supervisor: ["c", "r", "u", "d"],
+                admin: fullAccess,
+                employee_regular: fullAccess,
+                employee_warehouse: fullAccess,
+                employee_elevated: fullAccess,
+                employee_supervisor: fullAccess,
                 customer: ["c", "ro"],
             },
             invoices: {//customer can update freely
-                admin: ["c", "r", "u", "d"],
-                employee_regular: ["c", "r", "u", "d"],
-                employee_warehouse: ["c", "r", "u", "d"],
-                employee_elevated: ["c", "r", "u", "d"],
-                employee_supervisor: ["c", "r", "u", "d"],
-                customer: ["c", "ro", "uo", "do"],
+                admin: fullAccess,
+                employee_regular: fullAccess,
+                employee_warehouse: fullAccess,
+                employee_elevated: fullAccess,
+                employee_supervisor: fullAccess,
+                customer: createReadUpdateDeleteOwn,
             },
         },
     },
@@ -255,7 +247,7 @@ function getUserType(user: userType): userCrudTypeKeys {
         : user.role;
 }
 
-export async function ensureCanAccessTable<T extends tableNames>(tableName: T, columnNames: tableColumns[T][] = [], action: crudBaseType, resourceId?: string): Promise<ensureCanAccessTableReturnType> {
+export async function ensureCanAccessTable<T extends tableNames>(tableName: T, columnNames: tableColumns[T][] = [], crudActionObj: crudActionObjType): Promise<ensureCanAccessTableReturnType> {
     const tableColumnAccess: tableColumnAccessType = {}
 
     const tableErrors: string[] = []
@@ -298,7 +290,7 @@ export async function ensureCanAccessTable<T extends tableNames>(tableName: T, c
             //r and ro must match with r
 
             //r, ro includes r
-            const foundUserPermissionCrud = seenUserPermissionsCrud.find(eachSeenUserPermissionCrud => eachSeenUserPermissionCrud.includes(action))
+            const foundUserPermissionCrud = seenUserPermissionsCrud.find(eachSeenUserPermissionCrud => eachSeenUserPermissionCrud.includes(crudActionObj.action))
 
             //if can't do wanted action
             if (foundUserPermissionCrud === undefined) {
@@ -306,21 +298,21 @@ export async function ensureCanAccessTable<T extends tableNames>(tableName: T, c
 
                 //table
                 if (columnName === undefined) {
-                    throw new Error(`Not able to authorize "${action}" on table`)
+                    throw new Error(`Not able to authorize "${crudActionObj.action}" on table`)
 
                 } else {
                     //column
 
                     //dont throw error for column fail
                     tableColumnAccess[columnName] = false
-                    columnErrors.push(`Not able to authorize "${action}" on column ${columnName}`);
+                    columnErrors.push(`Not able to authorize "${crudActionObj.action}" on column ${columnName}`);
                 }
 
             } else {
                 //can do wanted action
 
                 //own check
-                const checkForOwnership = foundUserPermissionCrud.includes("o")
+                const checkForOwnership = foundUserPermissionCrud.includes("o") && !crudActionObj.skipOwnershipCheck
                 if (checkForOwnership) {
                     //prevent repeat column name checks 
                     userDoesOwn = columnName === undefined ? await checkOwnership() : userDoesOwn === undefined ? await checkOwnership() : userDoesOwn
@@ -360,18 +352,18 @@ export async function ensureCanAccessTable<T extends tableNames>(tableName: T, c
 
         async function checkOwnership() {
             //check for ownership - co, ro, uo, do
-            if (resourceId === undefined) throw new Error(`Not seeing resource ID for ownership check`)
+            if (crudActionObj.resourceId === undefined) throw new Error(`Not seeing resource ID for ownership check`)
 
             let ownershipId = "";
 
             //owenrship check on packages table e.g
             if (tableName === "packages") {
-                const seenPackage = await getSpecificPackage(parseInt(resourceId), { crud: "r" }, false);
+                const seenPackage = await getSpecificPackage(parseInt(crudActionObj.resourceId), { action: "r" }, false);
                 if (seenPackage === undefined) throw new Error(`Resource id not found for ${tableName}`)
                 ownershipId = seenPackage.userId;
 
             } else if (tableName === "users") {
-                const seenUser = await getSpecificUser(resourceId, { crud: "r" }, false);
+                const seenUser = await getSpecificUser(crudActionObj.resourceId, { action: "r" }, false);
                 if (seenUser === undefined) throw new Error(`Resource id not found for ${tableName}`)
                 ownershipId = seenUser.id;
 

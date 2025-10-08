@@ -8,10 +8,7 @@ import servicesStart2 from "@/public/services/servicesStart2.jpg"
 import servicesStart3 from "@/public/services/servicesStart3.jpg"
 import servicesStart4 from "@/public/services/servicesStart4.jpg"
 import servicesStart5 from "@/public/services/servicesStart5.jpg"
-import servicesStart6 from "@/public/services/servicesStart6.jpg"
-import servicesStart7 from "@/public/services/servicesStart7.jpg"
 import ShortCardDescription from '@/components/cards/shortCardDescription/ShortCardDescription'
-import CircularPercentage from '@/components/animate/CircularPercentage'
 import { servicesData } from '@/lib/data'
 
 export default function Page() {

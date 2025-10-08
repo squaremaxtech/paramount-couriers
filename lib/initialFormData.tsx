@@ -1,20 +1,9 @@
-import { newPackageType, newPreAlertType, newUserType } from "@/types";
-
-export const initialNewPreAlertObj: newPreAlertType = {
-    userId: "",
-    trackingNumber: "",
-    store: "",
-    consignee: "",
-    description: "",
-    packageValue: "0.00",
-    invoices: [],
-    acknowledged: false
-}
+import { newPackageType, newUserType } from "@/types";
 
 export const initialNewPackageObj: newPackageType = {
     userId: "",//
     location: "on way to warehouse",//
-    status: "in progress",//
+    status: "pre-alerted",//
     trackingNumber: "",//
     images: [],//
     weight: "0.00",

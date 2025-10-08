@@ -39,15 +39,6 @@ export default async function EmployeeLayout({
         {
           icon: (
             <span className="material-symbols-outlined mediumIcon">
-              quick_reorder
-            </span>
-          ),
-          link: `/employee/preAlerts`,
-          title: "preAlerts"
-        },
-        {
-          icon: (
-            <span className="material-symbols-outlined mediumIcon">
               add_card
             </span>
           ),

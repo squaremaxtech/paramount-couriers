@@ -9,12 +9,12 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     const usableId = extractIdFromTrackingNumber(id)
 
     //validate
-    const seenPackage = await getSpecificPackage(usableId, { crud: "r" })
+    const seenPackage = await getSpecificPackage(usableId, { action: "r" })
     if (seenPackage === undefined) return (<p>not seeing specific package</p>)
 
     return (
         <main>
-            <AddEditPackage sentPackage={seenPackage} wantedCrudObj={{ crud: "u" }} />
+            <AddEditPackage sentPackage={seenPackage} />
         </main>
     )
 }

@@ -7,7 +7,7 @@ export default async function Page() {
     const session = await auth()
     if (session === null) throw new Error("not seeing session")
 
-    const seenUser = await getSpecificUser(session.user.id, { crud: "ro", resourceId: session.user.id })
+    const seenUser = await getSpecificUser(session.user.id, { action: "r", resourceId: session.user.id })
     if (seenUser === undefined) throw new Error("not seeing user")
 
     return (

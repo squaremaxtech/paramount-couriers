@@ -2,7 +2,7 @@ import { z } from "zod";
 import * as schema from "@/db/schema"
 import { PgTableWithColumns } from "drizzle-orm/pg-core";
 
-export const dateSchma = z.preprocess((val) => {
+export const dateSchema = z.preprocess((val) => {
     if (typeof val === "string" || typeof val === "number") return new Date(val);
     return val;
 }, z.date())
@@ -48,10 +48,10 @@ export type tableColumns = {
     preAlertRelations: ""
 };
 
-export type wantedCrudObjType = {
-    crud: crudType,
+export type crudActionObjType = {
+    action: crudBaseType,
     resourceId?: string,
-    skipResourceIdCheck?: true
+    skipOwnershipCheck?: boolean,
 }
 
 export type tableColumnAccessType = {
@@ -69,7 +69,7 @@ export type ensureCanAccessTableReturnType = {
 
 // handle files
 export const dbFileSchema = z.object({
-    createdAt: dateSchma,
+    createdAt: dateSchema,
     fileName: z.string().min(1),
     src: z.string().min(1),
     status: z.enum(["to-delete", "to-upload", "uploaded"]),
@@ -228,7 +228,7 @@ export const userSchema = z.object({
     id: z.string().min(1),
     role: roleSchema,
     accessLevel: accessLevelSchema,
-    address: z.string().min(1),
+    address: z.string(),
     authorizedUsers: z.object({
         userId: z.string().min(1)
     }).array(),
@@ -238,7 +238,7 @@ export const userSchema = z.object({
     //null
     name: z.string().min(1).nullable(),
     email: z.string().email().nullable(),
-    emailVerified: dateSchma.nullable(),
+    emailVerified: dateSchema.nullable(),
     image: z.string().min(1).nullable(),
 })
 export type userType = z.infer<typeof userSchema> & {
@@ -251,17 +251,17 @@ export type newUserType = z.infer<typeof newUserSchema>
 
 
 
-export const statusOptions = ["pre-alerted", "fulfilled", "in progress", "cancelled", "on hold"] as const
+export const statusOptions = ["pre-alerted", "in progress", "cancelled", "on hold", "delivered"] as const
 export const statusSchema = z.enum(statusOptions)
 export type statusType = z.infer<typeof statusSchema>
 
-export const locationOptions = ["on way to warehouse", "warehouse delivered", "in transit to jamaica", "jamaica arrived", "ready for pickup", "delivered"] as const
+export const locationOptions = ["on way to warehouse", "warehouse delivered", "in transit to jamaica", "jamaica arrived", "ready for pickup"] as const
 export const locationSchema = z.enum(locationOptions)
 export type locationType = z.infer<typeof locationSchema>
 
 export const packageSchema = z.object({
     id: z.number(),
-    dateCreated: dateSchma,
+    dateCreated: dateSchema,
 
     userId: userSchema.shape.id,
     location: locationSchema,

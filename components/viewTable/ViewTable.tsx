@@ -1,5 +1,5 @@
 "use client"
-import { allFilters, dateSchma, dbImageSchema, dbImageType, dbInvoiceSchema, dbInvoiceType, decimalStringSchema, filterSearchType, searchObjType, tableFilterTypes, userSchema, userType, withId } from '@/types'
+import { allFilters, dateSchema, dbImageSchema, dbImageType, dbInvoiceSchema, dbInvoiceType, decimalStringSchema, filterSearchType, searchObjType, tableFilterTypes, userSchema, userType, withId } from '@/types'
 import React, { useRef, useState } from 'react'
 import styles from "./style.module.css"
 import { formatAsMoney, formatWeight, generateTrackingNumber, makeDateTimeLocalInput, spaceCamelCase } from '@/utility/utility'
@@ -492,11 +492,13 @@ export default function ViewTable<T extends withId>(
 
                                         //user obj check
                                         const userTest = userSchema.safeParse(tableData)
+                                        console.log(`$tableData`, tableData);
                                         if (userTest.data !== undefined) {
                                             seenUser = userTest.data
+                                            console.log(`$seenUser`, seenUser);
                                         }
 
-                                        const dateTest = dateSchma.safeParse(tableData)
+                                        const dateTest = dateSchema.safeParse(tableData)
                                         if (dateTest.data !== undefined) {
                                             seenDateCreated = dateTest.data
                                         }

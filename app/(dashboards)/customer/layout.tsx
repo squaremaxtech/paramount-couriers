@@ -42,8 +42,8 @@ export default async function CustomerLayout({
               quick_reorder
             </span>
           ),
-          link: `/customer/preAlerts`,
-          title: "pre alerts"
+          link: `/customer/preAlert`,
+          title: "pre alert"
         },
         {
           icon: (

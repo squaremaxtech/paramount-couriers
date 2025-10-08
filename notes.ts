@@ -2,6 +2,7 @@
 //auth table updated...
 //make packages table use permissions for all users
 //ensure resource id passed to function always
+//replace pre alerts page with link
 
 
 
