@@ -45,7 +45,7 @@ const tableAccess: tableAccessType = {
             employee_regular: readUpdate,
             employee_warehouse: read,
             employee_elevated: readUpdate,
-            employee_supervisor: ["c", "r", "u"],
+            employee_supervisor: readUpdate,
             customer: ["ro", "uo"],
         },
         columnDefault: {
@@ -66,7 +66,7 @@ const tableAccess: tableAccessType = {
                 customer: read,
             },
             role: {
-                admin: readUpdate,
+                admin: fullAccess,
                 employee_regular: read,
                 employee_warehouse: read,
                 employee_elevated: read,
@@ -74,7 +74,7 @@ const tableAccess: tableAccessType = {
                 customer: readOwn,
             },
             accessLevel: {
-                admin: readUpdate,
+                admin: fullAccess,
                 employee_regular: read,
                 employee_warehouse: read,
                 employee_elevated: read,
@@ -115,7 +115,7 @@ const tableAccess: tableAccessType = {
             },
             authorizedUsers: {
                 admin: fullAccess,
-                employee_regular: read,
+                employee_regular: fullAccess,
                 employee_warehouse: read,
                 employee_elevated: fullAccess,
                 employee_supervisor: fullAccess,

@@ -114,6 +114,17 @@ export function handleEnsureCanAccessTableResults(ensureCanAccessTableReturn: en
     return ensureCanAccessTableReturn.tableColumnAccess
 }
 
+export function handleEnsureCanAccessTableResultsBool(ensureCanAccessTableReturn: ensureCanAccessTableReturnType, option: "table" | "column" | "both") {
+    try {
+        handleEnsureCanAccessTableResults(ensureCanAccessTableReturn, option)
+
+        return true
+
+    } catch (error) {
+        return false
+    }
+}
+
 export function makeWhereClauses<T extends Object>(schema: z.Schema, filter: T, dbSchema: PgTableWithColumns<any>) {
     // Validate filter
     schema.parse(filter);

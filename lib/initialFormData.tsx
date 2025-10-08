@@ -33,5 +33,5 @@ export const initialNewUserObj: newUserType = {
     name: "",
     email: "",
     emailVerified: null,
-    image: "",
+    image: null,
 }

@@ -21,7 +21,7 @@ type replaceDataType<T> = {
 
 export default function ViewTable<T extends withId>(
     { wantedItems, hideColumns, sizeClass, searchFunc, renameTableHeadings, headingOrder, tableProvider, searchDebounceTime = 500, replaceData }:
-        { wantedItems: T[], hideColumns?: (keyof T)[], sizeClass?: { large: (keyof T)[], small: (keyof T)[] }, searchFunc: (tableFilters: tableFilterTypes<T>, wantedItemsSearchObj: searchObjType<T>) => Promise<T[]>, renameTableHeadings?: { [key in keyof T]?: string }, headingOrder?: (keyof T)[], tableProvider: { filters: allFilters<T>, columns: (keyof T)[] }, searchDebounceTime?: number, replaceData?: replaceDataType<T> }
+        { wantedItems: T[], hideColumns?: (keyof T)[], sizeClass?: { largest: (keyof T)[], large: (keyof T)[], small: (keyof T)[] }, searchFunc: (tableFilters: tableFilterTypes<T>, wantedItemsSearchObj: searchObjType<T>) => Promise<T[]>, renameTableHeadings?: { [key in keyof T]?: string }, headingOrder?: (keyof T)[], tableProvider: { filters: allFilters<T>, columns: (keyof T)[] }, searchDebounceTime?: number, replaceData?: replaceDataType<T> }
 ) {
     const searchParams = useSearchParams()
     const router = useRouter()
@@ -85,10 +85,14 @@ export default function ViewTable<T extends withId>(
     const [, refresherSet] = useState(false)
 
     function returnSizeClass(tableHeading: keyof T) {
+        const largestTableHeadings: (keyof T)[] = sizeClass !== undefined ? sizeClass.largest : []
         const largeTableHeadings: (keyof T)[] = sizeClass !== undefined ? sizeClass.large : []
         const smallTableHeadings: (keyof T)[] = sizeClass !== undefined ? sizeClass.small : []
 
-        if (largeTableHeadings.includes(tableHeading)) {
+        if (largestTableHeadings.includes(tableHeading)) {
+            return "largest"
+
+        } else if (largeTableHeadings.includes(tableHeading)) {
             return "larger"
 
         } else if (smallTableHeadings.includes(tableHeading)) {
@@ -630,6 +634,10 @@ export default function ViewTable<T extends withId>(
                                                                 <div className='resetTextMargin' style={{ fontSize: "var(--fontSizeS)" }}>
                                                                     <li>{seenUser.name}</li>
                                                                     <li>{seenUser.email}</li>
+                                                                    <li>Deliver: {seenUser.packageDeliveryMethod === "home" ? "Home" : `${seenUser.packageDeliveryMethod} Branch`}</li>
+                                                                    {seenUser.address !== null && seenUser.packageDeliveryMethod === "home" && (
+                                                                        <li>Home Parish: {seenUser.address.parish}</li>
+                                                                    )}
                                                                 </div>
                                                             )}
 

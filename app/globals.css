@@ -483,6 +483,11 @@ option {
   justify-items: center !important;
 }
 
+.recordTable th.largest,
+.recordTable td.largest {
+  flex-basis: 300px;
+}
+
 .recordTable th.larger,
 .recordTable td.larger {
   flex-basis: 220px;

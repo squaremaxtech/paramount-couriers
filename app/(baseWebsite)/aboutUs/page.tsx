@@ -49,15 +49,15 @@ export default function Page() {
                 <ul className='container' style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(200px, 100%), 1fr))", gap: "var(--spacingL)", overflow: "auto", }}>
                     {[
                         {
-                            amount: 2500,
-                            title: "Complete Delivery Per Month"
+                            amount: 100,
+                            title: "Complete Deliveries Per Month"
                         },
                         {
-                            amount: 58,
+                            amount: 5,
                             title: "Years Practical Experience"
                         },
                         {
-                            amount: 96,
+                            amount: 20,
                             title: "Awesome Team Members"
                         },
                     ].map((eachFunFact, eachFunFactIndex) => {

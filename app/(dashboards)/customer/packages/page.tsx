@@ -11,7 +11,7 @@ export default async function Page() {
     if (session === null) return <p>not seeing session</p>
 
     //ensures can only read own records
-    const seenPackages = await getPackages({ userId: session.user.id }, { action: "r", skipOwnershipCheck: true }, {})
+    const seenPackages = await getPackages({ userId: session.user.id }, { action: "r", skipOwnershipCheck: true }, {}, 50)
 
     return (
         <main>
@@ -23,6 +23,7 @@ export default async function Page() {
                         hideColumns={["userId", "comments", ("enableRLS") as (keyof packageType)]}
                         tableProvider={provideFilterAndColumnForTable(packages)}
                         sizeClass={{
+                            largest: [],
                             large: ["id", "trackingNumber", "location", "dateCreated"],
                             small: []
                         }}

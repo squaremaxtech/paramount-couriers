@@ -48,11 +48,20 @@ export default async function EmployeeLayout({
         {
           icon: (
             <span className="material-symbols-outlined mediumIcon">
-              add_location_alt
+              distance
             </span>
           ),
-          link: ``,
-          title: "addresses"
+          link: `/employee/address`,
+          title: "US address"
+        },
+        {
+          icon: (
+            <span className="material-symbols-outlined mediumIcon">
+              account_circle
+            </span>
+          ),
+          link: `/employee/users`,
+          title: "users"
         },
         //  {
         //   icon: (

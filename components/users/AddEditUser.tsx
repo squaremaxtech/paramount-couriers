@@ -280,6 +280,12 @@ export default function AddEditUser({ sentUser, submissionAction }: { sentUser?:
                                             const newFormObj = { ...prevFormObj }
                                             if (newFormObj.address === undefined) return prevFormObj
 
+                                            if (formObj.packageDeliveryMethod !== undefined && formObj.packageDeliveryMethod === "home") {
+                                                toast.error("please change your package delivery method to a branch location first")
+
+                                                return newFormObj
+                                            }
+
                                             newFormObj.address = null
 
                                             return newFormObj
@@ -302,6 +308,12 @@ export default function AddEditUser({ sentUser, submissionAction }: { sentUser?:
                         formObjSet(prevFormObj => {
                             const newFormObj = { ...prevFormObj }
                             if (newFormObj.packageDeliveryMethod === undefined) return prevFormObj
+
+                            if (value === "home" && formObj.address !== undefined && formObj.address === null) {
+                                toast.error("ensure you have your address set")
+
+                                return newFormObj
+                            }
 
                             newFormObj.packageDeliveryMethod = value
 

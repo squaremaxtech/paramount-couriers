@@ -7,7 +7,7 @@ import Link from 'next/link'
 import React from 'react'
 
 export default async function Page() {
-    const seenPackages = await getPackages({}, { action: "r" }, { fromUser: true })
+    const seenPackages = await getPackages({}, { action: "r" }, { fromUser: true }, 50)
 
     return (
         <main className='container'>
@@ -20,6 +20,7 @@ export default async function Page() {
                     wantedItems={seenPackages}
                     tableProvider={provideFilterAndColumnForTable(packages)}
                     sizeClass={{
+                        largest: [],
                         large: ["id", "trackingNumber", "location", "dateCreated"],
                         small: []
                     }}

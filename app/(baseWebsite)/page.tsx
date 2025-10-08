@@ -32,17 +32,17 @@ export default function Home() {
             {
               img: welcomeStandardImage,
               title: "barrel shipping",
-              link: "/services/#shipping",
+              link: "/services/#shipment",
             },
             {
               img: welcomeExpressImage,
               title: "freight shipping",
-              link: "/services/#shipping",
+              link: "/services/#shipment",
             },
             {
               img: welcomeDoorToDoorImage,
               title: "air & sea cargo",
-              link: "/services/#shipping",
+              link: "/services/#shipment",
             },
             {
               img: welcomeWareHousingImage,
@@ -58,7 +58,7 @@ export default function Home() {
                 <div style={{ display: "grid", justifyItems: "center", margin: "var(--spacingL)" }} className="resetTextMargin">
                   <h4 style={{ textAlign: "center" }}>{eachViewMoreObj.title}</h4>
 
-                  <Link href={eachViewMoreObj.title} className={styles.welcomeItemButton}>
+                  <Link href={eachViewMoreObj.link} className={styles.welcomeItemButton}>
                     <button className="button1">
                       view more
                     </button>
@@ -146,7 +146,7 @@ export default function Home() {
           {servicesData.map((eachService, eachServiceIndex) => {
             return (
               <li key={eachServiceIndex}>
-                <Link href={`services/${eachService.slug}`} className={`${styles.eachService} container`}>
+                <Link href={`services#${eachService.slug}`} className={`${styles.eachService} container`}>
                   <span className={`${styles.swapColor} material-symbols-outlined largerIcon`}>
                     {eachService.iconName}
                   </span>
