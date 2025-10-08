@@ -19,7 +19,7 @@ export default async function Page() {
                 (
                     <ViewTable
                         wantedItems={seenPackages}
-                        headingOrder={["id", "trackingNumber", "store", "description", "dateCreated", "location", "status", "invoices", "dateCreated", "packageValue", "payment", "needAttention"]}
+                        headingOrder={["id", "trackingNumber", "store", "description", "dateCreated", "location", "status", "invoices", "dateCreated", "packageValue", "charges", "payment", "needAttention"]}
                         hideColumns={["userId", "comments", ("enableRLS") as (keyof packageType)]}
                         tableProvider={provideFilterAndColumnForTable(packages)}
                         sizeClass={{

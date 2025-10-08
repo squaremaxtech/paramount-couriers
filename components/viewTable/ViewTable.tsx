@@ -1,8 +1,8 @@
 "use client"
-import { allFilters, dateSchema, dbImageSchema, dbImageType, dbInvoiceSchema, dbInvoiceType, decimalStringSchema, filterSearchType, searchObjType, tableFilterTypes, userSchema, userType, withId } from '@/types'
+import { allFilters, dateSchema, dbImageSchema, dbImageType, dbInvoiceSchema, dbInvoiceType, decimalStringSchema, filterSearchType, packageSchema, packageType, searchObjType, tableFilterTypes, userSchema, userType, withId } from '@/types'
 import React, { useEffect, useRef, useState } from 'react'
 import styles from "./style.module.css"
-import { filtersFromQuery, formatAsMoney, formatWeight, generateTrackingNumber, makeDateTimeLocalInput, spaceCamelCase } from '@/utility/utility'
+import { calculatePackageServiceCost, filtersFromQuery, formatAsMoney, formatWeight, generateTrackingNumber, makeDateTimeLocalInput, spaceCamelCase } from '@/utility/utility'
 import { consoleAndToastError } from '@/useful/consoleErrorWithToast'
 import CheckBox from '@/components/inputs/checkBox/CheckBox'
 import Select from '../inputs/select/Select'
@@ -542,6 +542,7 @@ export default function ViewTable<T extends withId>(
                                     let imageArr: dbImageType[] | undefined = undefined
                                     let seenDateCreated: Date | undefined = undefined
                                     let seenUser: userType | undefined = undefined
+                                    let seenCharges: packageType["charges"] | undefined = undefined
 
                                     if (typeof tableData === "object") {
                                         if (Array.isArray(tableData)) {
@@ -562,12 +563,16 @@ export default function ViewTable<T extends withId>(
                                         const userTest = userSchema.safeParse(tableData)
                                         if (userTest.data !== undefined) {
                                             seenUser = userTest.data
-                                            console.log(`$seenUser`, seenUser);
                                         }
 
                                         const dateTest = dateSchema.safeParse(tableData)
                                         if (dateTest.data !== undefined) {
                                             seenDateCreated = dateTest.data
+                                        }
+
+                                        const chargesTest = packageSchema.shape.charges.safeParse(tableData)
+                                        if (chargesTest.data !== undefined) {
+                                            seenCharges = chargesTest.data
                                         }
                                     }
 
@@ -626,6 +631,10 @@ export default function ViewTable<T extends withId>(
                                                                     <li>{seenUser.name}</li>
                                                                     <li>{seenUser.email}</li>
                                                                 </div>
+                                                            )}
+
+                                                            {seenCharges !== undefined && (
+                                                                <p>{formatAsMoney(`${calculatePackageServiceCost(seenCharges)}`)}</p>
                                                             )}
                                                         </>
                                                     )}
