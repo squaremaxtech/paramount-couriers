@@ -239,3 +239,84 @@ export function calculatePackageServiceCost(charges: packageType["charges"]) {
 
     return freight + fuel + insurance
 }
+
+type Generic = Record<string, any>
+
+/** Convert active filters (base.using === true) to query params */
+export function filtersToQuery<T extends Generic>(filters: allFilters<T>) {
+    const params = new URLSearchParams()
+
+    for (const key in filters) {
+        const filter = filters[key]
+        if (!filter || !filter.base?.using) continue
+
+        switch (filter.type) {
+            case "boolean":
+                if (filter.value !== undefined) params.set(key, String(filter.value))
+                break
+            case "number":
+            case "string":
+            case "stringNumber":
+                if (filter.value !== undefined && filter.value !== "")
+                    params.set(key, String(filter.value))
+                break
+            case "options":
+                if (filter.value) params.set(key, filter.value)
+                break
+            case "date":
+                if (filter.value) params.set(key, filter.value.toISOString())
+                break
+            case "array":
+                if (Array.isArray(filter.value) && filter.value.length > 0)
+                    params.set(key, JSON.stringify(filter.value))
+                break
+        }
+    }
+
+    return params
+}
+
+/** Restore filters from URLSearchParams */
+export function filtersFromQuery<T extends Generic>(
+    params: URLSearchParams,
+    currentFilters: allFilters<T>
+) {
+    const updated: allFilters<T> = { ...currentFilters }
+
+    for (const key in updated) {
+        const filter = updated[key]
+        if (!filter) continue
+
+        const value = params.get(key)
+        if (value === null) continue
+
+        switch (filter.type) {
+            case "boolean":
+                filter.value = value === "true"
+                break
+            case "number":
+                filter.value = Number(value)
+                break
+            case "string":
+            case "stringNumber":
+            case "options":
+                filter.value = value
+                break
+            case "date":
+                filter.value = new Date(value)
+                break
+            case "array":
+                try {
+                    filter.value = JSON.parse(value)
+                } catch {
+                    filter.value = []
+                }
+                break
+        }
+
+        // Mark as used
+        filter.base = { ...filter.base, using: true }
+    }
+
+    return updated
+}

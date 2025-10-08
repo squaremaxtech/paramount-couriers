@@ -8,7 +8,6 @@ import React from 'react'
 
 export default async function Page() {
     const seenPackages = await getPackages({}, { action: "r" }, { fromUser: true })
-    console.log(`$seenPackages`, seenPackages);
 
     return (
         <main className='container'>

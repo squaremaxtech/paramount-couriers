@@ -1,98 +1,28 @@
 //To Do:
-//auth table updated...
-//make packages table use permissions for all users
-//ensure resource id passed to function always
-//replace pre alerts page with link
-
-
-
-//make overview
-//show packages not closed
-//recently delivered
-
-
-
-// paramount couriers
-
-// managaeparamountcouriers@gmail.com
-
-
-// meeting questions:
-// how do they work - new shipping provider
-
-// whats my role
-
-// what happens net
-
-// full us address?:
-// pmc address
-
-// agent
-// Kingston, st Thomas
-
-
-// notes:
-
-
-// to do:
-// add customer address to package info table - Kingston/st. thomas
-
-
-
-//they handle clearance they delever to you in kingston
-//paramount offers home address delevery and branch pickup
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//designs for services...
-//api from cool couriers
+//make multi select menu: print, delete...etc - along with multi update menu
+//add email updates
 //Show an example of using Amazon/Shein - show shipping address - name with PMR - when making a package, on new sign up - Add PMR in
 //contact us map
-//finish this in a week - final copy, final design, finalise each page - make dashboards look good.
 //add auth to view image/download
 //enable contact form - need business email/domain
-//finish dashboard home
-//general email for customers to resign up
+//general email for customers to re-sign up
 //bulk actions
 //new customer onboarding process - completed check - if not customer sees update info
-//add accounts page
-//get images
-//make gmail for manageparamountcouriers
 //add notifications - on specific package info change - location, status change, needs attention
 //update amt of points for each service - points made
-
-//Landing page should have
-//Faq section...
-//Rates...
-//Highlight how many times per week shipments are available - monday/wednesday, get address as well
 //Highlight email updates for packages
+////make comments own table
+//home delivery to
+// Kingston, st Thomas
+// add customer address to package info table - Kingston/st. thomas
 
+//long term
 //write to reusable project
 ////auth role checker
 //write starts to share project
 //update testimonials
 //make admin page - manage all fields
 
-////make comments own table
 
 
 
@@ -112,6 +42,7 @@
 
 
 
+
 //notes
 //sync env
 
@@ -123,6 +54,10 @@
 
 //we use prc
 //anything that comes to the warehouse with prt is ours - customer name on there
+// managaeparamountcouriers@gmail.com
+//paramount offers home address delevery and branch pickup
+
+
 
 
 //completed
@@ -154,3 +89,18 @@
 //Jamaica arrives - ready for pickup, delivered at the end...
 //new logo...
 //charges start off at a certain value - takes into consideration the weight of the package - active rates - make a database...
+//finish dashboard home...
+//add accounts page...
+//make gmail for manageparamountcouriers...
+//designs for services...
+//Landing page should have...
+//Faq section...
+//Rates...
+//Highlight how many times per week shipments are available - monday/wednesday, get address as well...
+//auth table updated...
+//make packages table use permissions for all users...
+//ensure resource id passed to function always...
+//replace pre alerts page with link...
+//make overview...
+//show packages not closed...
+//recently delivered...

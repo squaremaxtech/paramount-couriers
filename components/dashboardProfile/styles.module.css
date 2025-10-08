@@ -10,7 +10,9 @@
     top: 100%;
     right: 0;
     width: min(300px, 100vw);
-    background-color: var(--bg2)
+    background-color: var(--bg2);
+    z-index: 99;
+    text-transform: capitalize;
 }
 
 .moreIntemsItem {
@@ -20,5 +22,5 @@
 }
 
 .moreIntemsItem:hover {
-    background-color: var(--bg2);
+    background-color: var(--bg5);
 }

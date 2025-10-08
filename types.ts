@@ -200,6 +200,18 @@ export const contactFormSchema = z.object({
 })
 export type contactFormType = z.infer<typeof contactFormSchema>
 
+export type locationIconMatchType = {
+    [key in locationType]: string
+}
+export const locationIconMatch: locationIconMatchType = {
+    "on way to warehouse": "airplane_ticket",
+    "warehouse delivered": "deployed_code_update",
+    "in transit to jamaica": "travel",
+    "jamaica arrived": "distance",
+    "ready for pickup": "celebration"
+}
+
+
 
 
 

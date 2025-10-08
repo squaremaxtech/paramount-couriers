@@ -1,0 +1,21 @@
+.locationOption {
+    padding: var(--spacingS);
+    border-radius: var(--borderRadiusS);
+    background-color: var(--bg2);
+    display: grid;
+    justify-items: center;
+}
+
+.canHover {
+    transition: scale var(--transitionTimeR);
+}
+
+.canHover:hover {
+    scale: 1.05;
+}
+
+.eachPackage {
+    background-color: var(--bg2);
+    box-shadow: 0px 0px 7px 2px color-mix(in hsl, var(--bg1), transparent 90%);
+    /* border: 1px solid var(--shade2); */
+}
