@@ -1,5 +1,5 @@
 import { auth } from '@/auth/auth'
-import ShowAccount from '@/components/account/showAccount'
+import AddEditUser from '@/components/users/AddEditUser'
 import { getSpecificUser } from '@/serverFunctions/handleUsers'
 import React from 'react'
 
@@ -12,7 +12,7 @@ export default async function Page() {
 
     return (
         <main>
-            <ShowAccount user={seenUser} />
+            <AddEditUser sentUser={seenUser} />
         </main>
     )
 }

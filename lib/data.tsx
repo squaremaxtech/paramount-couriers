@@ -7,6 +7,12 @@ export const siteInfo = {
     emailAddresses: ["support@paramount-couriers.com", "info@paramount-couriers.com"],
     addresses: ["W6PC+FC, Port Royal", "4500 north hiatus road"],
     phoneNumbers: ["+1 (876) 782-9165", "+1 (876) 782-9165"],
+    shippingAddress: {
+        street: "3706 NW 16th Street, Lauderhill",
+        city: "Miami",
+        state: "FL",
+        zipCode: "33311",
+    }
 }
 
 export const servicesData: {

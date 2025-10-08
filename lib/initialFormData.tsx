@@ -26,8 +26,9 @@ export const initialNewPackageObj: newPackageType = {
 export const initialNewUserObj: newUserType = {
     role: "employee",
     accessLevel: "regular",
-    address: "",
     authorizedUsers: [],
+    address: null,
+    packageDeliveryMethod: "Kingston",
 
     name: "",
     email: "",

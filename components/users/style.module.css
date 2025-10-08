@@ -1,0 +1,7 @@
+.form {
+    display: grid;
+    align-content: flex-start;
+    gap: var(--spacingR);
+    padding: var(--spacingR);
+    overflow: auto;
+}

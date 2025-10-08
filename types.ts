@@ -39,10 +39,13 @@ export type tableColumns = {
     sessions: ""
     authenticators: ""
     verificationTokens: ""
+    //
     roleEnum: ""
     accessLevelEnum: ""
     statusEnum: ""
     locationEnum: ""
+    packageDeliveryMethodEnum: ""
+    //
     userRelations: ""
     packageRelations: ""
     preAlertRelations: ""
@@ -235,15 +238,32 @@ export const accessLevelOptions = ["regular", "warehouse", "elevated", "supervis
 export const accessLevelSchema = z.enum(accessLevelOptions)
 export type accessLevelType = z.infer<typeof accessLevelSchema>
 
+export const parishOptions = ["Kingston", "St. Andrew", "St. Catherine", "Clarendon", "Manchester", "St. Elizabeth", "Westmoreland", "Hanover", "St. James", "Trelawny", "St. Ann", "St. Mary", "Portland", "St. Thomas"] as const;
+export const parishSchema = z.enum(parishOptions);
+export type parishType = z.infer<typeof parishSchema>;
+
+export const branchLocationOptions = ["Kingston", "St. Thomas"] as const;
+export const branchLocationSchema = z.enum(branchLocationOptions);
+export type branchLocationType = z.infer<typeof branchLocationSchema>;
+
+export const packageDeliveryMethodOptions = ["home", ...branchLocationOptions] as const;
+export const packageDeliveryMethodSchema = z.enum(packageDeliveryMethodOptions);
+export type packageDeliveryMethodType = z.infer<typeof packageDeliveryMethodSchema>;
+
 export const userSchema = z.object({
     //defaults
     id: z.string().min(1),
     role: roleSchema,
     accessLevel: accessLevelSchema,
-    address: z.string(),
     authorizedUsers: z.object({
         userId: z.string().min(1)
     }).array(),
+    address: z.object({
+        street: z.string().min(1, "please enter sreet address"),
+        parish: parishSchema,
+        city: z.string().min(1, "please enter your city"),
+    }).nullable(),
+    packageDeliveryMethod: packageDeliveryMethodSchema,
 
     //regular
 

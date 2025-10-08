@@ -1,18 +1,20 @@
-import { accessLevelOptions, dbImageType, dbInvoiceType, locationOptions, packageType, roleOptions, statusOptions, userType } from "@/types";
+import { accessLevelOptions, dbImageType, dbInvoiceType, locationOptions, packageDeliveryMethodOptions, packageType, roleOptions, statusOptions, userType } from "@/types";
 import { relations } from "drizzle-orm";
 import { boolean, timestamp, pgTable, text, primaryKey, integer, pgEnum, serial, json, decimal, index } from "drizzle-orm/pg-core"
 import type { AdapterAccountType } from "next-auth/adapters"
 
 export const roleEnum = pgEnum("role", roleOptions);
 export const accessLevelEnum = pgEnum("accessLevel", accessLevelOptions);
+export const packageDeliveryMethodEnum = pgEnum("packageDeliveryMethod", packageDeliveryMethodOptions);
 
 export const users = pgTable("users", {
     //defaults
     id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
     role: roleEnum().notNull().default("customer"),
     accessLevel: accessLevelEnum().notNull().default("regular"),
-    address: text("address").notNull().default(""),
     authorizedUsers: json("authorizedUsers").$type<userType["authorizedUsers"]>().notNull().default([]),
+    address: json("address").$type<userType["address"]>().default(null),
+    packageDeliveryMethod: packageDeliveryMethodEnum().notNull().default("Kingston"),
 
     //regular
 
@@ -21,6 +23,7 @@ export const users = pgTable("users", {
     email: text("email").unique(),
     emailVerified: timestamp("emailVerified", { mode: "date" }),
     image: text("image"),
+
 })
 export const userRelations = relations(users, ({ many }) => ({
     packages: many(packages),

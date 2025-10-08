@@ -120,8 +120,6 @@ export default function AddEditPackage({ sentPackage, submissionAction }: { sent
 
             //new package
             if (sentPackage === undefined) {
-                console.log(`$formObj`, formObj);
-
                 //validate - replace with initial defaults if no access to "c"
                 const filteredPackage = filterTableObjectByColumnAccess(tableColumnAccess, formObj, initialNewPackageObj)
 

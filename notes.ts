@@ -1,4 +1,16 @@
 //To Do:
+//add us address...
+//add home address, delivery options and name all edited in one place - auth...
+//confirm logo
+//apply extra user info on view package table
+//add address to customer nav - both rates and address on customer and employee
+//ensure customer enters full name
+//view user
+//email notifications - need professional email first
+//make user edit section: available to admins, elevated employees, supervisors
+
+
+
 //make multi select menu: print, delete...etc - along with multi update menu
 //add email updates
 //Show an example of using Amazon/Shein - show shipping address - name with PMR - when making a package, on new sign up - Add PMR in

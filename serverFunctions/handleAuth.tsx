@@ -42,11 +42,11 @@ const tableAccess: tableAccessType = {
     users: {
         table: {
             admin: fullAccess,
-            employee_regular: read,
+            employee_regular: readUpdate,
             employee_warehouse: read,
-            employee_elevated: read,
-            employee_supervisor: ["c", "r"],
-            customer: readOwn,
+            employee_elevated: readUpdate,
+            employee_supervisor: ["c", "r", "u"],
+            customer: ["ro", "uo"],
         },
         columnDefault: {
             admin: fullAccess,
@@ -57,7 +57,14 @@ const tableAccess: tableAccessType = {
             customer: readOwn,
         },
         columns: {
-            id: fixedUserCrud,
+            id: {
+                admin: fullAccess,
+                employee_regular: read,
+                employee_warehouse: read,
+                employee_elevated: read,
+                employee_supervisor: read,
+                customer: read,
+            },
             role: {
                 admin: readUpdate,
                 employee_regular: read,
@@ -82,7 +89,23 @@ const tableAccess: tableAccessType = {
                 employee_supervisor: readUpdate,
                 customer: ["r", "uo"],
             },
+            email: {
+                admin: fullAccess,
+                employee_regular: read,
+                employee_warehouse: read,
+                employee_elevated: readUpdate,
+                employee_supervisor: readUpdate,
+                customer: ["ro"],
+            },
             address: {
+                admin: fullAccess,
+                employee_regular: readUpdate,
+                employee_warehouse: read,
+                employee_elevated: readUpdate,
+                employee_supervisor: readUpdate,
+                customer: ["ro", "uo"],
+            },
+            packageDeliveryMethod: {
                 admin: fullAccess,
                 employee_regular: readUpdate,
                 employee_warehouse: read,
@@ -206,6 +229,7 @@ const tableAccess: tableAccessType = {
     accessLevelEnum: undefined,
     statusEnum: undefined,
     locationEnum: undefined,
+    packageDeliveryMethodEnum: undefined,
 
     userRelations: undefined,
     packageRelations: undefined,

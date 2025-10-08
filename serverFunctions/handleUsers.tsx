@@ -32,11 +32,13 @@ export async function updateUser(userId: userType["id"], updatedUserObj: Partial
     const accessTableResults = await ensureCanAccessTable("users", Object.keys(updatedUserObj) as tableColumns["users"][], crudActionObj)
     handleEnsureCanAccessTableResults(accessTableResults, "both")
 
-    await db.update(users)
+    const [result] = await db.update(users)
         .set({
             ...updatedUserObj
         })
-        .where(eq(users.id, userId));
+        .where(eq(users.id, userId)).returning();
+
+    return result
 }
 
 export async function deleteUser(userId: userType["id"], crudActionObj: crudActionObjType) {

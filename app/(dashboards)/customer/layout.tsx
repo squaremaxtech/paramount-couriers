@@ -57,6 +57,15 @@ export default async function CustomerLayout({
         {
           icon: (
             <span className="material-symbols-outlined mediumIcon">
+              distance
+            </span>
+          ),
+          link: `/customer/address`,
+          title: "US address"
+        },
+        {
+          icon: (
+            <span className="material-symbols-outlined mediumIcon">
               account_circle
             </span>
           ),
