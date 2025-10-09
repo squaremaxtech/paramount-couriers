@@ -1,6 +1,6 @@
 "use server";
 import { auth } from "@/auth/auth";
-import { crudActionObjType, crudBaseType, crudType, ensureCanAccessTableReturnType, tableColumnAccessType, tableColumns, tableNames, userCrudType, userCrudTypeKeys, userType } from "@/types";
+import { crudActionObjType, crudType, ensureCanAccessTableReturnType, tableColumnAccessType, tableColumns, tableNames, userCrudType, userCrudTypeKeys, userType } from "@/types";
 import { getSpecificPackage } from "./handlePackages";
 import { errorZodErrorAsString } from "@/useful/consoleErrorWithToast";
 import { getSpecificUser } from "./handleUsers";

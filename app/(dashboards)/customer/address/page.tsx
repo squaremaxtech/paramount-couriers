@@ -92,12 +92,22 @@ export default async function Page() {
                     </li>
 
                     <li>
-                        <p>Address Line</p>
+                        <p>Address Line 1</p>
 
                         <p>
                             {siteInfo.shippingAddress.street}
 
                             <CopyClipboard text={siteInfo.shippingAddress.street} />
+                        </p>
+                    </li>
+
+                    <li>
+                        <p>Address Line 2</p>
+
+                        <p>
+                            {siteInfo.shippingAddress.street2}
+
+                            <CopyClipboard text={siteInfo.shippingAddress.street2} />
                         </p>
                     </li>
 
