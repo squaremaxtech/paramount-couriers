@@ -1,11 +1,11 @@
 //To Do:
+//improve filters on view table
+//make multi select menu: export to excel, delete...etc
+//bulk updates
 //email notifications - need professional email first
-//make multi select menu: print, delete...etc - along with multi update menu
-//add email updates
 //add auth to view image/download
 //enable contact form - need business email/domain
-//general email for customers to re-sign up
-//bulk actions
+//send off general email for customers to re-sign up
 //new customer onboarding process - completed check - if not customer sees update info
 //add notifications - on specific package info change - location, status change, needs attention
 //make comments own table
