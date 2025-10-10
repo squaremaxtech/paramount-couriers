@@ -300,7 +300,7 @@ export default function AddEditUser({ sentUser, submissionAction }: { sentUser?:
 
             {formObj.packageDeliveryMethod !== undefined && tableColumnAccess["packageDeliveryMethod"] && (
                 <Select
-                    label='select package devliery method'
+                    label={`package devliery method - ${formObj.packageDeliveryMethod !== "home" ? "branch pickup" : "delivery"}`}
                     name='packageDeliveryMethod'
                     value={formObj.packageDeliveryMethod}
                     valueOptions={seenPackageDeliveryMethodOptions}

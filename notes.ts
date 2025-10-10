@@ -1,4 +1,10 @@
 //To Do:
+//update phone numbers - digicel/flow
+//proper get started page explaining everything
+//add extra location to package - in delivery to customer, with customer...etc
+//proper package small view component
+//update us address examples - no longer miami address
+//add better package examples
 //improve filters on view table
 //make multi select menu: export to excel, delete...etc
 //bulk updates
