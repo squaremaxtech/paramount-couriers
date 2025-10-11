@@ -1,7 +1,7 @@
 "use server"
 import { db } from "@/db"
 import { users } from "@/db/schema"
-import { newUserSchema, newUserType, userSchema, userType, tableColumns, tableFilterTypes, wantedCrudObjType } from "@/types"
+import { newUserSchema, newUserType, userSchema, userType, tableColumns, tableFilterTypes, crudActionObjType } from "@/types"
 import { and, eq, SQLWrapper } from "drizzle-orm"
 import { ensureCanAccessTable } from "./handleAuth"
 import { handleEnsureCanAccessTableResults, makeWhereClauses } from "@/utility/utility"
@@ -9,7 +9,7 @@ import { filterTableObjectByColumnAccess } from "@/useful/usefulFunctions"
 import { initialNewUserObj } from "@/lib/initialFormData"
 
 export async function addUser(newUserObj: newUserType) {
-    const accessTableResults = await ensureCanAccessTable("users", { crud: "c" }, Object.keys(newUserObj) as tableColumns["users"][])
+    const accessTableResults = await ensureCanAccessTable("users", Object.keys(newUserObj) as tableColumns["users"][], { action: "c" },)
     handleEnsureCanAccessTableResults(accessTableResults, "table")
 
     //validate on server as well - if no rights then it'll replace
@@ -24,24 +24,26 @@ export async function addUser(newUserObj: newUserType) {
     })
 }
 
-export async function updateUser(userId: userType["id"], updatedUserObj: Partial<userType>, wantedCrudObj: wantedCrudObjType) {
+export async function updateUser(userId: userType["id"], updatedUserObj: Partial<userType>, crudActionObj: crudActionObjType) {
     //validation
     userSchema.partial().parse(updatedUserObj)
 
     //auth
-    const accessTableResults = await ensureCanAccessTable("users", wantedCrudObj, Object.keys(updatedUserObj) as tableColumns["users"][])
+    const accessTableResults = await ensureCanAccessTable("users", Object.keys(updatedUserObj) as tableColumns["users"][], crudActionObj)
     handleEnsureCanAccessTableResults(accessTableResults, "both")
 
-    await db.update(users)
+    const [result] = await db.update(users)
         .set({
             ...updatedUserObj
         })
-        .where(eq(users.id, userId));
+        .where(eq(users.id, userId)).returning();
+
+    return result
 }
 
-export async function deleteUser(userId: userType["id"], wantedCrudObj: wantedCrudObjType) {
+export async function deleteUser(userId: userType["id"], crudActionObj: crudActionObjType) {
     //auth check
-    const accessTableResults = await ensureCanAccessTable("users", wantedCrudObj)
+    const accessTableResults = await ensureCanAccessTable("users", undefined, crudActionObj);
     handleEnsureCanAccessTableResults(accessTableResults, "both")
 
     //validation
@@ -50,10 +52,10 @@ export async function deleteUser(userId: userType["id"], wantedCrudObj: wantedCr
     await db.delete(users).where(eq(users.id, userId));
 }
 
-export async function getSpecificUser(userId: userType["id"], wantedCrudObj: wantedCrudObjType, runAuth = true): Promise<userType | undefined> {
+export async function getSpecificUser(userId: userType["id"], crudActionObj: crudActionObjType, runAuth = true): Promise<userType | undefined> {
     if (runAuth) {
         //auth check
-        const accessTableResults = await ensureCanAccessTable("users", wantedCrudObj)
+        const accessTableResults = await ensureCanAccessTable("users", undefined, crudActionObj);
         handleEnsureCanAccessTableResults(accessTableResults, "both")
     }
 
@@ -66,9 +68,9 @@ export async function getSpecificUser(userId: userType["id"], wantedCrudObj: wan
     return result
 }
 
-export async function getUsers(filter: tableFilterTypes<userType>, wantedCrudObj: wantedCrudObjType, getWith?: { [key in keyof userType]?: true }, limit = 50, offset = 0,): Promise<userType[]> {
+export async function getUsers(filter: tableFilterTypes<userType>, crudActionObj: crudActionObjType, getWith?: { [key in keyof userType]?: true }, limit = 50, offset = 0,): Promise<userType[]> {
     // Auth check
-    const accessTableResults = await ensureCanAccessTable("users", wantedCrudObj);
+    const accessTableResults = await ensureCanAccessTable("users", undefined, crudActionObj);
     handleEnsureCanAccessTableResults(accessTableResults, "both");
 
     //compile filters into proper where clauses

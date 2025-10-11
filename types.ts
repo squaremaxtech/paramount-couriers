@@ -2,7 +2,7 @@ import { z } from "zod";
 import * as schema from "@/db/schema"
 import { PgTableWithColumns } from "drizzle-orm/pg-core";
 
-export const dateSchma = z.preprocess((val) => {
+export const dateSchema = z.preprocess((val) => {
     if (typeof val === "string" || typeof val === "number") return new Date(val);
     return val;
 }, z.date())
@@ -17,6 +17,7 @@ export const decimalStringSchema = z.string()
 export type schemaType = typeof schema
 
 export type crudType = "c" | "r" | "u" | "d" | "co" | "ro" | "uo" | "do";
+export type crudBaseType = "c" | "r" | "u" | "d"
 export type userCrudType = {
     admin: crudType[];
     employee_regular: crudType[];
@@ -38,19 +39,22 @@ export type tableColumns = {
     sessions: ""
     authenticators: ""
     verificationTokens: ""
+    //
     roleEnum: ""
     accessLevelEnum: ""
     statusEnum: ""
     locationEnum: ""
+    packageDeliveryMethodEnum: ""
+    //
     userRelations: ""
     packageRelations: ""
     preAlertRelations: ""
 };
 
-export type wantedCrudObjType = {
-    crud: crudType,
+export type crudActionObjType = {
+    action: crudBaseType,
     resourceId?: string,
-    skipResourceIdCheck?: true
+    skipOwnershipCheck?: boolean,
 }
 
 export type tableColumnAccessType = {
@@ -68,7 +72,7 @@ export type ensureCanAccessTableReturnType = {
 
 // handle files
 export const dbFileSchema = z.object({
-    createdAt: dateSchma,
+    createdAt: dateSchema,
     fileName: z.string().min(1),
     src: z.string().min(1),
     status: z.enum(["to-delete", "to-upload", "uploaded"]),
@@ -199,6 +203,18 @@ export const contactFormSchema = z.object({
 })
 export type contactFormType = z.infer<typeof contactFormSchema>
 
+export type locationIconMatchType = {
+    [key in locationType]: string
+}
+export const locationIconMatch: locationIconMatchType = {
+    "on way to warehouse": "airplane_ticket",
+    "warehouse delivered": "deployed_code_update",
+    "in transit to jamaica": "travel",
+    "jamaica arrived": "distance",
+    "ready for pickup": "celebration"
+}
+
+
 
 
 
@@ -222,22 +238,39 @@ export const accessLevelOptions = ["regular", "warehouse", "elevated", "supervis
 export const accessLevelSchema = z.enum(accessLevelOptions)
 export type accessLevelType = z.infer<typeof accessLevelSchema>
 
+export const parishOptions = ["Kingston", "St. Andrew", "St. Catherine", "Clarendon", "Manchester", "St. Elizabeth", "Westmoreland", "Hanover", "St. James", "Trelawny", "St. Ann", "St. Mary", "Portland", "St. Thomas"] as const;
+export const parishSchema = z.enum(parishOptions);
+export type parishType = z.infer<typeof parishSchema>;
+
+export const branchLocationOptions = ["Kingston", "St. Thomas"] as const;
+export const branchLocationSchema = z.enum(branchLocationOptions);
+export type branchLocationType = z.infer<typeof branchLocationSchema>;
+
+export const packageDeliveryMethodOptions = ["home", ...branchLocationOptions] as const;
+export const packageDeliveryMethodSchema = z.enum(packageDeliveryMethodOptions);
+export type packageDeliveryMethodType = z.infer<typeof packageDeliveryMethodSchema>;
+
 export const userSchema = z.object({
     //defaults
     id: z.string().min(1),
     role: roleSchema,
     accessLevel: accessLevelSchema,
-    address: z.string().min(1),
     authorizedUsers: z.object({
         userId: z.string().min(1)
     }).array(),
+    address: z.object({
+        street: z.string().min(1, "please enter sreet address"),
+        parish: parishSchema,
+        city: z.string().min(1, "please enter your city"),
+    }).nullable(),
+    packageDeliveryMethod: packageDeliveryMethodSchema,
 
     //regular
 
     //null
     name: z.string().min(1).nullable(),
     email: z.string().email().nullable(),
-    emailVerified: dateSchma.nullable(),
+    emailVerified: dateSchema.nullable(),
     image: z.string().min(1).nullable(),
 })
 export type userType = z.infer<typeof userSchema> & {
@@ -250,17 +283,17 @@ export type newUserType = z.infer<typeof newUserSchema>
 
 
 
-export const statusOptions = ["pre-alerted", "fulfilled", "in progress", "cancelled", "on hold"] as const
+export const statusOptions = ["pre-alerted", "in progress", "cancelled", "on hold", "delivered"] as const
 export const statusSchema = z.enum(statusOptions)
 export type statusType = z.infer<typeof statusSchema>
 
-export const locationOptions = ["on way to warehouse", "warehouse delivered", "in transit to jamaica", "jamaica arrived", "ready for pickup", "delivered"] as const
+export const locationOptions = ["on way to warehouse", "warehouse delivered", "in transit to jamaica", "jamaica arrived", "ready for pickup"] as const
 export const locationSchema = z.enum(locationOptions)
 export type locationType = z.infer<typeof locationSchema>
 
 export const packageSchema = z.object({
     id: z.number(),
-    dateCreated: dateSchma,
+    dateCreated: dateSchema,
 
     userId: userSchema.shape.id,
     location: locationSchema,

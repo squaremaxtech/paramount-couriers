@@ -4,7 +4,7 @@
 *::before,
 *::after {
   box-sizing: border-box;
-  border: 1px solid red !important;
+  /* border: 1px solid red !important; */
 }
 
 :root {
@@ -244,7 +244,7 @@ textarea {
   background-color: var(--bg2);
   color: var(--textC4);
   border-radius: var(--borderRadiusS);
-  border: 1px solid var(--bg3);
+  border: 1px solid var(--shade2);
 }
 
 input:focus,
@@ -276,7 +276,7 @@ select {
 }
 
 select:hover {
-  border-color: var(--bg2);
+  border-color: var(--shade2);
 }
 
 option {
@@ -481,6 +481,11 @@ option {
 .recordTable th.center,
 .recordTable td.center {
   justify-items: center !important;
+}
+
+.recordTable th.largest,
+.recordTable td.largest {
+  flex-basis: 300px;
 }
 
 .recordTable th.larger,

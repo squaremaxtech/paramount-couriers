@@ -7,6 +7,13 @@ export const siteInfo = {
     emailAddresses: ["support@paramount-couriers.com", "info@paramount-couriers.com"],
     addresses: ["W6PC+FC, Port Royal", "4500 north hiatus road"],
     phoneNumbers: ["+1 (876) 782-9165", "+1 (876) 782-9165"],
+    shippingAddress: {
+        street: "3706 NW 16th Street",
+        street2: "PMC",
+        city: "Lauderhill",
+        state: "FL",
+        zipCode: "33311-4132",
+    }
 }
 
 export const servicesData: {
@@ -127,7 +134,7 @@ export const faqData: {
 }[] = [
         {
             question: "How does the service work?",
-            answer: "You shop online from any US store, ship to our US address, and we deliver your packages safely to Jamaica. (Shipping done on Monday, Wednesday and Saturday)",
+            answer: "You shop online from any US store, ship to our US address, and we deliver your packages safely to Jamaica. (Shipping done on Monday, Tuesday and Thursday)",
         },
         {
             question: "How do I get started as a new customer?",

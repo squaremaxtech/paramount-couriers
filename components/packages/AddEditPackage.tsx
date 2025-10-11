@@ -4,7 +4,7 @@ import styles from "./style.module.css"
 import { calculatePackageServiceCost, convertToCurrency, deepClone, formatAsMoney, formatWeight } from '@/utility/utility'
 import toast from 'react-hot-toast'
 import TextInput from '../inputs/textInput/TextInput'
-import { dbInvoiceType, newPackageSchema, packageType, wantedCrudObjType, packageSchema, searchObjType, preAlertType, userType, locationOptions, statusOptions, dbImageType } from '@/types'
+import { dbInvoiceType, newPackageSchema, packageType, packageSchema, searchObjType, userType, locationOptions, statusOptions, dbImageType } from '@/types'
 import { addPackage, deleteImageeOnPackage, deleteInvoiceOnPackage, updatePackage } from '@/serverFunctions/handlePackages'
 import { consoleAndToastError } from '@/useful/consoleErrorWithToast'
 import { allowedImageFileTypes, allowedInvoiceFileTypes, imageFileInputAccept, invoiceFileInputAccept } from '@/types/uploadTypes'
@@ -16,27 +16,25 @@ import { initialNewPackageObj } from '@/lib/initialFormData'
 import UseFormErrors from '../useFormErrors/UseFormErrors'
 import ShowMore from '../showMore/ShowMore'
 import Search from '../search/Search'
-import { deleteImageeOnPreAlert, deleteInvoiceOnPreAlert, getPreAlerts, updatePreAlert } from '@/serverFunctions/handlePreAlerts'
 import { getSpecificUser, getUsers } from '@/serverFunctions/handleUsers'
-import { ViewPreAlert } from '../preAlerts/ViewPreAlert'
 import { ViewUser } from '../users/ViewUser'
 import ViewItems from '../items/ViewItem'
 import FormToggleButton from '../inputs/formToggleButton/FormToggleButton'
 import Select from '../inputs/select/Select'
 import { rateByWeightArr } from '@/lib/data'
+import { useSession } from 'next-auth/react'
 
 const seenStatusOptions = [...statusOptions]
 const seenLocationOptions = [...locationOptions]
 
-export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionAction }: { sentPackage?: packageType, wantedCrudObj: wantedCrudObjType, submissionAction?: () => void }) {
+export default function AddEditPackage({ sentPackage, submissionAction }: { sentPackage?: packageType, submissionAction?: () => void }) {
+    const { data: session } = useSession()
+
     const [formObj, formObjSet] = useState<Partial<packageType>>(deepClone(sentPackage === undefined ? initialNewPackageObj : packageSchema.partial().parse(sentPackage)))
 
     const { formErrors, checkIfValid } = UseFormErrors<packageType>({ schema: packageSchema.partial() })
-    const { tableColumnAccess } = useTableColumnAccess({ tableName: "packages", tableRecordObject: formObj, wantedCrudObj: wantedCrudObj })
+    const { tableColumnAccess } = useTableColumnAccess({ tableName: "packages", tableRecordObject: formObj, crudActionObj: { action: sentPackage === undefined ? "c" : "u", resourceId: sentPackage === undefined ? undefined : `${sentPackage.id}` } })
 
-    const [preAlertsSearchObj, preAlertsSearchObjSet] = useState<searchObjType<preAlertType>>({
-        searchItems: [],
-    })
     const [usersSearchObj, usersSearchObjSet] = useState<searchObjType<userType>>({
         searchItems: [],
     })
@@ -45,7 +43,6 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
     const [imageFormData, imageFormDataSet] = useState<FormData | null>(null)
 
     const [chosenUser, chosenUserSet] = useState<userType | undefined>(undefined)
-    const [chosenPreAlert, chosenPreAlertSet] = useState<preAlertType | undefined>(undefined)
     const [invoiceType, invoiceTypeSet] = useState<dbInvoiceType["type"]>("delivery")
 
     //handle changes from above
@@ -56,13 +53,32 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
 
     }, [sentPackage])
 
+    //set user id for customer user type
+    useEffect(() => {
+        const search = async () => {
+            //only customers
+            if (session === null || session.user.role !== "customer") return
+
+            //set
+            formObjSet(prevFormObj => {
+                const newFormObj = { ...prevFormObj }
+                if (newFormObj.userId === undefined) return prevFormObj
+
+                newFormObj.userId = session.user.id
+
+                return newFormObj
+            })
+        }
+        search()
+    }, [session])
+
     //load chosen user
     useEffect(() => {
         const search = async () => {
             try {
-                if (formObj.userId === undefined || formObj.userId === "") return
+                if (formObj.userId === undefined || formObj.userId === "" || session === null) return
 
-                const seenUser = await getSpecificUser(formObj.userId, { crud: "r" })
+                const seenUser = await getSpecificUser(formObj.userId, { action: "r", resourceId: session.user.id })
                 if (seenUser === undefined) throw new Error("not seeing chosen user id")
 
                 chosenUserSet(seenUser)
@@ -72,7 +88,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
             }
         }
         search()
-    }, [formObj.userId])
+    }, [formObj.userId, session])
 
     //start off charges from rates
     useEffect(() => {
@@ -110,10 +126,8 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                 //invoices
                 if (filteredPackage.invoices !== undefined) {
                     filteredPackage.invoices = await handleWithFiles(filteredPackage.invoices, invoiceFormData, "invoice", {
-                        delete: async (dbWithFilesObjs) => {
-                            if (chosenPreAlert !== undefined) {
-                                await deleteInvoiceOnPreAlert(chosenPreAlert.id, dbWithFilesObjs, { crud: "d" })
-                            }
+                        delete: async () => {
+                            //nohing to run
                         }
                     })
                 }
@@ -121,18 +135,13 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                 //images
                 if (filteredPackage.images !== undefined) {
                     filteredPackage.images = await handleWithFiles(filteredPackage.images, imageFormData, "image", {
-                        delete: async (dbWithFilesObjs) => {
-                            if (chosenPreAlert !== undefined) {
-                                await deleteImageeOnPreAlert(chosenPreAlert.id, dbWithFilesObjs, { crud: "d" })
-                            }
+                        delete: async () => {
+                            //nohing to run
                         }
                     })
                 }
 
                 const validatedNewPackage = newPackageSchema.parse(filteredPackage)
-
-                //update chosen preAlert
-                await runSameForPreAlert()
 
                 //send up to server
                 await addPackage(validatedNewPackage)
@@ -157,7 +166,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                     filteredPackage.invoices = await handleWithFiles(filteredPackage.invoices, invoiceFormData, "invoice", {
                         delete: async (dbWithFilesObjs) => {
                             if (sentPackage !== undefined) {
-                                await deleteInvoiceOnPackage(sentPackage.id, dbWithFilesObjs, { crud: "d" })
+                                await deleteInvoiceOnPackage(sentPackage.id, dbWithFilesObjs, { action: "d" })
                             }
                         }
                     })
@@ -168,17 +177,14 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                     filteredPackage.images = await handleWithFiles(filteredPackage.images, imageFormData, "image", {
                         delete: async (dbWithFilesObjs) => {
                             if (sentPackage !== undefined) {
-                                await deleteImageeOnPackage(sentPackage.id, dbWithFilesObjs, { crud: "d" })
+                                await deleteImageeOnPackage(sentPackage.id, dbWithFilesObjs, { action: "d" })
                             }
                         }
                     })
                 }
 
-                //update chosen preAlert
-                await runSameForPreAlert()
-
                 //update
-                const updatedPackage = await updatePackage(sentPackage.id, filteredPackage, wantedCrudObj)
+                const updatedPackage = await updatePackage(sentPackage.id, filteredPackage, { action: "u", resourceId: `${sentPackage.id}` })
 
                 toast.success("package updated")
 
@@ -190,29 +196,6 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                 submissionAction()
             }
 
-            async function runSameForPreAlert() {
-                //update chosen preAlert
-                if (chosenPreAlert !== undefined) {
-                    await handleUpdatePreAlert(chosenPreAlert, { acknowledged: true })
-                }
-            }
-
-        } catch (error) {
-            consoleAndToastError(error)
-        }
-    }
-
-    async function handleUpdatePreAlert(preAlert: preAlertType, newPreAlertObj: Partial<preAlertType>) {
-        try {
-            //update preAlert on server then re-search
-            await updatePreAlert(preAlert.id, newPreAlertObj, { crud: "u" })
-
-            preAlertsSearchObjSet(prevPreAlertsSearchObj => {
-                const newPreAlertsSearchObj = { ...prevPreAlertsSearchObj }
-                newPreAlertsSearchObj.refreshAll = true
-                return newPreAlertsSearchObj
-            })
-
         } catch (error) {
             consoleAndToastError(error)
         }
@@ -220,80 +203,6 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
 
     return (
         <form className={styles.form} action={() => { }}>
-            <ShowMore
-                label='pre alerts'
-                startShowing={sentPackage === undefined}
-                content={(
-                    <div className='container'>
-                        <Search
-                            searchObj={preAlertsSearchObj}
-                            searchObjSet={preAlertsSearchObjSet}
-                            searchFunc={async (seenFilters) => {
-                                return await getPreAlerts({ ...seenFilters }, { crud: "r" }, {}, preAlertsSearchObj.limit, preAlertsSearchObj.offset)
-                            }}
-                            showPage={true}
-                            searchFilters={{
-                                trackingNumber: {
-                                    value: "",
-                                },
-                                consignee: {
-                                    value: "",
-                                },
-                                acknowledged: {
-                                    value: false,
-                                }
-                            }}
-                        />
-
-                        {preAlertsSearchObj.searchItems.length > 0 && (
-                            <ViewItems
-                                itemObjs={preAlertsSearchObj.searchItems.map(eachSeaarchItem => {
-                                    return {
-                                        item: eachSeaarchItem,
-                                        Element: <ViewPreAlert preAlert={eachSeaarchItem} />
-                                    }
-                                })}
-                                selectedId={chosenPreAlert !== undefined ? chosenPreAlert.id : undefined}
-                                selectionAction={async (eachPreAlert) => {
-                                    try {
-                                        //add onto form obj everything wanted
-                                        formObjSet(prevFormObj => {
-                                            const newFormObj = { ...prevFormObj }
-
-                                            //assign proper preAlert values to package
-                                            newFormObj.userId = eachPreAlert.userId
-                                            newFormObj.trackingNumber = eachPreAlert.trackingNumber
-                                            newFormObj.store = eachPreAlert.store
-                                            newFormObj.consignee = eachPreAlert.consignee
-                                            newFormObj.description = eachPreAlert.description
-                                            newFormObj.packageValue = eachPreAlert.packageValue
-                                            newFormObj.cifValue = newFormObj.packageValue //set cif value as default package value
-                                            newFormObj.invoices = eachPreAlert.invoices
-
-                                            return newFormObj
-                                        })
-
-                                        //set used
-                                        chosenPreAlertSet(eachPreAlert)
-
-                                        //deselect
-                                        if (chosenPreAlert !== undefined && chosenPreAlert.id === eachPreAlert.id) {
-                                            chosenPreAlertSet(undefined)
-
-                                        } else {
-                                            toast.success(`preAlert selected`)
-                                        }
-
-                                    } catch (error) {
-                                        consoleAndToastError(error)
-                                    }
-                                }}
-                            />
-                        )}
-                    </div>
-                )}
-            />
-
             {formObj.id !== undefined && tableColumnAccess["id"] && (
                 <>
                     <TextInput
@@ -318,63 +227,67 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                 </>
             )}
 
-            {formObj.userId !== undefined && tableColumnAccess["userId"] && (
+            {session !== null && session.user.role !== "customer" && (
                 <>
-                    <ShowMore
-                        label='user selection'
-                        content={(
-                            <>
-                                <Search
-                                    searchObj={usersSearchObj}
-                                    searchObjSet={usersSearchObjSet}
-                                    searchFunc={async (seenFilters) => {
-                                        return await getUsers({ ...seenFilters }, { crud: "r" }, {}, usersSearchObj.limit, usersSearchObj.offset)
-                                    }}
-                                    showPage={true}
-                                    searchFilters={{
-                                        id: {
-                                            value: "",
-                                        },
-                                        name: {
-                                            value: "",
-                                        }
-                                    }}
-                                />
+                    {formObj.userId !== undefined && tableColumnAccess["userId"] && (
+                        <>
+                            <ShowMore
+                                label='user selection'
+                                content={(
+                                    <>
+                                        <Search
+                                            searchObj={usersSearchObj}
+                                            searchObjSet={usersSearchObjSet}
+                                            searchFunc={async (seenFilters) => {
+                                                return await getUsers({ ...seenFilters }, { action: "r" }, {}, usersSearchObj.limit, usersSearchObj.offset)
+                                            }}
+                                            showPage={true}
+                                            searchFilters={{
+                                                id: {
+                                                    value: "",
+                                                },
+                                                name: {
+                                                    value: "",
+                                                }
+                                            }}
+                                        />
 
-                                {usersSearchObj.searchItems.length > 0 && (
-                                    <ViewItems
-                                        itemObjs={usersSearchObj.searchItems.map(eachSeaarchItem => {
-                                            return {
-                                                item: eachSeaarchItem,
-                                                Element: <ViewUser user={eachSeaarchItem} />
-                                            }
-                                        })}
-                                        selectedId={chosenUser !== undefined ? chosenUser.id : undefined}
-                                        selectionAction={async (eachUser) => {
-                                            formObjSet(prevFormObj => {
-                                                const newFormObj = { ...prevFormObj }
-                                                if (newFormObj.userId === undefined) return prevFormObj
+                                        {usersSearchObj.searchItems.length > 0 && (
+                                            <ViewItems
+                                                itemObjs={usersSearchObj.searchItems.map(eachSeaarchItem => {
+                                                    return {
+                                                        item: eachSeaarchItem,
+                                                        Element: <ViewUser user={eachSeaarchItem} />
+                                                    }
+                                                })}
+                                                selectedId={chosenUser !== undefined ? chosenUser.id : undefined}
+                                                selectionAction={async (eachUser) => {
+                                                    formObjSet(prevFormObj => {
+                                                        const newFormObj = { ...prevFormObj }
+                                                        if (newFormObj.userId === undefined) return prevFormObj
 
-                                                newFormObj.userId = eachUser.id
+                                                        newFormObj.userId = eachUser.id
 
-                                                return newFormObj
-                                            })
+                                                        return newFormObj
+                                                    })
 
-                                            toast.success(`${eachUser.name} selected`)
-                                        }}
-                                    />
+                                                    toast.success(`${eachUser.name} selected`)
+                                                }}
+                                            />
+                                        )}
+                                    </>
                                 )}
-                            </>
-                        )}
-                    />
-                </>
-            )}
+                            />
+                        </>
+                    )}
 
-            {chosenUser !== undefined && (
-                <>
-                    <label>chosen user</label>
+                    {chosenUser !== undefined && (
+                        <>
+                            <label>chosen user</label>
 
-                    <ViewUser user={chosenUser} fullView={false} />
+                            <ViewUser user={chosenUser} fullView={false} />
+                        </>
+                    )}
                 </>
             )}
 
@@ -529,6 +442,11 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
 
                                 newFormObj.packageValue = e.target.value
 
+                                //keep cif value same as declared value for customers
+                                if (session !== null && session.user.role === "customer") {
+                                    newFormObj.cifValue = newFormObj.packageValue
+                                }
+
                                 return newFormObj
                             })
                         }}
@@ -538,7 +456,7 @@ export default function AddEditPackage({ sentPackage, wantedCrudObj, submissionA
                 </>
             )}
 
-            {formObj.cifValue !== undefined && tableColumnAccess["cifValue"] && (
+            {formObj.cifValue !== undefined && tableColumnAccess["cifValue"] && session !== null && session.user.role !== "customer" && (
                 <>
                     <TextInput
                         name={"cifValue"}

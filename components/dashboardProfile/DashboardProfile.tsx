@@ -5,6 +5,7 @@ import defaultProfileIcon from "@/public/defaultProfileIcon.png"
 import styles from "./styles.module.css"
 import LogButton from "../logButtons/LogButton"
 import { useSession } from "next-auth/react"
+import Link from "next/link"
 
 export default function DashboardProfile() {
     const { data: session } = useSession()
@@ -26,9 +27,9 @@ export default function DashboardProfile() {
                 <ul className={styles.moreItemsMenu}
                     onClick={() => { showingNavSet(false) }}
                 >
-                    <li className={styles.moreIntemsItem}>account</li>
-
-                    <li className={styles.moreIntemsItem}>settings</li>
+                    <li className={styles.moreIntemsItem}>
+                        <Link href={`${session !== null && session.user.role === "customer" ? "/customer/account" : ""}`}>account</Link>
+                    </li>
 
                     <li className={styles.moreIntemsItem}>
                         <LogButton option='logout' />

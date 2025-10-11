@@ -1,0 +1,60 @@
+.guideList {
+    display: grid;
+    gap: 2rem;
+    padding: 0;
+    list-style: none;
+}
+
+.siteTitle {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--textC1, hsl(0 0% 15%));
+    margin-bottom: 0.75rem;
+}
+
+.formPreview {
+    background: hsl(0 0% 100%);
+    border: 1px solid hsl(0 0% 90%);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px hsl(0 0% 0% / 0.06);
+    padding: 1.5rem;
+    display: grid;
+    gap: 0.75rem;
+    color: var(--textC1, hsl(0 0% 20%));
+}
+
+.formRow {
+    display: grid;
+    gap: 0.25rem;
+}
+
+.formRow label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--textC2, hsl(0 0% 40%));
+}
+
+.formRow input {
+    background: hsl(0 0% 98%);
+    border: 1px solid hsl(0 0% 85%);
+    border-radius: 8px;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.9rem;
+    color: hsl(0 0% 20%);
+    pointer-events: none;
+}
+
+.note {
+    font-size: 0.8rem;
+    color: var(--textC3, hsl(0 0% 50%));
+    margin-top: 0.5rem;
+    text-align: right;
+    font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .formPreview {
+        padding: 1rem;
+    }
+}

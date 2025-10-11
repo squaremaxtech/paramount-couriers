@@ -42,8 +42,8 @@ export default async function CustomerLayout({
               quick_reorder
             </span>
           ),
-          link: `/customer/preAlerts`,
-          title: "pre alerts"
+          link: `/customer/preAlert`,
+          title: "pre alert"
         },
         {
           icon: (
@@ -53,6 +53,15 @@ export default async function CustomerLayout({
           ),
           link: `/rates`,
           title: "rates"
+        },
+        {
+          icon: (
+            <span className="material-symbols-outlined mediumIcon">
+              distance
+            </span>
+          ),
+          link: `/customer/address`,
+          title: "US address"
         },
         {
           icon: (

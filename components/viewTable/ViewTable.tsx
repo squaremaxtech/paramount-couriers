@@ -1,12 +1,13 @@
 "use client"
-import { allFilters, dateSchma, dbImageSchema, dbImageType, dbInvoiceSchema, dbInvoiceType, decimalStringSchema, filterSearchType, searchObjType, tableFilterTypes, userSchema, userType, withId } from '@/types'
-import React, { useRef, useState } from 'react'
+import { allFilters, dateSchema, dbImageSchema, dbImageType, dbInvoiceSchema, dbInvoiceType, decimalStringSchema, filterSearchType, packageSchema, packageType, searchObjType, tableFilterTypes, userSchema, userType, withId } from '@/types'
+import React, { useEffect, useRef, useState } from 'react'
 import styles from "./style.module.css"
-import { formatAsMoney, formatWeight, generateTrackingNumber, makeDateTimeLocalInput, spaceCamelCase } from '@/utility/utility'
+import { calculatePackageServiceCost, filtersFromQuery, formatAsMoney, formatWeight, generateTrackingNumber, makeDateTimeLocalInput, spaceCamelCase } from '@/utility/utility'
 import { consoleAndToastError } from '@/useful/consoleErrorWithToast'
 import CheckBox from '@/components/inputs/checkBox/CheckBox'
 import Select from '../inputs/select/Select'
 import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 type replaceDataType<T> = {
     [key in keyof T]?: {
@@ -20,8 +21,11 @@ type replaceDataType<T> = {
 
 export default function ViewTable<T extends withId>(
     { wantedItems, hideColumns, sizeClass, searchFunc, renameTableHeadings, headingOrder, tableProvider, searchDebounceTime = 500, replaceData }:
-        { wantedItems: T[], hideColumns?: (keyof T)[], sizeClass?: { large: (keyof T)[], small: (keyof T)[] }, searchFunc: (tableFilters: tableFilterTypes<T>, wantedItemsSearchObj: searchObjType<T>) => Promise<T[]>, renameTableHeadings?: { [key in keyof T]?: string }, headingOrder?: (keyof T)[], tableProvider: { filters: allFilters<T>, columns: (keyof T)[] }, searchDebounceTime?: number, replaceData?: replaceDataType<T> }
+        { wantedItems: T[], hideColumns?: (keyof T)[], sizeClass?: { largest: (keyof T)[], large: (keyof T)[], small: (keyof T)[] }, searchFunc: (tableFilters: tableFilterTypes<T>, wantedItemsSearchObj: searchObjType<T>) => Promise<T[]>, renameTableHeadings?: { [key in keyof T]?: string }, headingOrder?: (keyof T)[], tableProvider: { filters: allFilters<T>, columns: (keyof T)[] }, searchDebounceTime?: number, replaceData?: replaceDataType<T> }
 ) {
+    const searchParams = useSearchParams()
+    const router = useRouter()
+
     const [wantedItemsSearchObj, wantedItemsSearchObjSet] = useState<searchObjType<T>>({
         searchItems: wantedItems,
     })
@@ -81,10 +85,14 @@ export default function ViewTable<T extends withId>(
     const [, refresherSet] = useState(false)
 
     function returnSizeClass(tableHeading: keyof T) {
+        const largestTableHeadings: (keyof T)[] = sizeClass !== undefined ? sizeClass.largest : []
         const largeTableHeadings: (keyof T)[] = sizeClass !== undefined ? sizeClass.large : []
         const smallTableHeadings: (keyof T)[] = sizeClass !== undefined ? sizeClass.small : []
 
-        if (largeTableHeadings.includes(tableHeading)) {
+        if (largestTableHeadings.includes(tableHeading)) {
+            return "largest"
+
+        } else if (largeTableHeadings.includes(tableHeading)) {
             return "larger"
 
         } else if (smallTableHeadings.includes(tableHeading)) {
@@ -164,11 +172,73 @@ export default function ViewTable<T extends withId>(
         refresh()
 
         triggerSearch()
+
+        //write filters to url
+        writeFiltersToUrl()
+    }
+
+    // ✅ Read filters from URL on load
+    useEffect(() => {
+        const params = new URLSearchParams(searchParams.toString())
+        const restored = filtersFromQuery(params, allPackageFilters.current)
+        allPackageFilters.current = restored
+        console.log("Restored filters from URL:", restored)
+
+        console.log(`$ allPackageFilters.current`, allPackageFilters.current);
+        triggerSearch()
+    }, [])
+
+    // ✅ Update URL whenever filters change
+    function writeFiltersToUrl() {
+        console.log(`$hi there`);
+
+        console.log(`$allPackageFilters`, allPackageFilters);
+        const params = filtersToQuery(allPackageFilters.current)
+        console.log(`$params`, params);
+
+        const query = params.toString()
+        const newUrl = query ? `?${query}` : window.location.pathname
+        router.replace(newUrl)
+    }
+
+    type Generic = Record<string, any>
+
+    function filtersToQuery<T extends Generic>(filters: allFilters<T>) {
+        const params = new URLSearchParams()
+
+        for (const key in filters) {
+            const filter = filters[key]
+            if (!filter || !filter.base?.using) continue
+
+            switch (filter.type) {
+                case "boolean":
+                    if (filter.value !== undefined) params.set(key, String(filter.value))
+                    break
+                case "number":
+                case "string":
+                case "stringNumber":
+                    if (filter.value !== undefined && filter.value !== "")
+                        params.set(key, String(filter.value))
+                    break
+                case "options":
+                    if (filter.value) params.set(key, filter.value)
+                    break
+                case "date":
+                    if (filter.value) params.set(key, filter.value.toISOString())
+                    break
+                case "array":
+                    if (Array.isArray(filter.value) && filter.value.length > 0)
+                        params.set(key, JSON.stringify(filter.value))
+                    break
+            }
+        }
+
+        return params
     }
 
     return (
         <div className='container' style={{ zIndex: 0 }}>
-            <table className={`${styles.table} recordTable`}>
+            <table className={`${styles.table} recordTable`} style={{ minHeight: "50vh" }}>
                 <thead>
                     <tr className={styles.row} style={{ alignItems: "flex-start" }}>
                         <th className='smaller center noBorder' style={{ alignSelf: "center" }}>
@@ -373,8 +443,10 @@ export default function ViewTable<T extends withId>(
                                                         label={`select ${eachTableHeadingAsString}`}
                                                         name={`${eachTableHeadingAsString}select`}
                                                         value={filterSearchType.value !== undefined ? filterSearchType.value : ""}
-                                                        valueOptions={[...filterSearchType.options]}
+                                                        valueOptions={["select", ...filterSearchType.options]}
                                                         onChange={value => {
+                                                            if (value === "select") return
+
                                                             if (allPackageFilters.current[eachTableHeading] === undefined) return
 
                                                             //react refresh
@@ -391,7 +463,7 @@ export default function ViewTable<T extends withId>(
                                                     />
                                                 )}
 
-                                                <label className='resetTextMargin' style={{ color: filterSearchType.base.using ? "var(--c4)" : "var(--textC4)", }}
+                                                <label className='resetTextMargin' style={{ color: filterSearchType.base.using ? "var(--textC4)" : "var(--shade2)", }}
                                                     onClick={() => {
                                                         if (allPackageFilters.current[eachTableHeading] === undefined) return
 
@@ -474,6 +546,7 @@ export default function ViewTable<T extends withId>(
                                     let imageArr: dbImageType[] | undefined = undefined
                                     let seenDateCreated: Date | undefined = undefined
                                     let seenUser: userType | undefined = undefined
+                                    let seenCharges: packageType["charges"] | undefined = undefined
 
                                     if (typeof tableData === "object") {
                                         if (Array.isArray(tableData)) {
@@ -496,9 +569,14 @@ export default function ViewTable<T extends withId>(
                                             seenUser = userTest.data
                                         }
 
-                                        const dateTest = dateSchma.safeParse(tableData)
+                                        const dateTest = dateSchema.safeParse(tableData)
                                         if (dateTest.data !== undefined) {
                                             seenDateCreated = dateTest.data
+                                        }
+
+                                        const chargesTest = packageSchema.shape.charges.safeParse(tableData)
+                                        if (chargesTest.data !== undefined) {
+                                            seenCharges = chargesTest.data
                                         }
                                     }
 
@@ -556,7 +634,15 @@ export default function ViewTable<T extends withId>(
                                                                 <div className='resetTextMargin' style={{ fontSize: "var(--fontSizeS)" }}>
                                                                     <li>{seenUser.name}</li>
                                                                     <li>{seenUser.email}</li>
+                                                                    <li>Deliver: {seenUser.packageDeliveryMethod === "home" ? "Home" : `${seenUser.packageDeliveryMethod} Branch`}</li>
+                                                                    {seenUser.address !== null && seenUser.packageDeliveryMethod === "home" && (
+                                                                        <li>Home Parish: {seenUser.address.parish}</li>
+                                                                    )}
                                                                 </div>
+                                                            )}
+
+                                                            {seenCharges !== undefined && (
+                                                                <p>{formatAsMoney(`${calculatePackageServiceCost(seenCharges)}`)}</p>
                                                             )}
                                                         </>
                                                     )}

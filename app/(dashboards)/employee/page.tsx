@@ -2,6 +2,6 @@ import React from 'react'
 
 export default async function Page() {
     return (
-        <div>Page</div>
+        <div>Welcome to the employee dashboard</div>
     )
 }

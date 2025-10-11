@@ -1,16 +1,16 @@
 "use server"
 import { db } from "@/db"
 import { packages } from "@/db/schema"
-import { dbImageType, dbInvoiceType, newPackageSchema, newPackageType, packageSchema, packageType, tableColumns, tableFilterTypes, wantedCrudObjType } from "@/types"
+import { dbImageType, dbInvoiceType, newPackageSchema, newPackageType, packageSchema, packageType, tableColumns, tableFilterTypes, crudActionObjType } from "@/types"
 import { and, desc, eq, SQLWrapper } from "drizzle-orm"
 import { deleteImages, deleteInvoices } from "./handleFiles"
-import { ensureCanAccessTable, sessionCheck } from "./handleAuth"
+import { ensureCanAccessTable } from "./handleAuth"
 import { handleEnsureCanAccessTableResults, makeWhereClauses } from "@/utility/utility"
 import { filterTableObjectByColumnAccess } from "@/useful/usefulFunctions"
 import { initialNewPackageObj } from "@/lib/initialFormData"
 
 export async function addPackage(newPackageObj: newPackageType) {
-    const accessTableResults = await ensureCanAccessTable("packages", { crud: "c" }, Object.keys(newPackageObj) as tableColumns["packages"][])
+    const accessTableResults = await ensureCanAccessTable("packages", Object.keys(newPackageObj) as tableColumns["packages"][], { action: "c" })
     handleEnsureCanAccessTableResults(accessTableResults, "table")
 
     //validate on server as well - if no rights then it'll replace
@@ -25,12 +25,12 @@ export async function addPackage(newPackageObj: newPackageType) {
     })
 }
 
-export async function updatePackage(packageId: packageType["id"], updatedPackageObj: Partial<packageType>, wantedCrudObj: wantedCrudObjType): Promise<packageType> {
+export async function updatePackage(packageId: packageType["id"], updatedPackageObj: Partial<packageType>, crudActionObj: crudActionObjType): Promise<packageType> {
     //validation
     packageSchema.partial().parse(updatedPackageObj)
 
     //auth
-    const accessTableResults = await ensureCanAccessTable("packages", wantedCrudObj, Object.keys(updatedPackageObj) as tableColumns["packages"][])
+    const accessTableResults = await ensureCanAccessTable("packages", Object.keys(updatedPackageObj) as tableColumns["packages"][], crudActionObj)
     handleEnsureCanAccessTableResults(accessTableResults, "both")
 
     const [result] = await db.update(packages)
@@ -42,9 +42,9 @@ export async function updatePackage(packageId: packageType["id"], updatedPackage
     return result
 }
 
-export async function deletePackage(packageId: packageType["id"], wantedCrudObj: wantedCrudObjType) {
+export async function deletePackage(packageId: packageType["id"], crudActionObj: crudActionObjType) {
     //auth check
-    const accessTableResults = await ensureCanAccessTable("packages", wantedCrudObj)
+    const accessTableResults = await ensureCanAccessTable("packages", undefined, crudActionObj);
     handleEnsureCanAccessTableResults(accessTableResults, "both")
 
     //validation
@@ -53,24 +53,24 @@ export async function deletePackage(packageId: packageType["id"], wantedCrudObj:
     await db.delete(packages).where(eq(packages.id, packageId));
 }
 
-export async function deleteInvoiceOnPackage(packageId: packageType["id"], dbInvoiceType: dbInvoiceType[], wantedCrudObj: wantedCrudObjType) {
+export async function deleteInvoiceOnPackage(packageId: packageType["id"], dbInvoiceType: dbInvoiceType[], crudActionObj: crudActionObjType) {
     //validation
     packageSchema.shape.id.parse(packageId)
 
     //auth check
-    const accessTableResults = await ensureCanAccessTable("packages", wantedCrudObj)
+    const accessTableResults = await ensureCanAccessTable("packages", undefined, crudActionObj);
     handleEnsureCanAccessTableResults(accessTableResults, "both")
 
     //delete from folder
     await deleteInvoices(dbInvoiceType.map(eachDbInvoiceType => eachDbInvoiceType.file.src))
 }
 
-export async function deleteImageeOnPackage(packageId: packageType["id"], dbImageType: dbImageType[], wantedCrudObj: wantedCrudObjType) {
+export async function deleteImageeOnPackage(packageId: packageType["id"], dbImageType: dbImageType[], crudActionObj: crudActionObjType) {
     //validation
     packageSchema.shape.id.parse(packageId)
 
     //auth check
-    const accessTableResults = await ensureCanAccessTable("packages", wantedCrudObj)
+    const accessTableResults = await ensureCanAccessTable("packages", undefined, crudActionObj);
     handleEnsureCanAccessTableResults(accessTableResults, "both")
 
     //delete from folder
@@ -78,10 +78,11 @@ export async function deleteImageeOnPackage(packageId: packageType["id"], dbImag
 }
 
 
-export async function getSpecificPackage(packageId: packageType["id"], wantedCrudObj: wantedCrudObjType, runAuth = true): Promise<packageType | undefined> {
+export async function getSpecificPackage(packageId: packageType["id"], crudActionObj: crudActionObjType, runAuth = true): Promise<packageType | undefined> {
     if (runAuth) {
         //auth check
-        const accessTableResults = await ensureCanAccessTable("packages", wantedCrudObj)
+        const accessTableResults = await ensureCanAccessTable("packages", undefined, crudActionObj);
+
         handleEnsureCanAccessTableResults(accessTableResults, "both")
     }
 
@@ -94,17 +95,9 @@ export async function getSpecificPackage(packageId: packageType["id"], wantedCru
     return result
 }
 
-export async function getPackages(filter: tableFilterTypes<packageType>, wantedCrudObj: wantedCrudObjType, getWith?: { [key in keyof packageType]?: true }, limit = 50, offset = 0,): Promise<packageType[]> {
+export async function getPackages(filter: tableFilterTypes<packageType>, crudActionObj: crudActionObjType, getWith?: { [key in keyof packageType]?: true }, limit = 50, offset = 0): Promise<packageType[]> {
     // Auth check
-    //madatory restriction for users that dont have r permissions for multipleSearch
-    if (wantedCrudObj.crud === "ro") {
-        wantedCrudObj.skipResourceIdCheck = true
-
-        const session = await sessionCheck()
-        filter.userId = session.user.id
-    }
-
-    const accessTableResults = await ensureCanAccessTable("packages", wantedCrudObj);
+    const accessTableResults = await ensureCanAccessTable("packages", undefined, crudActionObj);
     handleEnsureCanAccessTableResults(accessTableResults, "both");
 
     //compile filters into proper where clauses

@@ -5,11 +5,3 @@
     padding: var(--spacingR);
     overflow: auto;
 }
-
-.preAlert {
-    border: 1px solid transparent;
-}
-
-.selected {
-    border: 1px solid var(--c5);
-}
