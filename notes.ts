@@ -8,31 +8,16 @@
 //improve filters on view table
 //make multi select menu: export to excel, delete...etc
 //bulk updates
-//email notifications - need professional email first
 //add auth to view image/download
-//enable contact form - need business email/domain
 //send off general email for customers to re-sign up
 //new customer onboarding process - completed check - if not customer sees update info
 //add notifications - on specific package info change - location, status change, needs attention
 //make comments own table
 //update numbers on site
+//note options for store type - show tracking number live
 
 //in meeting
-//go over features - customer, employee, admin...
-//onboarding/sign up - accounts page - packages/pre alerts...
-//explain role based access...
-//show supervisor updating users...
-//talk on professional email
 //ask about social media - add them - instagram/tiktok
-//setup server with business email (manageparamount) - handle server body upload size, certbot and postgres along with permissions
-
-//purchasing steps
-//1) confirm our management email - manageparamountcouriers@outlook.com - ParamountCouriers:PW
-//2) Make a hostinger account - buy the server, domain and business email
-//3) Then I work to make the site live - thats it.
-
-
-
 
 //long term
 //write to reusable project
@@ -76,6 +61,8 @@
 //paramount offers home address delevery and branch pickup
 
 //ensure customer enters full name
+
+//vps at 72.60.25.209 - Paramount2Caps@numbers
 
 
 
@@ -140,3 +127,11 @@
 //Highlight email updates for packages...
 //home delivery to Kingston, st Thomas...
 //add customer address to package info table - Kingston/st. thomas...
+//email notifications - need professional email first...
+//enable contact form - need business email/domain...
+//go over features - customer, employee, admin...
+//onboarding/sign up - accounts page - packages/pre alerts...
+//explain role based access...
+//show supervisor updating users...
+//talk on professional email...
+//setup server with business email (manageparamount) - handle server body upload size, certbot and postgres along with permissions...

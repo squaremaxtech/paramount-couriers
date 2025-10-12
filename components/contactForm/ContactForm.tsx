@@ -8,6 +8,7 @@ import UseFormErrors from '../useFormErrors/UseFormErrors'
 import { consoleAndToastError } from '@/useful/consoleErrorWithToast'
 import TextArea from '../inputs/textArea/TextArea'
 import { sendNodeEmail } from '@/serverFunctions/handleNodeEmails'
+import { newCustomerContactHtml } from '@/lib/emailTemplates'
 
 export default function ContactForm({ submissionAction }: { submissionAction?: () => void }) {
     const initialContactForm: contactFormType = {
@@ -33,12 +34,18 @@ export default function ContactForm({ submissionAction }: { submissionAction?: (
             //validate contactForm
             contactFormSchema.parse(formObj)
 
+            const finalEmailHtml = newCustomerContactHtml
+                .replace('{{fullname}}', formObj.fullname)
+                .replace('{{email}}', formObj.email)
+                .replace('{{phone}}', formObj.phone)
+                .replace('{{message}}', formObj.message);
+
             //send email
             await sendNodeEmail({
-                sendTo: "support@paramount-couriers.com",
+                sendTo: "info@paramount-couriers.com",
                 replyTo: formObj.email,
                 subject: `Customer Contact from ${formObj.fullname}`,
-                text: `fullname:\n${formObj.fullname}\nmessage:\n${formObj.message}`
+                html: finalEmailHtml
             })
 
             toast.success("submitted")

@@ -21,13 +21,17 @@ export async function sendNodeEmail(input: {
     sendTo: string,
     replyTo: string,
     subject: string,
-    text: string,
+    text?: string,
+    html?: string,
 }) {
+    if (input.html === undefined && input.text === undefined) throw new Error("need to submit text")
+
     await transporter.sendMail({
         from: email,
         to: input.sendTo,
         subject: input.subject,
-        html: input.text,
+        text: input.text,
+        html: input.html,
         replyTo: input.replyTo
     });
 }
