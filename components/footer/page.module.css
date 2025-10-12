@@ -54,6 +54,7 @@
     align-content: flex-start;
     grid-template-columns: 1fr auto;
     gap: var(--spacingR);
+    max-width: 300px;
 }
 
 .circle {

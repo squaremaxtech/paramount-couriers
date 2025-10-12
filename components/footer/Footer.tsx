@@ -86,13 +86,17 @@ export default function Footer() {
                     </div>
 
                     <div className={styles.cardBody}>
-                        <div>
-                            {siteInfo.phoneNumbers.map((eachPhoneNumber, eachPhoneNumberIndex) => {
+                        <ul className='snap' style={{ display: "grid", gap: "var(--spacingS)", fontSize: "var(--)", gridAutoFlow: "column", gridAutoColumns: "100%", overflow: "auto" }}>
+                            {siteInfo.branches.map((eachBranch) => {
                                 return (
-                                    <p key={eachPhoneNumberIndex}>{eachPhoneNumber}</p>
+                                    <li key={eachBranch.name} style={{ display: "grid", alignContent: "flex-start" }}>
+                                        <p>{eachBranch.name}</p>
+                                        {eachBranch.number.flow !== "" && <p>Flow {eachBranch.number.flow}</p>}
+                                        {eachBranch.number.digicel !== "" && <p>Digicel {eachBranch.number.digicel}</p>}
+                                    </li>
                                 )
                             })}
-                        </div>
+                        </ul>
 
                         <div className={styles.circle}>
                             <span className="material-symbols-outlined mediumIcon" style={{ position: "absolute", top: "50%", left: "50%", translate: "-50% -50%" }}>

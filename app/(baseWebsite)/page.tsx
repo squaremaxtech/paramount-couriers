@@ -10,7 +10,7 @@ import aboutUsIntroImg2 from "@/public/aboutUs/aboutUsIntro2.jpg"
 import expressHomeDeliveryImg from "@/public/expressHomeDelivery.jpg"
 import Link from "next/link";
 import styles from "./page.module.css"
-import { servicesData, testimonialsData } from "@/lib/data";
+import { servicesData, siteInfo, testimonialsData } from "@/lib/data";
 import AnimateRateChange from "@/components/animate/AnimateRateChange";
 import DisplayStars from "@/components/displayStars/DisplayStars";
 import { ShowFAQ } from "@/components/FAQ/FAQ";
@@ -93,7 +93,7 @@ export default function Home() {
 
             <h1>Your<span className="highlightText"> Trusted Shipping</span> Partner</h1>
 
-            <h4>Fast, Reliable & Secure Shipping from the U.S. to Jamaica</h4>
+            <h4>Supreme service, supreme speed, from your favorite stores to your door the Paramount way</h4>
 
             <p>We specialize in bridging the gap between the U.S. and Jamaica, offering a service built on speed, security, tracking, and convenience. With Paramount Couriers, you can ship with confidence, knowing your packages are handled with care and delivered on time.</p>
 
@@ -273,6 +273,21 @@ export default function Home() {
             <p>With Paramount Couriers, your packages don&apos;t just stop at Jamaica — we bring them directly to you. Enjoy secure, on-time delivery from the U.S. store to your doorstep, with full tracking every step of the way.</p>
           </div>
         </div>
+      </section>
+
+      <section>
+        <h1 style={{ textAlign: "center" }}>opening hours</h1>
+
+        <ul style={{ display: "grid", gap: "var(--spacingR)", justifyItems: "center" }}>
+          {siteInfo.branches.map(eachBranch => {
+            return (
+              <li key={eachBranch.name} style={{ display: "grid", justifyItems: "center" }}>
+                <h5>{eachBranch.name}</h5>
+                <p>{eachBranch.openingHours}</p>
+              </li>
+            )
+          })}
+        </ul>
       </section>
 
       <section>

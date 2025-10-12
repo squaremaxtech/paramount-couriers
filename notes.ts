@@ -1,9 +1,7 @@
 //To Do:
-//update phone numbers - digicel/flow
 //proper get started page explaining everything
 //add extra location to package - in delivery to customer, with customer...etc
 //proper package small view component
-//update us address examples - no longer miami address
 //add better package examples
 //improve filters on view table
 //make multi select menu: export to excel, delete...etc
@@ -13,8 +11,8 @@
 //new customer onboarding process - completed check - if not customer sees update info
 //add notifications - on specific package info change - location, status change, needs attention
 //make comments own table
-//update numbers on site
 //note options for store type - show tracking number live
+//proper branch selection - global
 
 //in meeting
 //ask about social media - add them - instagram/tiktok
@@ -135,3 +133,6 @@
 //show supervisor updating users...
 //talk on professional email...
 //setup server with business email (manageparamount) - handle server body upload size, certbot and postgres along with permissions...
+//update us address examples - no longer miami address...
+//update phone numbers - digicel/flow...
+//update numbers on site...

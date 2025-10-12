@@ -4,15 +4,37 @@ import { ratePricingType } from "@/types";
 import { StaticImageData } from "next/image";
 
 export const siteInfo = {
-    emailAddresses: ["support@paramount-couriers.com", "info@paramount-couriers.com"],
-    addresses: ["W6PC+FC, Port Royal", "4500 north hiatus road"],
-    phoneNumbers: ["+1 (876) 782-9165", "+1 (876) 782-9165"],
+    emailAddresses: ["info@paramount-couriers.com"],
+    addresses: ["Containers Plaza, Poorman’s Corner Yallahs, St Thomas"],
+    branches: [
+        {
+            name: "St. Thomas",
+            number: {
+                flow: "(876) 343-3661",
+                digicel: "(876) 352-5259"
+            },
+            address: "",
+            openingHours: "Mon - Fri 9am to 6pm and Saturday 10am - 4pm"
+        },
+        {
+            name: "Kingston",
+            number: {
+                flow: "(876) 782-9165",
+                digicel: ""
+            },
+            address: "",
+            openingHours: "Mon - Fri 9:30am to 5:30pm and Saturday 10am to 4pm"
+        },
+    ],
     shippingAddress: {
         street: "3706 NW 16th Street",
         street2: "PMC",
         city: "Lauderhill",
         state: "FL",
         zipCode: "33311-4132",
+    },
+    socialLinks: {
+        "instagram": "couriersparamount"
     }
 }
 
@@ -158,7 +180,7 @@ export const faqData: {
         },
         {
             question: "Do you offer home delivery?",
-            answer: "Yes, you can choose between office pickup or door-to-door delivery.",
+            answer: "Yes, Mon -  Fri 9:30am to 4:30pm and Saturday 10:30am to 3pm",
         },
         {
             question: "How much does shipping cost?",
