@@ -29,9 +29,19 @@ const materialSymbolsSharp = localFont({
   variable: "--materialSymbolsSharp",
 });
 
-export const metadata: Metadata = {
+const metadataInfo = {
   title: "Paramount Couriers",
-  description: "Paramount Couriers provides fast, reliable, and affordable shipping services from the U.S. to Jamaica. From standard and express deliveries to store-to-door service and secure warehousing, we make it simple to shop abroad and receive your packages hassle-free.",
+  description: "Paramount Couriers provides fast, reliable, and affordable shipping services from the U.S. to Jamaica. From standard and express deliveries to store-to-door service and secure warehousing, we make it simple to shop abroad and receive your packages hassle-free."
+}
+
+export const metadata: Metadata = {
+  title: metadataInfo.title,
+  description: metadataInfo.description,
+  metadataBase: new URL('https://paramount-couriers.com'),
+  openGraph: {
+    title: metadataInfo.title,
+    description: metadataInfo.description,
+  }
 };
 
 export default async function RootLayout({
