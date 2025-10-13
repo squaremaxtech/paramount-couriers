@@ -13,7 +13,7 @@ export default async function Page() {
     const canAddToUsersTable = handleEnsureCanAccessTableResultsBool(ensureCanAccessTableResults, "table")
 
     return (
-        <main className='container'>
+        <main className='container' style={{ gridTemplateRows: canAddToUsersTable ? "auto 1fr" : "1fr", overflow: "auto" }}>
             {canAddToUsersTable && (
                 <Link href={`/employee/users/add`} style={{ justifySelf: "flex-end" }}>
                     <button className='button1'>add</button>

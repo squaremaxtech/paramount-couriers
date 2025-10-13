@@ -10,7 +10,7 @@ export default async function Page() {
     const seenPackages = await getPackages({}, { action: "r" }, { fromUser: true }, 50)
 
     return (
-        <main className='container'>
+        <main className='container' style={{ gridTemplateRows: "auto 1fr", overflow: "auto" }}>
             <Link href={`/employee/packages/add`} style={{ justifySelf: "flex-end" }}>
                 <button className='button1'>add</button>
             </Link>
@@ -28,7 +28,7 @@ export default async function Page() {
                         "use server"
                         return await getPackages(activeFilters as tableFilterTypes<packageType>, { action: "r" }, { fromUser: true }, wantedItemsSearchObj.limit, wantedItemsSearchObj.offset)
                     }}
-                    headingOrder={["id", "dateCreated", "fromUser"]}
+                    headingOrder={["id", "dateCreated", "fromUser", "status", "location", "trackingNumber", "packageValue", "cifValue", "charges", "payment"]}
                     replaceData={{
                         id: {
                             link: `/employee/packages/edit`,

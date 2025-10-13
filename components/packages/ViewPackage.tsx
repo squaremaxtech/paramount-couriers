@@ -77,13 +77,13 @@ export function ViewPackage({ seenPackage }: { seenPackage: packageType }) {
                     <li>
                         <p>declared value</p>
 
-                        <p>{formatAsMoney(seenPackage.packageValue)}</p>
+                        <p>{formatAsMoney(seenPackage.packageValue)} USD</p>
                     </li>
 
                     <li>
                         <p>cif value</p>
 
-                        <p>{formatAsMoney(seenPackage.cifValue)}</p>
+                        <p>{formatAsMoney(seenPackage.cifValue)} USD</p>
                     </li>
 
 
@@ -102,26 +102,26 @@ export function ViewPackage({ seenPackage }: { seenPackage: packageType }) {
                     <li>
                         <p>freight</p>
 
-                        <p>{formatAsMoney(seenPackage.charges.freight)}</p>
+                        <p>{formatAsMoney(seenPackage.charges.freight)} JMD</p>
                     </li>
 
                     <li>
                         <p>fuel</p>
 
-                        <p>{formatAsMoney(seenPackage.charges.fuel)}</p>
+                        <p>{formatAsMoney(seenPackage.charges.fuel)} JMD</p>
                     </li>
 
                     <li>
                         <p>insurance</p>
 
-                        <p>{formatAsMoney(seenPackage.charges.insurance)}</p>
+                        <p>{formatAsMoney(seenPackage.charges.insurance)} JMD</p>
                     </li>
                 </ul>
 
                 <div>
-                    <h2 style={{ textAlign: "center" }}>Total: {formatAsMoney(`${calculatePackageServiceCost(seenPackage.charges)}`)}</h2>
+                    <h2 style={{ textAlign: "center" }}>Total: {formatAsMoney(`${calculatePackageServiceCost(seenPackage.charges)}`)} JMD</h2>
 
-                    <h1 style={{ textAlign: "end", color: "var(--c1)" }}>Total Paid: {formatAsMoney(seenPackage.payment)}</h1>
+                    <h1 style={{ textAlign: "end", color: "var(--c1)" }}>Total Paid: {formatAsMoney(seenPackage.payment)} JMD</h1>
                 </div>
 
                 {parseFloat(seenPackage.payment) > 0 && (

@@ -14,7 +14,7 @@ export default async function Page() {
     const seenPackages = await getPackages({ userId: session.user.id }, { action: "r", skipOwnershipCheck: true }, {}, 50)
 
     return (
-        <main>
+        <main className='container' style={{ overflow: "auto" }}>
             {seenPackages.length > 0 ?
                 (
                     <ViewTable

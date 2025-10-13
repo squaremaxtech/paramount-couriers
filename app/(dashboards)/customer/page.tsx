@@ -107,9 +107,9 @@ export default async function Page() {
 
                     <p>{eachPackage.description}</p>
 
-                    <p style={{}}>Charges: {formatAsMoney(`${calculatePackageServiceCost(eachPackage.charges)}`)}</p>
+                    <p style={{}}>Charges: {formatAsMoney(`${calculatePackageServiceCost(eachPackage.charges)}`)} JMD</p>
 
-                    <p style={{}}>Total Payment: {formatAsMoney(eachPackage.payment)}</p>
+                    <p style={{}}>Total Payment: {formatAsMoney(eachPackage.payment)} JMD</p>
                   </Link>
                 </li>
               )

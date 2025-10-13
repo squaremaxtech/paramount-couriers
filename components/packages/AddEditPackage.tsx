@@ -433,7 +433,7 @@ export default function AddEditPackage({ sentPackage, submissionAction }: { sent
                         name={"packageValue"}
                         value={formObj.packageValue}
                         type={"text"}
-                        label={`packageValue ${formatAsMoney(formObj.packageValue)}`}
+                        label={`packageValue ${formatAsMoney(formObj.packageValue)} USD`}
                         placeHolder={"enter package value"}
                         onChange={(e) => {
                             formObjSet(prevFormObj => {
@@ -462,7 +462,7 @@ export default function AddEditPackage({ sentPackage, submissionAction }: { sent
                         name={"cifValue"}
                         value={formObj.cifValue}
                         type={"text"}
-                        label={`CIF value ${formatAsMoney(formObj.cifValue)}`}
+                        label={`CIF value ${formatAsMoney(formObj.cifValue)} USD`}
                         placeHolder={"enter package value"}
                         onChange={(e) => {
                             formObjSet(prevFormObj => {
@@ -599,7 +599,7 @@ export default function AddEditPackage({ sentPackage, submissionAction }: { sent
 
             {formObj.charges !== undefined && tableColumnAccess["charges"] && (
                 <>
-                    <label>service charges - total: {formatAsMoney(`${calculatePackageServiceCost(formObj.charges)}`)}</label>
+                    <label>service charges - total: {formatAsMoney(`${calculatePackageServiceCost(formObj.charges)}`)} JMD</label>
 
                     {formErrors["charges"] !== undefined && <p className='errorText'>{formErrors["charges"]}</p>}
 
@@ -608,7 +608,7 @@ export default function AddEditPackage({ sentPackage, submissionAction }: { sent
                             name={"chargesFreight"}
                             value={formObj.charges.freight}
                             type={"text"}
-                            label={`freight fee ${formatAsMoney(formObj.charges.freight)}`}
+                            label={`freight fee ${formatAsMoney(formObj.charges.freight)} JMD`}
                             placeHolder={"enter freight fee"}
                             onChange={(e) => {
                                 formObjSet(prevFormObj => {
@@ -627,7 +627,7 @@ export default function AddEditPackage({ sentPackage, submissionAction }: { sent
                             name={"chargesFuel"}
                             value={formObj.charges.fuel}
                             type={"text"}
-                            label={`fuel fee ${formatAsMoney(formObj.charges.fuel)}`}
+                            label={`fuel fee ${formatAsMoney(formObj.charges.fuel)} JMD`}
                             placeHolder={"enter fuel fee"}
                             onChange={(e) => {
                                 formObjSet(prevFormObj => {
@@ -646,7 +646,7 @@ export default function AddEditPackage({ sentPackage, submissionAction }: { sent
                             name={"chargesInsurance"}
                             value={formObj.charges.insurance}
                             type={"text"}
-                            label={`insurance fee ${formatAsMoney(formObj.charges.insurance)}`}
+                            label={`insurance fee ${formatAsMoney(formObj.charges.insurance)} JMD`}
                             placeHolder={"enter insurance fee"}
                             onChange={(e) => {
                                 formObjSet(prevFormObj => {
@@ -670,7 +670,7 @@ export default function AddEditPackage({ sentPackage, submissionAction }: { sent
                         name={"payment"}
                         value={formObj.payment}
                         type={"text"}
-                        label={`payment ${formatAsMoney(formObj.payment)}`}
+                        label={`payment ${formatAsMoney(formObj.payment)} JMD`}
                         placeHolder={"enter payment"}
                         onChange={(e) => {
                             formObjSet(prevFormObj => {

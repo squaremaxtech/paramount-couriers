@@ -237,8 +237,8 @@ export default function ViewTable<T extends withId>(
     }
 
     return (
-        <div className='container' style={{ zIndex: 0 }}>
-            <table className={`${styles.table} recordTable`} style={{ minHeight: "50vh" }}>
+        <div className='container' style={{ zIndex: 0, overflow: "auto", minHeight: "50vh" }}>
+            <table className={`${styles.table} recordTable`} style={{}}>
                 <thead>
                     <tr className={styles.row} style={{ alignItems: "flex-start" }}>
                         <th className='smaller center noBorder' style={{ alignSelf: "center" }}>

@@ -166,7 +166,9 @@ async function LoginMenu({ calledFrom }: { calledFrom: "desktop" | "mobile" }) {
                         <Image alt="userImage" src={session.user.image !== null ? session.user.image : defaultImage} width={30} height={30} style={{ objectFit: "cover" }} />
                     </label>
 
-                    <input id={`${calledFrom}userOptionsCheckbox`} className="visibilityCheckbox" type="checkbox" />
+                    {calledFrom === "desktop" && (
+                        <input id={`${calledFrom}userOptionsCheckbox`} className="visibilityCheckbox" type="checkbox" />
+                    )}
                     <ul className={styles.moreItemsMenu}>
                         <li className={styles.moreIntemsItem}
                         >

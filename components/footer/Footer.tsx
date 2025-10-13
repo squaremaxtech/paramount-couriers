@@ -86,7 +86,7 @@ export default function Footer() {
                     </div>
 
                     <div className={styles.cardBody}>
-                        <ul className='snap' style={{ display: "grid", gap: "var(--spacingS)", fontSize: "var(--)", gridAutoFlow: "column", gridAutoColumns: "100%", overflow: "auto" }}>
+                        <ul className='snap' style={{ display: "grid", gap: "var(--spacingS)", fontSize: "var(--)", gridAutoFlow: "column", gridAutoColumns: "90%", overflow: "auto" }}>
                             {siteInfo.branches.map((eachBranch) => {
                                 return (
                                     <li key={eachBranch.name} style={{ display: "grid", alignContent: "flex-start" }}>
