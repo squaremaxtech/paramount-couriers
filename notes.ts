@@ -1,4 +1,5 @@
 //To Do:
+//ensure upload folder not synced on github
 //proper get started page explaining everything
 //add extra location to package - in delivery to customer, with customer...etc
 //proper package small view component
