@@ -1,7 +1,13 @@
 import Link from 'next/link'
 import React from 'react'
+import LogButton from '../logButtons/LogButton'
+import { auth } from '@/auth/auth'
 
-export default function GetStarted() {
+export default async function GetStarted() {
+    //if logged out
+    //and in mobile
+    const session = await auth()
+
     return (
         <div className='flexContainer' style={{ justifyContent: "space-between", backgroundColor: "var(--bg1)", padding: "var(--spacingS) var(--spacingR)" }}>
             <ul className='flexContainer'>
@@ -35,9 +41,17 @@ export default function GetStarted() {
                 })}
             </ul>
 
-            <Link href={"/contactUs"}>
-                <button className='button2'>get started</button>
-            </Link>
+            <div className="flexContainer">
+                <Link href={"/howItWorks"}>
+                    <button className='button2'>how it works</button>
+                </Link>
+
+                {session === null && (
+                    <div className='mobileOnly'>
+                        <LogButton option="login" />
+                    </div>
+                )}
+            </div>
         </div>
     )
 }

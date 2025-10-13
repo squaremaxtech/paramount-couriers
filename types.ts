@@ -273,6 +273,10 @@ export const userSchema = z.object({
     emailVerified: dateSchema.nullable(),
     image: z.string().min(1).nullable(),
 })
+export const userSchemaForFilter = userSchema.extend({
+    //ensure no email issue on filter
+    email: z.string().nullable(),
+})
 export type userType = z.infer<typeof userSchema> & {
     packages?: packageType[],
 }

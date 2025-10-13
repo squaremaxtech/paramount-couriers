@@ -48,20 +48,20 @@ export default async function CustomerLayout({
         {
           icon: (
             <span className="material-symbols-outlined mediumIcon">
-              add_card
-            </span>
-          ),
-          link: `/rates`,
-          title: "rates"
-        },
-        {
-          icon: (
-            <span className="material-symbols-outlined mediumIcon">
               distance
             </span>
           ),
           link: `/customer/address`,
           title: "US address"
+        },
+        {
+          icon: (
+            <span className="material-symbols-outlined mediumIcon">
+              add_card
+            </span>
+          ),
+          link: `/rates`,
+          title: "rates"
         },
         {
           icon: (

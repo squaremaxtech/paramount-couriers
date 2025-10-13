@@ -283,7 +283,20 @@ option {
   background-color: var(--bg2);
 }
 
-@media only screen and (max-width: 900px) {}
+
+.mobileOnly {
+  display: none;
+}
+
+@media only screen and (max-width: 900px) {
+  .desktopOnly {
+    display: none;
+  }
+
+  .mobileOnly {
+    display: grid;
+  }
+}
 
 
 

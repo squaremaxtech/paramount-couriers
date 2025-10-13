@@ -158,7 +158,11 @@ async function LoginMenu({ calledFrom }: { calledFrom: "desktop" | "mobile" }) {
     return (
         <div className={styles.loginMenu}>
             {session === null ? (
-                <LogButton option='login' />
+                <>
+                    {calledFrom === "desktop" && (
+                        <LogButton option='login' />
+                    )}
+                </>
 
             ) : (
                 <div className={styles.contDiv}>

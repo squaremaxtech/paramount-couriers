@@ -1,6 +1,16 @@
 //To Do:
+//make login clear...
+//how it works page...
+//proper get started page explaining everything...
+//move us address closer...
+//use address - no wrap...
+//filter email error...
+//active inactive check for user login
+//deactivate account options
+//admin dashboard delete options
+//add notifications - on specific package info change - location, status change, needs attention
+
 //ensure upload folder not synced on github
-//proper get started page explaining everything
 //add extra location to package - in delivery to customer, with customer...etc
 //proper package small view component
 //add better package examples
@@ -10,12 +20,12 @@
 //add auth to view image/download
 //send off general email for customers to re-sign up
 //new customer onboarding process - completed check - if not customer sees update info
-//add notifications - on specific package info change - location, status change, needs attention
 //make comments own table
 //note options for store type - show tracking number live
 //proper branch selection - global
 //consider full access roles
 //research premade google account issue
+//clear invoice/images options - on package delete and manual
 
 //long term
 //write to reusable project

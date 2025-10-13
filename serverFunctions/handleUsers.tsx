@@ -1,7 +1,7 @@
 "use server"
 import { db } from "@/db"
 import { users } from "@/db/schema"
-import { newUserSchema, newUserType, userSchema, userType, tableColumns, tableFilterTypes, crudActionObjType } from "@/types"
+import { newUserSchema, newUserType, userSchema, userType, tableColumns, tableFilterTypes, crudActionObjType, userSchemaForFilter } from "@/types"
 import { and, eq, SQLWrapper } from "drizzle-orm"
 import { ensureCanAccessTable } from "./handleAuth"
 import { handleEnsureCanAccessTableResults, makeWhereClauses } from "@/utility/utility"
@@ -74,7 +74,7 @@ export async function getUsers(filter: tableFilterTypes<userType>, crudActionObj
     handleEnsureCanAccessTableResults(accessTableResults, "both");
 
     //compile filters into proper where clauses
-    const whereClauses: SQLWrapper[] = makeWhereClauses(userSchema.partial(), filter, users)
+    const whereClauses: SQLWrapper[] = makeWhereClauses(userSchemaForFilter.partial(), filter, users)
 
     const results = await db.query.users.findMany({
         where: and(...whereClauses),
