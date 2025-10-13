@@ -33,7 +33,7 @@ export default function Page() {
                     <h2 className="text-xl font-semibold mb-2">3. View Your U.S. Address</h2>
                     <p className="text-gray-700">
                         On your dashboard, click <strong>View U.S. Address</strong> to find
-                        your personal shipping address. Be sure your name includes{" "}
+                        your personal shipping address. Be sure the address includes{" "}
                         <strong>“PMC”</strong> — this helps our team and shipping partners
                         identify your packages quickly.
                     </p>

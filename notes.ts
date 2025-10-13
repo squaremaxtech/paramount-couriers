@@ -1,5 +1,4 @@
 //To Do:
-
 //admin dashboard delete options
 //add notifications - on specific package info change - location, status change, needs attention
 //bulk updates
@@ -20,6 +19,8 @@
 //research premade google account issue
 //clear invoice/images options - on package delete and manual
 //google cloud from their account
+//add stores select to add edit package
+//add view tracking number options
 
 //long term
 //write to reusable project
@@ -152,3 +153,4 @@
 //use address - no wrap...
 //filter email error...
 //active inactive check for user login - settled on deleting user - contact us...
+//rate sheet changes...
