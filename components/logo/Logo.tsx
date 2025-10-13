@@ -5,8 +5,8 @@ import Link from 'next/link'
 
 export default function Logo() {
     return (
-        <Link href={"/"}>
-            <Image alt='logo' src={logo} width={300} height={300} style={{ width: "clamp(1rem, 15000vw, 5rem)", objectFit: "contain" }} />
+        <Link href={"/"} style={{ aspectRatio: "16/9", width: "5rem" }}>
+            <Image alt='logo' src={logo} width={300} height={300} style={{ width: "100%", objectFit: "contain" }} />
         </Link>
     )
 }

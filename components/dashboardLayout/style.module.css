@@ -61,20 +61,18 @@
 
     .sidebar {
         position: absolute;
-        grid-auto-flow: column;
-        grid-auto-columns: 70px;
-        align-items: center;
-        gap: var(--spacingR);
         bottom: 0;
         width: 100%;
+        display: flex;
+        white-space: nowrap;
+        align-items: center;
         border-top-left-radius: var(--borderRadiusL);
         border-top-right-radius: var(--borderRadiusL);
-        padding-right: var(--spacingL);
-        white-space: nowrap;
+        padding-inline: var(--spacingR);
     }
 
     .menuItem {
-        padding: 0;
+        padding: var(--spacingS) var(--spacingR);
     }
 
     .contentCont {

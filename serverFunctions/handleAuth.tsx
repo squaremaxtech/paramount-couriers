@@ -40,7 +40,7 @@ type tableAccessType = {
 
 const tableAccess: tableAccessType = {
     users: {
-        table: {
+        table: {//who can crud the table itself
             admin: fullAccess,
             employee_regular: readUpdate,
             employee_warehouse: read,

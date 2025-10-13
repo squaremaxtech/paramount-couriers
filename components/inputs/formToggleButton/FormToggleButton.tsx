@@ -5,7 +5,7 @@ export default function FormToggleButton({ label, value, onClick, buttonText, er
         <div style={{ display: "grid", alignContent: "flex-start", gap: "var(--spacingR)" }}>
             <label>{label}</label>
 
-            <button {...buttonProps} className={`button1 ${buttonProps.className ?? ""}`} style={{ ...buttonProps.style }}
+            <button type="button" {...buttonProps} className={`button1 ${buttonProps.className ?? ""}`} style={{ ...buttonProps.style }}
                 onClick={onClick}
             >{buttonText === undefined ? value.toString() : buttonText}</button>
 

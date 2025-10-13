@@ -13,11 +13,6 @@ import { initialNewUserObj } from '@/lib/initialFormData'
 import UseFormErrors from '../useFormErrors/UseFormErrors'
 import Select from '../inputs/select/Select'
 
-const seenRoleOptions = [...roleOptions]
-const seenAccessLevelOptions = [...accessLevelOptions]
-const seenParishOptions = [...parishOptions]
-const seenPackageDeliveryMethodOptions = [...packageDeliveryMethodOptions]
-
 export default function AddEditUser({ sentUser, submissionAction }: { sentUser?: userType, submissionAction?: () => void }) {
     const [formObj, formObjSet] = useState<Partial<userType>>(deepClone(sentUser === undefined ? initialNewUserObj : userSchema.partial().parse(sentUser)))
 
@@ -155,7 +150,7 @@ export default function AddEditUser({ sentUser, submissionAction }: { sentUser?:
                     label='select user role'
                     name='role'
                     value={formObj.role}
-                    valueOptions={seenRoleOptions}
+                    valueOptions={roleOptions}
                     onChange={value => {
                         formObjSet(prevFormObj => {
                             const newFormObj = { ...prevFormObj }
@@ -175,7 +170,7 @@ export default function AddEditUser({ sentUser, submissionAction }: { sentUser?:
                     label='select user accessLevel'
                     name='accessLevel'
                     value={formObj.accessLevel}
-                    valueOptions={seenAccessLevelOptions}
+                    valueOptions={accessLevelOptions}
                     onChange={value => {
                         formObjSet(prevFormObj => {
                             const newFormObj = { ...prevFormObj }
@@ -242,7 +237,7 @@ export default function AddEditUser({ sentUser, submissionAction }: { sentUser?:
                                     label='select parish'
                                     name='addressParish'
                                     value={formObj.address.parish}
-                                    valueOptions={seenParishOptions}
+                                    valueOptions={parishOptions}
                                     onChange={value => {
                                         formObjSet(prevFormObj => {
                                             const newFormObj = { ...prevFormObj }
@@ -300,16 +295,16 @@ export default function AddEditUser({ sentUser, submissionAction }: { sentUser?:
 
             {formObj.packageDeliveryMethod !== undefined && tableColumnAccess["packageDeliveryMethod"] && (
                 <Select
-                    label={`package devliery method - ${formObj.packageDeliveryMethod !== "home" ? "branch pickup" : "delivery"}`}
+                    label={`package devliery method - ${formObj.packageDeliveryMethod === "home" ? "delivery" : "branch pickup"}`}
                     name='packageDeliveryMethod'
                     value={formObj.packageDeliveryMethod}
-                    valueOptions={seenPackageDeliveryMethodOptions}
+                    valueOptions={packageDeliveryMethodOptions}
                     onChange={value => {
                         formObjSet(prevFormObj => {
                             const newFormObj = { ...prevFormObj }
                             if (newFormObj.packageDeliveryMethod === undefined) return prevFormObj
 
-                            if (value === "home" && formObj.address !== undefined && formObj.address === null) {
+                            if (value === "home" && (formObj.address === undefined || formObj.address === null)) {
                                 toast.error("ensure you have your address set")
 
                                 return newFormObj

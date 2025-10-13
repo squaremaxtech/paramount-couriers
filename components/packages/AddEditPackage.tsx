@@ -24,9 +24,6 @@ import Select from '../inputs/select/Select'
 import { rateByWeightArr } from '@/lib/data'
 import { useSession } from 'next-auth/react'
 
-const seenStatusOptions = [...statusOptions]
-const seenLocationOptions = [...locationOptions]
-
 export default function AddEditPackage({ sentPackage, submissionAction }: { sentPackage?: packageType, submissionAction?: () => void }) {
     const { data: session } = useSession()
 
@@ -296,7 +293,7 @@ export default function AddEditPackage({ sentPackage, submissionAction }: { sent
                     label='select package location'
                     name='location'
                     value={formObj.location}
-                    valueOptions={seenLocationOptions}
+                    valueOptions={locationOptions}
                     onChange={value => {
                         formObjSet(prevFormObj => {
                             const newFormObj = { ...prevFormObj }
@@ -316,7 +313,7 @@ export default function AddEditPackage({ sentPackage, submissionAction }: { sent
                     label='select package status'
                     name='status'
                     value={formObj.status}
-                    valueOptions={seenStatusOptions}
+                    valueOptions={statusOptions}
                     onChange={value => {
                         formObjSet(prevFormObj => {
                             const newFormObj = { ...prevFormObj }

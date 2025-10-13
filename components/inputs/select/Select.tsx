@@ -1,6 +1,6 @@
 export default function Select<T extends string>({
     name, value, valueOptions, onChange, label, id, errors, ...elProps }: {
-        name: string, value: T, valueOptions: T[], onChange: (value: T) => void, label?: string, id?: string, errors?: string,
+        name: string, value: T, valueOptions: readonly T[], onChange: (value: T) => void, label?: string, id?: string, errors?: string,
     } & Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'>) {
     return (
         <div {...elProps} style={{ display: "grid", alignContent: "flex-start", gap: "var(--spacingR)", ...elProps?.style }}>
