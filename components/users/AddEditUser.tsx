@@ -14,7 +14,7 @@ import UseFormErrors from '../useFormErrors/UseFormErrors'
 import Select from '../inputs/select/Select'
 import FormToggleButton from '../inputs/formToggleButton/FormToggleButton'
 
-export default function AddEditUser({ sentUser, submissionAction }: { sentUser?: userType, submissionAction?: () => void }) {
+export default function AddEditUser({ sentUser, submissionAction, aboveNotifs }: { sentUser?: userType, submissionAction?: () => void, aboveNotifs?: boolean }) {
     const [formObj, formObjSet] = useState<Partial<userType>>(deepClone(sentUser === undefined ? initialNewUserObj : userSchema.partial().parse(sentUser)))
 
     const { formErrors, checkIfValid } = UseFormErrors<userType>({ schema: userSchema.partial() })
@@ -27,6 +27,16 @@ export default function AddEditUser({ sentUser, submissionAction }: { sentUser?:
         formObjSet(deepClone(userSchema.partial().parse(sentUser)))
 
     }, [sentUser])
+
+    //notify once for incomplete info
+    useEffect(() => {
+        if (!aboveNotifs) return
+
+        if (formObj.name === "" || formObj.name === null) {
+            toast.success("please enter your name")
+        }
+
+    }, [])
 
     async function handleSubmit() {
         try {

@@ -4,11 +4,26 @@ import { db } from "@/db";
 import { accounts, authenticators, sessions, users } from "@/db/schema";
 import dotenv from 'dotenv';
 import Google from "next-auth/providers/google";
+import Email from "next-auth/providers/nodemailer"
 
 dotenv.config({ path: ".env.local" });
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-    providers: [Google],
+    providers: [
+        Email({
+            server: {
+                host: "smtp.hostinger.com",
+                port: 465,
+                secure: true,
+                auth: {
+                    user: process.env.EMAIL,
+                    pass: process.env.EMAIL_PASS,
+                },
+            },
+            from: process.env.EMAIL,
+        }),
+        Google
+    ],
     callbacks: {
         authorized: async ({ auth }) => {
             return !!auth

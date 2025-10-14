@@ -5,6 +5,7 @@ import { Toaster } from "react-hot-toast";
 import localFont from "next/font/local";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth/auth";
+import StarterInfoCheck from "@/components/starterInfoCheck/StarterInfoCheck";
 
 const rubik = Rubik({
   variable: "--rubik",
@@ -55,6 +56,7 @@ export default async function RootLayout({
     <html lang="en">
       <body className={`${alegreya.variable} ${rubik.variable} ${materialSymbolsOutlined.variable} ${materialSymbolsRounded.variable} ${materialSymbolsSharp.variable} antialiased`}>
         <SessionProvider session={session}>
+          <StarterInfoCheck seenSession={session} />
 
           <Toaster position="top-center" reverseOrder={false} />
           {children}

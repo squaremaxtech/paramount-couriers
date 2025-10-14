@@ -1,6 +1,6 @@
 //To Do:
-//admin dashboard manage all options...
 //add notifications - on specific package info change - location, status change, needs attention
+//admin dashboard manage all options
 //bulk updates
 
 //ensure upload folder not synced on github
@@ -33,6 +33,21 @@
 
 
 //Ideas
+//notifcation system
+//lives in add/update/delete server functions
+//called by their CRUD
+//then it reads the object to see what kind of notifcation to send
+//from their normalized list of all html templates
+//send email
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //admin
 //go over all database tables
 //check auth on each who can c, r, u, d
@@ -164,3 +179,4 @@
 //filter email error...
 //active inactive check for user login - settled on deleting user - contact us...
 //rate sheet changes...
+//Email sign in...

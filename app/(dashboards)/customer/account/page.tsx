@@ -12,7 +12,7 @@ export default async function Page() {
 
     return (
         <main>
-            <AddEditUser sentUser={seenUser} />
+            <AddEditUser sentUser={seenUser} aboveNotifs={true} />
         </main>
     )
 }
