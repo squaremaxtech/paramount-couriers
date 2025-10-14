@@ -1,13 +1,14 @@
 "use server"
 import { db } from "@/db"
 import { packages } from "@/db/schema"
-import { dbImageType, dbInvoiceType, newPackageSchema, newPackageType, packageSchema, packageType, tableColumns, tableFilterTypes, crudActionObjType } from "@/types"
+import { dbImageType, dbInvoiceType, newPackageSchema, newPackageType, packageSchema, packageType, tableColumns, tableFilterTypes, crudActionObjType, userType } from "@/types"
 import { and, desc, eq, SQLWrapper } from "drizzle-orm"
 import { deleteImages, deleteInvoices } from "./handleFiles"
 import { ensureCanAccessTable } from "./handleAuth"
 import { handleEnsureCanAccessTableResults, makeWhereClauses } from "@/utility/utility"
 import { filterTableObjectByColumnAccess } from "@/useful/usefulFunctions"
 import { initialNewPackageObj } from "@/lib/initialFormData"
+import { sendNotificationEmail } from "./handleEmailNotifications"
 
 export async function addPackage(newPackageObj: newPackageType) {
     const accessTableResults = await ensureCanAccessTable("packages", Object.keys(newPackageObj) as tableColumns["packages"][], { action: "c" })
@@ -20,12 +21,19 @@ export async function addPackage(newPackageObj: newPackageType) {
     const validatedPackage = newPackageSchema.parse(filteredPackage)
 
     //add new request
-    await db.insert(packages).values({
+    const [newPackage] = await db.insert(packages).values({
         ...validatedPackage
+    }).returning()
+
+    //notifs
+    sendNotificationEmail({
+        table: { name: "packages", updatedPackage: newPackage },
+        action: "c",
+        sendTo: { type: "id", userId: validatedPackage.userId }
     })
 }
 
-export async function updatePackage(packageId: packageType["id"], updatedPackageObj: Partial<packageType>, crudActionObj: crudActionObjType): Promise<packageType> {
+export async function updatePackage(packageId: packageType["id"], userId: userType["id"], updatedPackageObj: Partial<packageType>, crudActionObj: crudActionObjType): Promise<packageType> {
     //validation
     packageSchema.partial().parse(updatedPackageObj)
 
@@ -33,13 +41,23 @@ export async function updatePackage(packageId: packageType["id"], updatedPackage
     const accessTableResults = await ensureCanAccessTable("packages", Object.keys(updatedPackageObj) as tableColumns["packages"][], crudActionObj)
     handleEnsureCanAccessTableResults(accessTableResults, "both")
 
-    const [result] = await db.update(packages)
+    const currentPackage = await getSpecificPackage(packageId, crudActionObj)
+    if (currentPackage === undefined) throw new Error(`not seeing package for id ${packageId}`)
+
+    const [updatedPackage] = await db.update(packages)
         .set({
             ...updatedPackageObj
         })
         .where(eq(packages.id, packageId)).returning()
 
-    return result
+    //notifs
+    sendNotificationEmail({
+        table: { name: "packages", oldPackage: currentPackage, updatedPackage: updatedPackage },
+        action: "u",
+        sendTo: { type: "id", userId: userId }
+    })
+
+    return updatedPackage
 }
 
 export async function deletePackage(packageId: packageType["id"], crudActionObj: crudActionObjType) {

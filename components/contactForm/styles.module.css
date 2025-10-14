@@ -8,7 +8,11 @@
 .form textarea {
     padding: var(--spacingR);
     background-color: var(--bg5);
-    border: 1px solid var(--shade2);
+    border: none;
+}
+
+.form input {
+    border: none;
 }
 
 .inputCont:has(input:focus) {
@@ -21,6 +25,5 @@
 }
 
 .form input:focus {
-    border: none;
     outline: none;
 }

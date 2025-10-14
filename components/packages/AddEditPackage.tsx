@@ -181,7 +181,7 @@ export default function AddEditPackage({ sentPackage, submissionAction }: { sent
                 }
 
                 //update
-                const updatedPackage = await updatePackage(sentPackage.id, filteredPackage, { action: "u", resourceId: `${sentPackage.id}` })
+                const updatedPackage = await updatePackage(sentPackage.id, sentPackage.userId, filteredPackage, { action: "u", resourceId: `${sentPackage.id}` })
 
                 toast.success("package updated")
 

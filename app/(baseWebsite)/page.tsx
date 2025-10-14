@@ -297,7 +297,7 @@ export default function Home() {
       </section>
 
       <section>
-        <h1 style={{ textAlign: "center" }}>Our Testimonial</h1>
+        <h1 style={{ textAlign: "center" }}>Our Testimonials</h1>
 
         <ul className="container snap" style={{ gridAutoColumns: "min(550px, 100%)", overflow: "auto", gridAutoFlow: "column", }}>
           {testimonialsData.map((eachTestimonial, eachTestimonialIndex) => {
