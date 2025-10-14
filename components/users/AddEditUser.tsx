@@ -12,6 +12,7 @@ import { filterTableObjectByColumnAccess } from '@/useful/usefulFunctions'
 import { initialNewUserObj } from '@/lib/initialFormData'
 import UseFormErrors from '../useFormErrors/UseFormErrors'
 import Select from '../inputs/select/Select'
+import FormToggleButton from '../inputs/formToggleButton/FormToggleButton'
 
 export default function AddEditUser({ sentUser, submissionAction }: { sentUser?: userType, submissionAction?: () => void }) {
     const [formObj, formObjSet] = useState<Partial<userType>>(deepClone(sentUser === undefined ? initialNewUserObj : userSchema.partial().parse(sentUser)))
@@ -316,6 +317,29 @@ export default function AddEditUser({ sentUser, submissionAction }: { sentUser?:
                         })
                     }}
                     errors={formErrors["packageDeliveryMethod"]}
+                />
+            )}
+
+            {formObj.active !== undefined && tableColumnAccess["active"] && (
+                <FormToggleButton
+                    label='account active?'
+                    buttonProps={{
+                        style: { justifySelf: "flex-start" }
+                    }}
+                    onClick={() => {
+                        if (!tableColumnAccess["active"]) return
+
+                        formObjSet(prevFormObj => {
+                            const newFormObj = { ...prevFormObj }
+                            if (newFormObj.active === undefined) return prevFormObj
+
+                            newFormObj.active = !newFormObj.active
+
+                            return newFormObj
+                        })
+                    }}
+                    value={formObj.active}
+                    errors={formErrors["active"]}
                 />
             )}
 

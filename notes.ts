@@ -1,5 +1,5 @@
 //To Do:
-//admin dashboard delete options
+//admin dashboard manage all options...
 //add notifications - on specific package info change - location, status change, needs attention
 //bulk updates
 
@@ -33,6 +33,16 @@
 
 
 //Ideas
+//admin
+//go over all database tables
+//check auth on each who can c, r, u, d
+//search records
+//show add record option (if authed)
+//select multiple records - show delete option (if authed)
+//add additional content - like delete packages if deleting user...etc
+//
+//
+//
 //websockets?
 //bulk upload for warehouse users
 

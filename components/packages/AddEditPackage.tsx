@@ -245,6 +245,9 @@ export default function AddEditPackage({ sentPackage, submissionAction }: { sent
                                                 },
                                                 name: {
                                                     value: "",
+                                                },
+                                                email: {
+                                                    value: "",
                                                 }
                                             }}
                                         />

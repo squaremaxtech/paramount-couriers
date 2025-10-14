@@ -264,6 +264,7 @@ export const userSchema = z.object({
         city: z.string().min(1, "please enter your city"),
     }).nullable(),
     packageDeliveryMethod: packageDeliveryMethodSchema,
+    active: z.boolean(),
 
     //regular
 

@@ -26,6 +26,15 @@ export default async function AdminLayout({
           link: `/employee/users`,
           title: "users"
         },
+        {
+          icon: (
+            <span className="material-symbols-outlined mediumIcon">
+              account_circle
+            </span>
+          ),
+          link: `/admin/database`,
+          title: "database"
+        },
       ]}
     >
       {children}

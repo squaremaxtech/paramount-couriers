@@ -15,6 +15,7 @@ export const users = pgTable("users", {
     authorizedUsers: json("authorizedUsers").$type<userType["authorizedUsers"]>().notNull().default([]),
     address: json("address").$type<userType["address"]>().default(null),
     packageDeliveryMethod: packageDeliveryMethodEnum().notNull().default("Kingston"),
+    active: boolean("active").notNull().default(true),
 
     //regular
 
@@ -23,7 +24,6 @@ export const users = pgTable("users", {
     email: text("email").unique(),
     emailVerified: timestamp("emailVerified", { mode: "date" }),
     image: text("image"),
-
 })
 export const userRelations = relations(users, ({ many }) => ({
     packages: many(packages),

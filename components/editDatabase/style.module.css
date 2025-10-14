@@ -1,0 +1,36 @@
+.main {
+    display: grid;
+    align-content: flex-start;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: 1fr;
+    position: relative;
+    overflow: auto;
+}
+
+.sidebar {
+    display: grid;
+    align-content: flex-start;
+    gap: var(--spacingR);
+    width: 300px;
+    background-color: var(--color3);
+    padding: var(--spacingR);
+    overflow: auto;
+}
+
+.mainContent {
+    display: grid;
+    align-content: flex-start;
+    gap: var(--spacingR);
+    padding: var(--spacingR);
+    overflow: auto;
+}
+
+@media only screen and (max-width: 600px) {
+    .sidebar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%
+    }
+
+}

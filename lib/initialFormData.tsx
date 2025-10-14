@@ -29,6 +29,7 @@ export const initialNewUserObj: newUserType = {
     authorizedUsers: [],
     address: null,
     packageDeliveryMethod: "Kingston",
+    active: true,
 
     name: "",
     email: "",
