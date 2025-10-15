@@ -1,6 +1,5 @@
 //To Do:
-//add notifications - on specific package info change - location, status change, needs attention
-//admin dashboard manage all options
+//admin dashboard manage all options - refine, fiz filtering
 //bulk updates
 
 //ensure upload folder not synced on github
@@ -10,7 +9,6 @@
 //make multi select menu: export to excel, delete...etc
 //improve filters on view table
 //add auth to view image/download
-//send off general email for customers to re-sign up
 //new customer onboarding process - completed check - if not customer sees update info
 //make comments own table
 //note options for store type - show tracking number live
@@ -182,3 +180,4 @@
 //rate sheet changes...
 //Email sign in...
 //updated map...
+//add notifications - on specific package info change - location, status change, needs attention...

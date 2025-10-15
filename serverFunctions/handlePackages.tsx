@@ -41,6 +41,7 @@ export async function updatePackage(packageId: packageType["id"], userId: userTy
     const accessTableResults = await ensureCanAccessTable("packages", Object.keys(updatedPackageObj) as tableColumns["packages"][], crudActionObj)
     handleEnsureCanAccessTableResults(accessTableResults, "both")
 
+    //get current package
     const currentPackage = await getSpecificPackage(packageId, crudActionObj)
     if (currentPackage === undefined) throw new Error(`not seeing package for id ${packageId}`)
 

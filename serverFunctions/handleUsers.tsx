@@ -7,6 +7,7 @@ import { ensureCanAccessTable } from "./handleAuth"
 import { handleEnsureCanAccessTableResults, makeWhereClauses } from "@/utility/utility"
 import { filterTableObjectByColumnAccess } from "@/useful/usefulFunctions"
 import { initialNewUserObj } from "@/lib/initialFormData"
+import { sendNotificationEmail } from "./handleEmailNotifications"
 
 export async function addUser(newUserObj: newUserType) {
     const accessTableResults = await ensureCanAccessTable("users", Object.keys(newUserObj) as tableColumns["users"][], { action: "c" },)
@@ -19,8 +20,15 @@ export async function addUser(newUserObj: newUserType) {
     const validatedUser = newUserSchema.parse(filteredUser)
 
     //add new request
-    await db.insert(users).values({
+    const [newUser] = await db.insert(users).values({
         ...validatedUser
+    }).returning()
+
+    //notifs
+    sendNotificationEmail({
+        table: { name: "users", updatedUser: newUser },
+        action: "c",
+        sendTo: newUser.email === null ? { type: "id", userId: newUser.id } : { type: "email", email: newUser.email }
     })
 }
 
@@ -32,13 +40,25 @@ export async function updateUser(userId: userType["id"], updatedUserObj: Partial
     const accessTableResults = await ensureCanAccessTable("users", Object.keys(updatedUserObj) as tableColumns["users"][], crudActionObj)
     handleEnsureCanAccessTableResults(accessTableResults, "both")
 
-    const [result] = await db.update(users)
+    //get current user
+    const currentUser = await getSpecificUser(userId, crudActionObj)
+    if (currentUser === undefined) throw new Error(`not seeing user for id ${userId}`)
+
+    const [updatedUser] = await db.update(users)
         .set({
             ...updatedUserObj
         })
         .where(eq(users.id, userId)).returning();
 
-    return result
+    //notifs
+    const updatedEmail = updatedUser.email
+    sendNotificationEmail({
+        table: { name: "users", oldUser: currentUser, updatedUser: updatedUser },
+        action: "u",
+        sendTo: updatedEmail === null ? { type: "id", userId: updatedUser.id } : { type: "email", email: updatedEmail }
+    })
+
+    return updatedUser
 }
 
 export async function deleteUser(userId: userType["id"], crudActionObj: crudActionObjType) {
