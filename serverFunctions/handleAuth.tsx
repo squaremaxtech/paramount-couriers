@@ -9,6 +9,7 @@ const fullAccess: crudType[] = ["c", "r", "u", "d"];
 const read: crudType[] = ["r"];
 const readOwn: crudType[] = ["ro"];
 const readUpdate: crudType[] = ["r", "u"];
+const readOwnUpdateOwn: crudType[] = ["ro", "uo"]
 const createReadUpdate: crudType[] = ["c", "r", "u"];
 const createReadUpdateDeleteOwn: crudType[] = ["c", "ro", "uo", "do"];
 const fixedUserCrud: userCrudType = {
@@ -46,7 +47,7 @@ const tableAccess: tableAccessType = {
             employee_warehouse: read,
             employee_elevated: readUpdate,
             employee_supervisor: readUpdate,
-            customer: ["ro", "uo"],
+            customer: readOwnUpdateOwn,
         },
         columnDefault: {
             admin: fullAccess,
@@ -103,7 +104,7 @@ const tableAccess: tableAccessType = {
                 employee_warehouse: read,
                 employee_elevated: readUpdate,
                 employee_supervisor: readUpdate,
-                customer: ["ro", "uo"],
+                customer: readOwnUpdateOwn,
             },
             packageDeliveryMethod: {
                 admin: fullAccess,
@@ -111,7 +112,7 @@ const tableAccess: tableAccessType = {
                 employee_warehouse: read,
                 employee_elevated: readUpdate,
                 employee_supervisor: readUpdate,
-                customer: ["ro", "uo"],
+                customer: readOwnUpdateOwn,
             },
             authorizedUsers: {
                 admin: fullAccess,
@@ -120,6 +121,14 @@ const tableAccess: tableAccessType = {
                 employee_elevated: fullAccess,
                 employee_supervisor: fullAccess,
                 customer: ["co", "ro", "uo", "do"],
+            },
+            phoneNumber: {
+                admin: fullAccess,
+                employee_regular: readUpdate,
+                employee_warehouse: read,
+                employee_elevated: readUpdate,
+                employee_supervisor: readUpdate,
+                customer: readOwnUpdateOwn,
             },
         },
     },

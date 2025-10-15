@@ -16,6 +16,7 @@ export const users = pgTable("users", {
     address: json("address").$type<userType["address"]>().default(null),
     packageDeliveryMethod: packageDeliveryMethodEnum().notNull().default("Kingston"),
     active: boolean("active").notNull().default(true),
+    phoneNumber: text("phoneNumber").notNull().default(""),
 
     //regular
 

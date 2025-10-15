@@ -194,13 +194,26 @@ export type ratePricingType = {
     weight: number;
 };
 
+export const phoneNumberSchema = z
+    .string()
+    .refine(
+        (val) => val === "" || /^\(\d{3}\)\s?\d{3}-\d{4}$/.test(val),
+        "Phone number must be in the format (XXX) 123-4567"
+    );
+
+// ✅ Required version (for contact form, etc.)
+export const requiredPhoneNumberSchema = z
+    .string()
+    .min(1, "Please enter your phone number")
+    .refine(
+        (val) => /^\(\d{3}\)\s?\d{3}-\d{4}$/.test(val),
+        "Phone number must be in the format (XXX) 123-4567"
+    );
+
 export const contactFormSchema = z.object({
     fullname: z.string().min(1, "Please enter your name"),
     email: z.string().min(1, "Please enter your email").email(),
-    phone: z.string().min(1).regex(
-        /^\(876\)\s\d{3}-\d{4}$/,
-        "Phone number must be in the format (876) xxx-xxxx"
-    ),
+    phone: requiredPhoneNumberSchema,
     message: z.string().min(1, "Please enter your message"),
 })
 export type contactFormType = z.infer<typeof contactFormSchema>
@@ -267,6 +280,7 @@ export const userSchema = z.object({
     }).nullable(),
     packageDeliveryMethod: packageDeliveryMethodSchema,
     active: z.boolean(),
+    phoneNumber: phoneNumberSchema,
 
     //regular
 

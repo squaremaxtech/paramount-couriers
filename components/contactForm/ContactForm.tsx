@@ -15,7 +15,7 @@ export default function ContactForm({ submissionAction }: { submissionAction?: (
         email: "",
         fullname: "",
         message: "",
-        phone: "(876) 123-4567"
+        phone: "(876) "
     }
     const [formObj, formObjSet] = useState<contactFormType>(deepClone(initialContactForm))
 
@@ -23,12 +23,6 @@ export default function ContactForm({ submissionAction }: { submissionAction?: (
 
     async function handleSubmit() {
         try {
-            if (formObj.phone === initialContactForm.phone) {
-                toast.success("please add your number")
-
-                return
-            }
-
             toast.success("submittting")
 
             //validate contactForm

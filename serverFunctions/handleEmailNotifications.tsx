@@ -16,6 +16,7 @@ const notificationsHtmlObj = {
         emailVerified: "Your email address has been verified successfully.",
         addressUpdated: "Your delivery address has been updated.",
         deliveryMethodUpdated: "Your package delivery method has been updated.",
+        phoneNumberUpdated: "Your phone number has been updated.",
     },
     packages: {
         created: "A new package has been added to your account.",
@@ -130,12 +131,16 @@ export async function sendNotificationEmail(sendNotificationEmailObj: sendNotifi
                 messages.push(userMsg.emailVerified)
             }
 
-            if (updatedUser.address !== oldUser.address) {
+            if (JSON.stringify(updatedUser.address) !== JSON.stringify(oldUser.address)) {
                 messages.push(userMsg.addressUpdated)
             }
 
             if (updatedUser.packageDeliveryMethod !== oldUser.packageDeliveryMethod) {
                 messages.push(userMsg.deliveryMethodUpdated)
+            }
+
+            if (updatedUser.phoneNumber !== oldUser.phoneNumber) {
+                messages.push(userMsg.phoneNumberUpdated)
             }
         }
 

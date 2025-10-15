@@ -156,6 +156,30 @@ export default function AddEditUser({ sentUser, submissionAction, aboveNotifs }:
                 </>
             )}
 
+            {formObj.phoneNumber !== undefined && tableColumnAccess["phoneNumber"] && (
+                <>
+                    <TextInput
+                        name={"phoneNumber"}
+                        value={formObj.phoneNumber}
+                        type={"text"}
+                        label={"phone number"}
+                        placeHolder={"E.g (XXX) 123-4567"}
+                        onChange={(e) => {
+                            formObjSet(prevFormObj => {
+                                const newFormObj = { ...prevFormObj }
+                                if (newFormObj.phoneNumber === undefined) return prevFormObj
+
+                                newFormObj.phoneNumber = e.target.value
+
+                                return newFormObj
+                            })
+                        }}
+                        onBlur={() => { checkIfValid(formObj, "phoneNumber") }}
+                        errors={formErrors["phoneNumber"]}
+                    />
+                </>
+            )}
+
             {formObj.role !== undefined && tableColumnAccess["role"] && (
                 <Select
                     label='select user role'

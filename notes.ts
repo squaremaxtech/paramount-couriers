@@ -1,6 +1,7 @@
 //To Do:
 //bulk updates
 //add hover tips - whats a consignee
+//contact us number format - any
 
 //ensure upload folder not synced on github
 //add extra location to package - in delivery to customer, with customer...etc
@@ -19,7 +20,6 @@
 //google cloud from their account
 //add stores select to add edit package
 //add view tracking number options
-//contact us number format - any
 //admin dashboard manage all options - refine
 
 //long term

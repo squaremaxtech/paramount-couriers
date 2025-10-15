@@ -30,6 +30,7 @@ export const initialNewUserObj: newUserType = {
     address: null,
     packageDeliveryMethod: "Kingston",
     active: true,
+    phoneNumber: "",
 
     name: "",
     email: "",
