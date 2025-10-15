@@ -339,10 +339,18 @@ export default function AddEditUser({ sentUser, submissionAction, aboveNotifs }:
                             const newFormObj = { ...prevFormObj }
                             if (newFormObj.packageDeliveryMethod === undefined) return prevFormObj
 
-                            if (value === "home" && (formObj.address === undefined || formObj.address === null)) {
-                                toast.error("ensure you have your address set")
+                            if (value === "home") {
+                                //ensure address
+                                if (formObj.address === undefined || formObj.address === null) {
+                                    toast.error("ensure you have your address set")
+                                    return newFormObj
+                                }
 
-                                return newFormObj
+                                //ensure phone number
+                                if (formObj.phoneNumber === undefined || formObj.phoneNumber === "") {
+                                    toast.error("please set a phone number")
+                                    return newFormObj
+                                }
                             }
 
                             newFormObj.packageDeliveryMethod = value
