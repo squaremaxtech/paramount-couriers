@@ -1,7 +1,7 @@
 "use server"
 import { db } from "@/db"
 import { users } from "@/db/schema"
-import { newUserSchema, newUserType, userSchema, userType, tableColumns, tableFilterTypes, crudActionObjType, userSchemaForFilter } from "@/types"
+import { newUserSchema, newUserType, userSchema, userType, tableColumns, tableFilterTypes, crudActionObjType, userSchemaForFilter, dateSchema } from "@/types"
 import { and, eq, SQLWrapper } from "drizzle-orm"
 import { ensureCanAccessTable } from "./handleAuth"
 import { handleEnsureCanAccessTableResults, makeWhereClauses } from "@/utility/utility"
@@ -43,6 +43,11 @@ export async function updateUser(userId: userType["id"], updatedUserObj: Partial
     //get current user
     const currentUser = await getSpecificUser(userId, crudActionObj)
     if (currentUser === undefined) throw new Error(`not seeing user for id ${userId}`)
+
+    //fix dates
+    if (updatedUserObj.emailVerified !== undefined && updatedUserObj.emailVerified !== null) {
+        updatedUserObj.emailVerified = dateSchema.parse(updatedUserObj.emailVerified)
+    }
 
     const [updatedUser] = await db.update(users)
         .set({

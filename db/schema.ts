@@ -22,7 +22,7 @@ export const users = pgTable("users", {
     //null
     name: text("name"),
     email: text("email").unique(),
-    emailVerified: timestamp("emailVerified", { mode: "string" }),
+    emailVerified: timestamp("emailVerified", { mode: "date" }), //convert to obj on server whenever used
     image: text("image"),
 })
 export const userRelations = relations(users, ({ many }) => ({
@@ -37,7 +37,7 @@ export const statusEnum = pgEnum("status", statusOptions);
 
 export const packages = pgTable("packages", {
     id: serial("id").primaryKey(),
-    dateCreated: timestamp("dateCreated", { mode: "string" }).notNull().defaultNow(),
+    dateCreated: timestamp("dateCreated", { mode: "date" }).notNull().defaultNow(),
 
     userId: text("userId").notNull().references(() => users.id),
     location: locationEnum().notNull(),

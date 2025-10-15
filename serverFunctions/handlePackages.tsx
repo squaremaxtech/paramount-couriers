@@ -1,7 +1,7 @@
 "use server"
 import { db } from "@/db"
 import { packages } from "@/db/schema"
-import { dbImageType, dbInvoiceType, newPackageSchema, newPackageType, packageSchema, packageType, tableColumns, tableFilterTypes, crudActionObjType, userType } from "@/types"
+import { dbImageType, dbInvoiceType, newPackageSchema, newPackageType, packageSchema, packageType, tableColumns, tableFilterTypes, crudActionObjType, userType, dateSchema } from "@/types"
 import { and, desc, eq, SQLWrapper } from "drizzle-orm"
 import { deleteImages, deleteInvoices } from "./handleFiles"
 import { ensureCanAccessTable } from "./handleAuth"
@@ -44,6 +44,11 @@ export async function updatePackage(packageId: packageType["id"], userId: userTy
     //get current package
     const currentPackage = await getSpecificPackage(packageId, crudActionObj)
     if (currentPackage === undefined) throw new Error(`not seeing package for id ${packageId}`)
+
+    //fix dates
+    if (updatedPackageObj.dateCreated !== undefined) {
+        updatedPackageObj.dateCreated = dateSchema.parse(updatedPackageObj.dateCreated)
+    }
 
     const [updatedPackage] = await db.update(packages)
         .set({

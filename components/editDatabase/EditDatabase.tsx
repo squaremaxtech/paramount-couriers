@@ -4,7 +4,7 @@ import styles from "./style.module.css"
 import * as schema from "@/db/schema"
 import toast from 'react-hot-toast'
 import AddEditUser from '../users/AddEditUser'
-import { packageType, searchObjType, userType } from '@/types'
+import { packageType, searchObjType, tableFilterTypes, userType } from '@/types'
 import { deleteUser, getSpecificUser, getUsers } from '@/serverFunctions/handleUsers'
 import { deletePackage, getPackages, getSpecificPackage } from '@/serverFunctions/handlePackages'
 import Search from '../search/Search'
@@ -45,7 +45,7 @@ export default function Page() {
 
     type updateOption = { type: "all" } | { type: "specific", id: string }
 
-    async function loadStarterValues<T>(sentActiveTable: activeTableType, updateOption: updateOption): Promise<T[]> {
+    async function loadStarterValues<T>(sentActiveTable: activeTableType, updateOption: updateOption, tableFilters?: tableFilterTypes<T>): Promise<T[]> {
         async function getResults<T>(updateOption: updateOption, specificFunction: () => Promise<T | undefined>, getAllFunction: () => Promise<T[]>): Promise<T[]> {
             let results: T[] = []
 
@@ -110,7 +110,7 @@ export default function Page() {
                     return await getSpecificUser(updateOption.id, { action: "r" })
                 },
                 async () => {
-                    return await getUsers({}, { action: "r" }, {}, usersSearchObj.limit, usersSearchObj.offset)
+                    return await getUsers(tableFilters ?? {}, { action: "r" }, {}, usersSearchObj.limit, usersSearchObj.offset)
                 },
             )
 
@@ -130,7 +130,7 @@ export default function Page() {
                     return await getSpecificPackage(parseInt(updateOption.id), { action: "r" })
                 },
                 async () => {
-                    return await getPackages({}, { action: "r" }, {}, packagesSearchObj.limit, packagesSearchObj.offset)
+                    return await getPackages(tableFilters ?? {}, { action: "r" }, {}, packagesSearchObj.limit, packagesSearchObj.offset)
                 },
             )
 
@@ -231,8 +231,8 @@ export default function Page() {
                                 <Search
                                     searchObj={usersSearchObj}
                                     searchObjSet={usersSearchObjSet}
-                                    searchFunc={async () => {
-                                        return loadStarterValues<userType>(activeTable, { type: "all" })
+                                    searchFunc={async (allFilters) => {
+                                        return loadStarterValues<userType>(activeTable, { type: "all" }, allFilters)
                                     }}
                                     showPage={true}
                                     searchFilters={{
@@ -323,8 +323,8 @@ export default function Page() {
                                 <Search
                                     searchObj={packagesSearchObj}
                                     searchObjSet={packagesSearchObjSet}
-                                    searchFunc={async () => {
-                                        return loadStarterValues<packageType>(activeTable, { type: "all" })
+                                    searchFunc={async (allFilters) => {
+                                        return loadStarterValues<packageType>(activeTable, { type: "all" }, allFilters)
                                     }}
                                     showPage={true}
                                     handleResults={false}

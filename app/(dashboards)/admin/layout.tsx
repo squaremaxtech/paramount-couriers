@@ -29,7 +29,7 @@ export default async function AdminLayout({
         {
           icon: (
             <span className="material-symbols-outlined mediumIcon">
-              account_circle
+              database
             </span>
           ),
           link: `/admin/database`,

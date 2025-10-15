@@ -2,17 +2,12 @@ import { z } from "zod";
 import * as schema from "@/db/schema"
 import { PgTableWithColumns } from "drizzle-orm/pg-core";
 
-const postgresTimestampRegex =
-    /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(\.\d{1,3})?$/;
-
-export const timeStampSchema = z
-    .string()
-    .regex(postgresTimestampRegex, "Invalid timestamp format (expected YYYY-MM-DD HH:mm:ss.SSS)");
-
 export const dateSchema = z.preprocess((val) => {
-    if (typeof val === "string" || typeof val === "number") return new Date(val);
+    if (val instanceof Date) return val;  // already a Date
+    if (typeof val === "string" || typeof val === "number") return new Date(val); // convert string
+
     return val;
-}, z.date())
+}, z.date());
 
 export const decimalStringSchema = z.string()
     .regex(/^(0|[1-9]\d*)(\.\d{1,2})?$/, "Must be a valid number (max 2 decimal places)")
@@ -278,7 +273,7 @@ export const userSchema = z.object({
     //null
     name: z.string().min(1).nullable(),
     email: z.string().email().nullable(),
-    emailVerified: timeStampSchema.nullable(),
+    emailVerified: dateSchema.nullable(),
     image: z.string().min(1).nullable(),
 })
 export const userSchemaForFilter = userSchema.extend({
@@ -305,7 +300,7 @@ export type locationType = z.infer<typeof locationSchema>
 
 export const packageSchema = z.object({
     id: z.number(),
-    dateCreated: timeStampSchema,
+    dateCreated: dateSchema,
 
     userId: userSchema.shape.id,
     location: locationSchema,

@@ -1,6 +1,6 @@
 //To Do:
-//admin dashboard manage all options - refine, fiz filtering
 //bulk updates
+//add hover tips - whats a consignee
 
 //ensure upload folder not synced on github
 //add extra location to package - in delivery to customer, with customer...etc
@@ -20,6 +20,7 @@
 //add stores select to add edit package
 //add view tracking number options
 //contact us number format - any
+//admin dashboard manage all options - refine
 
 //long term
 //write to reusable project
@@ -181,3 +182,4 @@
 //Email sign in...
 //updated map...
 //add notifications - on specific package info change - location, status change, needs attention...
+//admin dashboard manage all options fix filtering...
