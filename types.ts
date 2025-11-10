@@ -267,7 +267,7 @@ export type packageDeliveryMethodType = z.infer<typeof packageDeliveryMethodSche
 
 export const userSchema = z.object({
     //defaults
-    id: z.string().min(1),
+    id: z.string().min(1, "please add a user id"),
     role: roleSchema,
     accessLevel: accessLevelSchema,
     authorizedUsers: z.object({
