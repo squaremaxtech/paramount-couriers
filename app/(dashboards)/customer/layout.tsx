@@ -30,6 +30,15 @@ export default async function CustomerLayout({
         {
           icon: (
             <span className="material-symbols-outlined mediumIcon">
+              distance
+            </span>
+          ),
+          link: `/customer/address`,
+          title: "US address"
+        },
+        {
+          icon: (
+            <span className="material-symbols-outlined mediumIcon">
               package_2
             </span>
           ),
@@ -44,15 +53,6 @@ export default async function CustomerLayout({
           ),
           link: `/customer/preAlert`,
           title: "pre alert"
-        },
-        {
-          icon: (
-            <span className="material-symbols-outlined mediumIcon">
-              distance
-            </span>
-          ),
-          link: `/customer/address`,
-          title: "US address"
         },
         {
           icon: (
